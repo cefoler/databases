@@ -1,9 +1,11 @@
-package com.celeste.sql;
+package com.celeste;
 
-import com.celeste.sql.provider.HikariConnectionProvider;
-import com.celeste.sql.provider.SQLConnectionProvider;
-import com.celeste.sql.util.PropertiesBuilder;
+import com.celeste.provider.HikariConnectionProvider;
+import com.celeste.provider.SQLConnectionProvider;
+import com.celeste.util.PropertiesBuilder;
+import lombok.Getter;
 
+@Getter
 public class SQLProcessor {
 
     public SQLConnectionProvider sqlConnectionProvider;
@@ -12,7 +14,7 @@ public class SQLProcessor {
         this.sqlConnectionProvider = new HikariConnectionProvider();
     }
 
-    public void startDatabase(
+    public void connect(
       String host, String port, String database, String user, String password
     ) {
         sqlConnectionProvider.connect(new PropertiesBuilder()
@@ -23,10 +25,6 @@ public class SQLProcessor {
           .with("username", user)
           .with("password", password)
           .wrap());
-    }
-
-    public SQLConnectionProvider getSqlConnectionProvider() {
-        return sqlConnectionProvider;
     }
 
 }

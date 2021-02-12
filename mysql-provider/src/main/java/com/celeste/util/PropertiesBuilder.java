@@ -1,4 +1,4 @@
-package com.celeste.sql.util;
+package com.celeste.util;
 
 import java.util.Properties;
 

@@ -1,16 +1,18 @@
 package com.celeste.redis;
 
 import com.celeste.redis.util.PropertiesBuilder;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 @Getter
-@AllArgsConstructor
 public class RedisProcessor {
 
     public final JedisConnectionProvider jedisConnectionProvider;
+
+    public RedisProcessor() {
+        this.jedisConnectionProvider = new JedisConnectionProvider();
+    }
 
     public void connect(String hostname) {
         jedisConnectionProvider.connect(new PropertiesBuilder()

@@ -1,4 +1,4 @@
-package com.celeste.sql.function;
+package com.celeste.function;
 
 import java.sql.SQLException;
 import java.util.function.Function;

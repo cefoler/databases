@@ -1,6 +1,6 @@
-package com.celeste.sql.mapper;
+package com.celeste.mapper;
 
-import com.celeste.sql.function.SqlFunction;
+import com.celeste.function.SqlFunction;
 import lombok.Builder;
 import lombok.Getter;
 

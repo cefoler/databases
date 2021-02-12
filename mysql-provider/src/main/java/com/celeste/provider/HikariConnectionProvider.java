@@ -1,4 +1,4 @@
-package com.celeste.sql.provider;
+package com.celeste.provider;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

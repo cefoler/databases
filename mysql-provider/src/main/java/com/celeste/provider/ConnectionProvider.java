@@ -1,4 +1,4 @@
-package com.celeste.sql.provider;
+package com.celeste.provider;
 
 import java.util.Properties;
 

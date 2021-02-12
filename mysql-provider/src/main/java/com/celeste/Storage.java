@@ -1,4 +1,4 @@
-package com.celeste.sql;
+package com.celeste;
 
 import java.util.List;
 import java.util.UUID;

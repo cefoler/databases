@@ -1,7 +1,7 @@
-package com.celeste.sql.provider;
+package com.celeste.provider;
 
-import com.celeste.sql.function.SqlFunction;
-import com.celeste.sql.mapper.SqlEntryMapper;
+import com.celeste.function.SqlFunction;
+import com.celeste.mapper.SqlEntryMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
