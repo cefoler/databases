@@ -1,0 +1,13 @@
+# Gradle
+.gradle/
+build/
+
+# IDEA
+.idea/
+
+# Logs
+/*.log
+
+# config
+*.env
+*.conf
