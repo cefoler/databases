@@ -1,19 +1,37 @@
 plugins {
     id 'java'
+    id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
-group 'org.example'
+group 'com.celeste'
 version '1.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    compileOnly 'org.projectlombok:lombok:1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.18.10'
 }
 
-test {
-    useJUnitPlatform()
+subprojects {
+    afterEvaluate {
+        apply plugin: 'java'
+
+        repositories {
+            mavenLocal()
+            mavenCentral()
+
+            maven { url 'https://jitpack.io' }
+        }
+
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Jar) {
+        destinationDirectory.set(file("$rootDir/target/"))
+
+        println(destinationDirectory)
+    }
+
 }
