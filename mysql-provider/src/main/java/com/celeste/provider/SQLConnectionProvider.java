@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Getter
@@ -22,7 +23,7 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
 
     private static final String JDBC_CONNECTION_URL = "jdbc:<driver>://<hostname>:<port>/<database>";
 
-    private final ScheduledExecutorService executorService;
+    private final ExecutorService executorService;
     private HikariDataSource dataSource;
 
     public CompletableFuture<Boolean> execute(String sql, Object... values) {

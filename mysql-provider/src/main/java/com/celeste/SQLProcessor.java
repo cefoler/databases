@@ -4,15 +4,15 @@ import com.celeste.provider.SQLConnectionProvider;
 import com.celeste.util.PropertiesBuilder;
 import lombok.Getter;
 
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutorService;
 
 @Getter
 public class SQLProcessor {
 
     public SQLConnectionProvider sqlConnectionProvider;
 
-    public SQLProcessor(ScheduledExecutorService scheduledExecutorService) {
-        this.sqlConnectionProvider = new SQLConnectionProvider(scheduledExecutorService);
+    public SQLProcessor(ExecutorService executorService) {
+        this.sqlConnectionProvider = new SQLConnectionProvider(executorService);
     }
 
     public void connect(
