@@ -1,17 +1,18 @@
 package com.celeste;
 
-import com.celeste.provider.HikariConnectionProvider;
 import com.celeste.provider.SQLConnectionProvider;
 import com.celeste.util.PropertiesBuilder;
 import lombok.Getter;
+
+import java.util.concurrent.ScheduledExecutorService;
 
 @Getter
 public class SQLProcessor {
 
     public SQLConnectionProvider sqlConnectionProvider;
 
-    public SQLProcessor() {
-        this.sqlConnectionProvider = new HikariConnectionProvider();
+    public SQLProcessor(ScheduledExecutorService scheduledExecutorService) {
+        this.sqlConnectionProvider = new SQLConnectionProvider(scheduledExecutorService);
     }
 
     public void connect(
@@ -25,6 +26,14 @@ public class SQLProcessor {
           .with("username", user)
           .with("password", password)
           .wrap());
+    }
+
+    public boolean isConnected() {
+        return sqlConnectionProvider.isRunning();
+    }
+
+    public void disconnect() {
+        sqlConnectionProvider.disconnect();
     }
 
 }

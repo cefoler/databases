@@ -17,9 +17,10 @@ import static java.util.logging.Level.WARNING;
 import static lombok.AccessLevel.NONE;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-@Getter(onMethod_={@Synchronized})
+@Getter(onMethod_= { @Synchronized } )
 public class MongoProvider implements MongoDB {
 
+    private static final String CONNECTION_URL = "mongodb://<username>:<password>@<host>/?authSource=admin";
     @Getter(NONE)
     private MongoClient client;
     private MongoDatabase database;
@@ -33,10 +34,10 @@ public class MongoProvider implements MongoDB {
             Logger.getLogger("org.mongodb.driver").setLevel(WARNING);
 
             final ConnectionString connection = new ConnectionString(
-                "mongodb://" +
-                username + ":" +
-                password + "@" +
-                host + "/?authSource=admin"
+                CONNECTION_URL
+                .replace("<username>", username)
+                .replace("<password>", password)
+                .replace("<host>", host)
             );
 
             final CodecRegistry codec = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
