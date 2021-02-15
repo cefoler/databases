@@ -1,8 +1,4 @@
 rootProject.name = 'Databases'
-include 'MySQL'
-include 'MySQL'
-include 'Redis'
-include 'MongoDB'
 include 'mongodb-provider'
 include 'mysql-provider'
 include 'redis-provider'

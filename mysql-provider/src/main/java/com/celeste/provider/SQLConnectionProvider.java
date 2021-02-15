@@ -31,7 +31,7 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
         return CompletableFuture.supplyAsync(() -> {
 
             try (
-              Connection connection = this.getConnectionInstance();
+              Connection connection = getConnectionInstance();
               PreparedStatement statement = connection.prepareStatement(sql)
             ) {
                 applyValuesToStatement(statement, values);
@@ -39,8 +39,9 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
                 return statement.execute();
             } catch (Exception e) {
                 e.printStackTrace();
-                return false;
             }
+
+            return false;
         }, getExecutorService());
     }
 
@@ -48,7 +49,7 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
         return CompletableFuture.supplyAsync(() -> {
 
             try (
-              Connection connection = this.getConnectionInstance();
+              Connection connection = getConnectionInstance();
               PreparedStatement statement = connection.prepareStatement(sql)
             ) {
                 this.applyValuesToStatement(statement, statementValues);
@@ -57,23 +58,26 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
                 return true;
             } catch (Exception exception) {
                 exception.printStackTrace();
-                return false;
             }
+
+            return false;
         }, getExecutorService());
     }
 
     public CompletableFuture<ResultSet> executeQuery(String sql, Object... statementValues) {
         return CompletableFuture.supplyAsync(() -> {
             try (
-              Connection connection = this.getConnectionInstance();
+              Connection connection = getConnectionInstance();
               PreparedStatement statement = connection.prepareStatement(sql)
             ) {
                 applyValuesToStatement(statement, statementValues);
 
                 return statement.executeQuery();
             } catch (Exception exception) {
-                return null;
+                exception.printStackTrace();
             }
+
+            return null;
         }, getExecutorService());
     }
 
@@ -82,7 +86,7 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
             final List<T> collected = Collections.synchronizedList(new ArrayList<>());
 
             try (
-              Connection connection = this.getConnectionInstance();
+              Connection connection = getConnectionInstance();
               PreparedStatement statement = connection.prepareStatement(sql)
             ) {
                 applyValuesToStatement(statement, statementValues);
@@ -105,10 +109,9 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
 
     public <T> CompletableFuture<T> getFirstFromQuery(String sql, SqlFunction<ResultSet, T> function, Object... statementValues) {
         return CompletableFuture.supplyAsync(() -> {
-            final Connection currentConnection = this.getConnectionInstance();
 
             try (
-              Connection connection = this.getConnectionInstance();
+              Connection connection = getConnectionInstance();
               PreparedStatement statement = connection.prepareStatement(sql)
             ) {
                 applyValuesToStatement(statement, statementValues);
