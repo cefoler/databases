@@ -2,16 +2,12 @@ plugins {
     id 'java'
 }
 
-group 'com.celeste  '
+group 'com.celeste'
 version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation 'dev.morphia.morphia:core:1.5.4'
 
-    compileOnly 'org.projectlombok:lombok:1.18.10'
-    annotationProcessor 'org.projectlombok:lombok:1.18.10'
+    compileOnly 'org.projectlombok:lombok:1.18.18'
+    annotationProcessor 'org.projectlombok:lombok:1.18.18'
 }

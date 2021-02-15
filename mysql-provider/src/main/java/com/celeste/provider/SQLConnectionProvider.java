@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -69,9 +70,7 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
         }, getExecutorService());
     }
 
-    public <T> CompletableFuture<List<T>> selectAsList(
-        String sql, SqlFunction<ResultSet, T> function, Object... statementValues
-    ) {
+    public <T> CompletableFuture<List<T>> selectAsList(String sql, SqlFunction<ResultSet, T> function, Object... statementValues) {
         return CompletableFuture.supplyAsync(() -> {
             final Connection currentConnection = getConnectionInstance();
             final List<T> collected = Collections.synchronizedList(new ArrayList<>());
@@ -108,7 +107,7 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
                     }
                 }
             } catch (Exception exception) {
-                return null;
+                exception.printStackTrace();
             }
 
             return null;
@@ -128,8 +127,10 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
                 }
                 return map;
             } catch (Exception exception) {
-                return Collections.emptyMap();
+                exception.printStackTrace();
             }
+
+            return Collections.emptyMap();
         }, getExecutorService());
     }
 
@@ -145,46 +146,44 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
         }
     }
 
-    @Override
+    @Override @SneakyThrows
     public Connection getConnectionInstance() {
-        try {
-            return dataSource.getConnection();
-        } catch (Exception exception) {
-            throw new RuntimeException("The datasource is not running");
-        }
+        return dataSource.getConnection();
     }
 
     @Override
     public boolean isRunning() {
-        return dataSource != null && dataSource.isRunning();
+        return dataSource.isRunning();
     }
 
     @Override
-    public boolean connect(Properties properties) {
+    public void connect(Properties properties) {
         final HikariConfig config = new HikariConfig();
 
+        config.setDriverClassName("com.mysql.jdbc.Driver");
         config.setJdbcUrl(JDBC_CONNECTION_URL
-            .replace("<driver>", properties.getProperty("driver"))
-            .replace("<hostname>", properties.getProperty("hostname"))
-            .replace("<port>", properties.getProperty("port"))
-            .replace("<database>", properties.getProperty("database")));
+          .replace("<driver>", properties.getProperty("driver"))
+          .replace("<hostname>", properties.getProperty("hostname"))
+          .replace("<port>", properties.getProperty("port"))
+          .replace("<database>", properties.getProperty("database")));
 
         config.setUsername(properties.getProperty("username"));
         config.setPassword(properties.getProperty("password"));
 
-        config.setMaximumPoolSize(Runtime.getRuntime().availableProcessors() * 2);
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(40);
+
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
 
         config.addDataSourceProperty("autoReconnect", "true");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("useServerPrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "256");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-        try {
-            this.dataSource = new HikariDataSource(config);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        this.dataSource = new HikariDataSource(config);
     }
 
     @Override

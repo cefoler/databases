@@ -15,9 +15,7 @@ public class SQLProcessor {
         this.sqlConnectionProvider = new SQLConnectionProvider(executorService);
     }
 
-    public void connect(
-      String host, String port, String database, String user, String password
-    ) {
+    public void connect(String host, String port, String database, String user, String password) {
         sqlConnectionProvider.connect(new PropertiesBuilder()
           .with("driver", "mysql")
           .with("hostname", host)
