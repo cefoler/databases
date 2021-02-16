@@ -188,7 +188,7 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
         config.setMinimumIdle(1);
         config.setMaximumPoolSize(40);
 
-        config.setConnectionTimeout(30000);
+        config.setConnectionTimeout(120000);
         config.setIdleTimeout(600000);
         config.setMaxLifetime(1800000);
 
