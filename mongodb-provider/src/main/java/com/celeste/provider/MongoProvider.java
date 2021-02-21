@@ -5,7 +5,6 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
 import lombok.Getter;
 import lombok.Synchronized;
-import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -14,14 +13,13 @@ import java.util.logging.Logger;
 
 import static com.mongodb.MongoClientSettings.builder;
 import static java.util.logging.Level.WARNING;
-import static lombok.AccessLevel.NONE;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Getter(onMethod_= { @Synchronized } )
 public class MongoProvider implements MongoDB {
 
     private static final String CONNECTION_URL = "mongodb://<username>:<password>@<host>/?authSource=admin";
-    @Getter(NONE)
+
     private MongoClient client;
     private MongoDatabase database;
 
@@ -65,41 +63,13 @@ public class MongoProvider implements MongoDB {
     }
 
     @Override @Synchronized
-    public void createCollection(final String name) {
-        if (!exists(name)) database.createCollection(name);
-    }
-
-    @Override @Synchronized
     public boolean isConnect() {
         return client != null;
     }
 
     @Override
     public MongoClient getClient() {
-        return null;
-    }
-
-    @Override @Synchronized
-    public MongoCollection<Document> getCollection(final String name) {
-        if (!exists(name)) database.createCollection(name);
-        return database.getCollection(name);
-    }
-
-    @Override @Synchronized
-    public <T> MongoCollection<T> getCollection(final String name, final Class<T> clazz) {
-        if (!exists(name)) database.createCollection(name);
-        return database.getCollection(name, clazz);
-    }
-
-    @Synchronized
-    private boolean exists(final String name) {
-        final MongoIterable<String> collections = database.listCollectionNames();
-
-        for (final String collection : collections) {
-            if (collection.equals(name)) return true;
-        }
-
-        return false;
+        return client;
     }
 
 }
