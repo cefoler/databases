@@ -22,12 +22,8 @@ public class RedisProcessor {
     }
 
     public void setupRedisChannel(final Object object, final String channel) {
-        new Thread(() -> {
-
-            final Jedis jedis = provider.getConnectionInstance();
-            jedis.subscribe((JedisPubSub) object, channel);
-
-        }).start();
+        final Jedis jedis = provider.getConnectionInstance();
+        jedis.subscribe((JedisPubSub) object, channel);
     }
 
     public void disconnect() {
