@@ -8,31 +8,30 @@ import redis.clients.jedis.JedisPubSub;
 @Getter
 public class RedisProcessor {
 
-    public final JedisConnectionProvider jedisConnectionProvider;
+    public final JedisConnectionProvider provider;
 
     public RedisProcessor() {
-        this.jedisConnectionProvider = new JedisConnectionProvider();
+        this.provider = new JedisConnectionProvider();
     }
 
     public void connect(String hostname) {
-        jedisConnectionProvider.connect(new PropertiesBuilder()
+        provider.connect(new PropertiesBuilder()
             .with("hostname", hostname)
             .wrap()
         );
     }
 
     public void setupRedisChannel(final Object object, final String channel) {
-        jedisConnectionProvider.connect(null);
-
         new Thread(() -> {
-            try (
-              final Jedis jedis = jedisConnectionProvider.getConnectionInstance()
-            ) {
-                jedis.subscribe((JedisPubSub) object, channel);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
+
+            final Jedis jedis = provider.getConnectionInstance();
+            jedis.subscribe((JedisPubSub) object, channel);
+
         }).start();
+    }
+
+    public void disconnect() {
+        provider.disconnect();
     }
 
 }
