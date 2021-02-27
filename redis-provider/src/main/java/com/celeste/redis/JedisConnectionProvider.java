@@ -24,9 +24,7 @@ public class JedisConnectionProvider implements ConnectionProvider<Jedis> {
         try {
             this.jedisPool = new JedisPool(
                 properties.getProperty("hostname"),
-                Integer.parseInt(properties.getProperty("port")),
-                properties.getProperty("username"),
-                properties.getProperty("password")
+                Integer.parseInt(properties.getProperty("port"))
             );
 
             return true;
