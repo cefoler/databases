@@ -22,7 +22,12 @@ public class JedisConnectionProvider implements ConnectionProvider<Jedis> {
     @Override
     public boolean connect(Properties properties) {
         try {
-            this.jedisPool = new JedisPool(properties.getProperty("hostname"));
+            this.jedisPool = new JedisPool(
+                properties.getProperty("hostname"),
+                Integer.parseInt(properties.getProperty("")),
+                properties.getProperty("username"),
+                properties.getProperty("password")
+            );
             return true;
         } catch (Exception exception) {
             return false;

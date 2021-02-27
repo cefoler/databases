@@ -1,9 +1,10 @@
 package com.celeste.redis;
 
-import com.celeste.redis.util.PropertiesBuilder;
 import lombok.Getter;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
+
+import java.util.Properties;
 
 @Getter
 public class RedisProcessor {
@@ -14,11 +15,8 @@ public class RedisProcessor {
         this.provider = new JedisConnectionProvider();
     }
 
-    public void connect(String hostname) {
-        provider.connect(new PropertiesBuilder()
-            .with("hostname", hostname)
-            .wrap()
-        );
+    public void connect(Properties properties) {
+        provider.connect(properties);
     }
 
     public void setupRedisChannel(final Object object, final String channel) {
