@@ -8,7 +8,7 @@ public interface ConnectionProvider<T> {
 
     boolean isRunning();
 
-    boolean connect(Properties properties);
+    boolean connect(Properties properties, boolean credentials);
 
     void disconnect();
 

@@ -15,13 +15,15 @@ public class RedisProcessor {
         this.provider = new JedisConnectionProvider();
     }
 
-    public void connect(Properties properties) {
-        provider.connect(properties);
+    public void connect(Properties properties, boolean credentials) {
+        provider.connect(properties, credentials);
     }
 
     public void setupRedisChannel(final Object object, final String channel) {
-        final Jedis jedis = provider.getConnectionInstance();
-        jedis.subscribe((JedisPubSub) object, channel);
+        new Thread(() -> {
+            final Jedis jedis = provider.getConnectionInstance();
+            jedis.subscribe((JedisPubSub) object, channel);
+        }).start();
     }
 
     public void disconnect() {
