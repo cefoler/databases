@@ -173,6 +173,41 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
 
     @Override
     public void connect(Properties properties) {
+        try {
+            final HikariConfig config = new HikariConfig();
+
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            config.setJdbcUrl(JDBC_CONNECTION_URL
+              .replace("<driver>", properties.getProperty("driver"))
+              .replace("<hostname>", properties.getProperty("hostname"))
+              .replace("<port>", properties.getProperty("port"))
+              .replace("<database>", properties.getProperty("database"))
+            );
+
+            config.setUsername(properties.getProperty("username"));
+            config.setPassword(properties.getProperty("password"));
+
+            config.setMinimumIdle(1);
+            config.setMaximumPoolSize(40);
+
+            config.setConnectionTimeout(60000);
+            config.setIdleTimeout(600000);
+            config.setMaxLifetime(1800000);
+
+            config.addDataSourceProperty("autoReconnect", "true");
+            config.addDataSourceProperty("cachePrepStmts", "true");
+            config.addDataSourceProperty("useServerPrepStmts", "true");
+            config.addDataSourceProperty("prepStmtCacheSize", "250");
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+            this.dataSource = new HikariDataSource(config);
+        } catch (Throwable exception) {
+            connectOld(properties);
+        }
+    }
+
+    @SneakyThrows
+    private void connectOld(Properties properties) {
         final HikariConfig config = new HikariConfig();
 
         config.setDriverClassName("com.mysql.jdbc.Driver");
@@ -180,7 +215,8 @@ public class SQLConnectionProvider implements ConnectionProvider<Connection> {
           .replace("<driver>", properties.getProperty("driver"))
           .replace("<hostname>", properties.getProperty("hostname"))
           .replace("<port>", properties.getProperty("port"))
-          .replace("<database>", properties.getProperty("database")));
+          .replace("<database>", properties.getProperty("database"))
+        );
 
         config.setUsername(properties.getProperty("username"));
         config.setPassword(properties.getProperty("password"));
