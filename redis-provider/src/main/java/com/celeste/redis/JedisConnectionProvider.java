@@ -1,8 +1,9 @@
 package com.celeste.redis;
 
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
 
 import java.util.Properties;
 
@@ -33,11 +34,12 @@ public class JedisConnectionProvider implements ConnectionProvider<Jedis> {
             }
 
             this.jedisPool = new JedisPool(
-                new GenericObjectPoolConfig(),
+                new JedisPoolConfig(),
                 properties.getProperty("hostname"),
-                1000,
+                Protocol.DEFAULT_TIMEOUT,
                 Integer.parseInt(properties.getProperty("port")),
-                properties.getProperty("password")
+                properties.getProperty("password"),
+                false
             );
 
             return true;
