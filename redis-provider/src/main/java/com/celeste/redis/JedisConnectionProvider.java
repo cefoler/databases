@@ -36,8 +36,8 @@ public class JedisConnectionProvider implements ConnectionProvider<Jedis> {
             this.jedisPool = new JedisPool(
                 new JedisPoolConfig(),
                 properties.getProperty("hostname"),
-                Protocol.DEFAULT_TIMEOUT,
                 Integer.parseInt(properties.getProperty("port")),
+                Protocol.DEFAULT_TIMEOUT,
                 properties.getProperty("password"),
                 false
             );
