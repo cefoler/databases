@@ -6,7 +6,8 @@ group 'com.celeste'
 version '1.0-SNAPSHOT'
 
 dependencies {
-    implementation 'com.zaxxer:HikariCP:3.4.5'
+    implementation 'mysql:mysql-connector-java:8.0.21'
+    implementation 'com.zaxxer:HikariCP:4.0.2'
 
     compileOnly 'org.projectlombok:lombok:1.18.18'
     annotationProcessor 'org.projectlombok:lombok:1.18.18'
