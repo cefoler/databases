@@ -7,7 +7,7 @@ import redis.clients.jedis.Protocol;
 
 import java.util.Properties;
 
-public class JedisConnectionProvider implements ConnectionProvider<Jedis> {
+public final class JedisConnectionProvider implements Connection<Jedis> {
 
     private JedisPool jedisPool;
 
@@ -22,30 +22,24 @@ public class JedisConnectionProvider implements ConnectionProvider<Jedis> {
     }
 
     @Override
-    public boolean connect(Properties properties, boolean credentials) {
-        try {
-            if (!credentials) {
-                this.jedisPool = new JedisPool(
-                    properties.getProperty("hostname"),
-                    Integer.parseInt(properties.getProperty("port"))
-                );
-
-                return true;
-            }
-
+    public void connect(final Properties properties, final boolean credentials) {
+        if (!credentials) {
             this.jedisPool = new JedisPool(
-                new JedisPoolConfig(),
                 properties.getProperty("hostname"),
-                Integer.parseInt(properties.getProperty("port")),
-                Protocol.DEFAULT_TIMEOUT,
-                properties.getProperty("password"),
-                false
+                Integer.parseInt(properties.getProperty("port"))
             );
 
-            return true;
-        } catch (Exception exception) {
-            return false;
+            return;
         }
+
+        this.jedisPool = new JedisPool(
+            new JedisPoolConfig(),
+            properties.getProperty("hostname"),
+            Integer.parseInt(properties.getProperty("port")),
+            Protocol.DEFAULT_TIMEOUT,
+            properties.getProperty("password"),
+            false
+        );
     }
 
     @Override

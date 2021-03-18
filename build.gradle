@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
 group 'com.celeste'
@@ -8,11 +7,6 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-}
-
-dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.18'
-    annotationProcessor 'org.projectlombok:lombok:1.18.18'
 }
 
 subprojects {
@@ -23,7 +17,6 @@ subprojects {
 
             maven { url 'https://jitpack.io' }
         }
-
     }
 
     tasks.withType(JavaCompile) {

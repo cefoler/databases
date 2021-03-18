@@ -1,5 +1,4 @@
-rootProject.name = 'Databases'
-include 'mongodb-provider'
-include 'mysql-provider'
+rootProject.name = 'databases'
 include 'redis-provider'
+include 'database-provider'
 
