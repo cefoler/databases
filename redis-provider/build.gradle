@@ -13,4 +13,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.18'
 
     compile 'org.jetbrains:annotations:16.0.2'
+
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.12'
 }
