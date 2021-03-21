@@ -20,4 +20,6 @@ public interface DAO<T> {
 
     @NotNull
     List<T> findAll();
+
 }
+

@@ -14,35 +14,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public interface SQL extends Database {
 
-    void executeUpdate(@NotNull final String sql, @NotNull final Object... values) throws SQLException;
+    int executeUpdate(@NotNull final String sql, @NotNull final Object... values) throws SQLException;
 
     @NotNull
     ResultSet executeQuery(@NotNull final String sql, @NotNull final Object... values) throws SQLException;
 
     Connection getConnection() throws SQLException;
 
-    default void createTable(@NotNull final String sql) throws SQLException {
-        if (sql.contains("CREATE TABLE")) executeUpdate(sql);
-    }
-
-    default void applyValues(@NotNull final PreparedStatement statement,
-                             @NotNull final Object... values) throws SQLException {
+    default void applyValues(@NotNull final PreparedStatement statement, @NotNull final Object... values) throws SQLException {
         final AtomicInteger ai = new AtomicInteger(1);
-        for (final Object value : values) {
+
+        for (final Object value : values)
             statement.setObject(ai.getAndIncrement(), value);
-        }
     }
 
-    default <T> T getFirst(@NotNull final String sql, @NotNull final SQLFunction<ResultSet, T> function,
-                           @NotNull final Object... values) throws SQLException {
+    default <T> T getFirst(@NotNull final String sql, @NotNull final SQLFunction<ResultSet, T> function, @NotNull final Object... values) throws SQLException {
         try (final ResultSet result = executeQuery(sql, values)) {
             return result.next() ? function.apply(result) : null;
         }
     }
 
     @NotNull
-    default <T> List<T> getAll(@NotNull final String sql, @NotNull final SQLFunction<ResultSet, T> function,
-                               @NotNull final Object... values) throws SQLException {
+    default <T> List<T> getAll(@NotNull final String sql, @NotNull final SQLFunction<ResultSet, T> function, @NotNull final Object... values) throws SQLException {
         final List<T> arguments = new ArrayList<>();
 
         try (final ResultSet result = executeQuery(sql, values)) {
@@ -50,9 +43,9 @@ public interface SQL extends Database {
                 final T argument = function.apply(result);
                 if (argument != null) arguments.add(argument);
             }
-
-            return arguments;
         }
+
+        return arguments;
     }
 
 }

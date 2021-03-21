@@ -1,4 +1,4 @@
-package com.celeste.database.provider.sql.mysql;
+package com.celeste.database.provider.sql.postgresql;
 
 import com.celeste.database.provider.sql.SQL;
 import com.celeste.database.type.DatabaseType;
@@ -18,16 +18,14 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @Getter(AccessLevel.PRIVATE)
-public final class MySQLProvider implements SQL {
+public final class PostgreSQLProvider implements SQL {
 
     private final Properties properties;
-    private final String connectionUrl;
 
     private HikariDataSource hikari;
 
-    public MySQLProvider(@NotNull final Properties properties) throws FailedConnectionException {
+    public PostgreSQLProvider(@NotNull final Properties properties) throws FailedConnectionException {
         this.properties = properties;
-        this.connectionUrl = "jdbc:mysql://{hostname}:{port}/{database}";
 
         init();
     }
@@ -37,16 +35,13 @@ public final class MySQLProvider implements SQL {
         try {
             final HikariConfig config = new HikariConfig();
 
-            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            config.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
 
-            config.setJdbcUrl(connectionUrl
-              .replace("{hostname}", properties.getProperty("hostname"))
-              .replace("{port}", properties.getProperty("port"))
-              .replace("{database}", properties.getProperty("database"))
-            );
-
-            config.setUsername(properties.getProperty("username"));
-            config.setPassword(properties.getProperty("password"));
+            config.addDataSourceProperty("serverName", properties.getProperty("hostname"));
+            config.addDataSourceProperty("portNumber", properties.getProperty("port"));
+            config.addDataSourceProperty("databaseName", properties.getProperty("database"));
+            config.addDataSourceProperty("user", properties.getProperty("username"));
+            config.addDataSourceProperty("password", properties.getProperty("password"));
 
             config.setMinimumIdle(1);
             config.setMaximumPoolSize(20);
@@ -89,7 +84,7 @@ public final class MySQLProvider implements SQL {
 
     @Override @NotNull
     public DatabaseType getType() {
-        return DatabaseType.MYSQL;
+        return DatabaseType.POSTGRESQL;
     }
 
     @Override
@@ -120,3 +115,4 @@ public final class MySQLProvider implements SQL {
     }
 
 }
+

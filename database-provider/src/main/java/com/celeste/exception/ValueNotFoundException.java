@@ -2,7 +2,7 @@ package com.celeste.exception;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ValueNotFoundException extends Exception {
+public class ValueNotFoundException extends DAOException {
 
     public ValueNotFoundException(@NotNull final String error) {
         super(error);

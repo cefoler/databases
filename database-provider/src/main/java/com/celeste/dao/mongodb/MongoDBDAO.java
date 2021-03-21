@@ -4,15 +4,19 @@ import com.celeste.dao.DAO;
 import com.celeste.database.provider.mongodb.MongoDB;
 import com.celeste.exception.DAOException;
 import com.celeste.exception.ValueNotFoundException;
+import dev.morphia.query.experimental.filters.Filter;
 import dev.morphia.query.experimental.filters.Filters;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Getter(AccessLevel.PRIVATE)
-public final class MongoDBDAO<T> implements DAO<T> {
+public class MongoDBDAO<T> implements DAO<T> {
 
     @Getter
     private final MongoDB database;
@@ -41,8 +45,7 @@ public final class MongoDBDAO<T> implements DAO<T> {
         database.getDatastore()
           .find(clazz)
           .filter(Filters.and(
-            Filters.eq("_id", key),
-            Filters.eq("_id", key.toString())
+              getFilters(key)
           ))
           .delete();
     }
@@ -52,8 +55,7 @@ public final class MongoDBDAO<T> implements DAO<T> {
         return database.getDatastore()
           .find(clazz)
           .filter(Filters.and(
-            Filters.eq("_id", key),
-            Filters.eq("_id", key.toString())
+              getFilters(key)
           ))
           .count() > 0;
     }
@@ -63,8 +65,7 @@ public final class MongoDBDAO<T> implements DAO<T> {
         final T argument = database.getDatastore()
           .find(clazz)
           .filter(Filters.and(
-            Filters.eq("_id", key),
-            Filters.eq("_id", key.toString())
+              getFilters(key)
           ))
           .first();
 
@@ -78,6 +79,15 @@ public final class MongoDBDAO<T> implements DAO<T> {
           .find(clazz)
           .iterator()
           .toList();
+    }
+
+    private Filter[] getFilters(final Object key) {
+        final List<Filter> filters = new ArrayList<>(Collections.singletonList(Filters.eq("_id", key)));
+
+        if (key.toString().matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"))
+            filters.add(Filters.eq("_id", UUID.fromString(key.toString())));
+
+        return filters.toArray(new Filter[0]);
     }
 
 }

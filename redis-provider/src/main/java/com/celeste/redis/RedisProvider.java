@@ -44,7 +44,9 @@ public final class RedisProvider {
 
     public void publish(final String message, final String channel) {
         try (Jedis jedis = provider.getConnectionInstance()) {
-            jedis.publish(registeredChannels.get(channel), message);
+          if (registeredChannels.get(channel) == null) return;
+
+          jedis.publish(registeredChannels.get(channel), message);
         }
     }
 

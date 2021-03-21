@@ -9,6 +9,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Query {
 
-    @NotNull String value();
+    @NotNull
+    String value();
 
 }

@@ -1,7 +1,7 @@
 package com.celeste.database.provider.mongodb;
 
 import com.celeste.database.type.DatabaseType;
-import com.celeste.exception.DatabaseException;
+import com.celeste.exception.FailedConnectionException;
 import com.mongodb.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -19,12 +19,13 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-public class MongoDBProvider implements MongoDB {
+public final class MongoDBProvider implements MongoDB {
 
     @Getter(AccessLevel.PRIVATE)
     private final Properties properties;
@@ -32,16 +33,16 @@ public class MongoDBProvider implements MongoDB {
     private MongoClient client;
     private Datastore datastore;
 
-    public MongoDBProvider(@NotNull final Properties properties) throws DatabaseException {
+    public MongoDBProvider(@NotNull final Properties properties) throws FailedConnectionException {
         this.properties = properties;
 
         init();
     }
 
     @Override @Synchronized
-    public void init() throws DatabaseException {
+    public void init() throws FailedConnectionException {
         try {
-            Class.forName("com.mongodb.MongoClient");
+            Class.forName("com.mongodb.client.MongoClients");
 
             final Block<ClusterSettings.Builder> cluster = builder -> builder.hosts(
                 Collections.singletonList(getServer(properties))
@@ -93,7 +94,7 @@ public class MongoDBProvider implements MongoDB {
 
             datastore.ensureIndexes();
         } catch (Throwable throwable) {
-            throw new DatabaseException(throwable);
+            throw new FailedConnectionException(throwable);
         }
 
     }
@@ -111,11 +112,6 @@ public class MongoDBProvider implements MongoDB {
     @Override @NotNull
     public DatabaseType getType() {
         return DatabaseType.MONGODB;
-    }
-
-    @Override
-    public MongoClient getClient() {
-        return client;
     }
 
     private ServerAddress getServer(@NotNull final Properties properties) {

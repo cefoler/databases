@@ -12,6 +12,6 @@ public interface Serializable<T> extends java.io.Serializable {
     T read(@NotNull final ResultSet result) throws SQLException, IOException;
 
     @NotNull
-    Object[] write(@NotNull final T entity) throws IOException;
+    Object[] write(@NotNull final T entity) throws SQLException, IOException;
 
 }

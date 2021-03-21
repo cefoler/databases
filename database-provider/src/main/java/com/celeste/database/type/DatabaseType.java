@@ -9,8 +9,11 @@ import java.util.List;
 @Getter
 public enum DatabaseType {
 
+    MONGODB("MONGODB", "MONGO"),
     MYSQL("MYSQL"),
-    MONGODB("MONGODB", "MONGO");
+    POSTGRESQL("POSTGRESQL", "POSTGRE", "POST", "GRE"),
+    H2("H2"),
+    SQLITE("SQLITE", "SQL", "LITE");
 
     @NotNull
     private final List<String> names;
@@ -20,11 +23,11 @@ public enum DatabaseType {
     }
 
     @NotNull
-    public static DatabaseType getDatabase(@NotNull final String database) {
+    public static DatabaseType getDataBase(@NotNull final String database) {
         return Arrays.stream(values())
           .filter(type -> type.getNames().contains(database.toUpperCase()))
           .findFirst()
-          .orElse(MYSQL);
+          .orElse(SQLITE);
     }
 
 }

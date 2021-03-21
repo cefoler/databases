@@ -10,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
@@ -19,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter(AccessLevel.PRIVATE)
-public final class SQLDAO<T> implements DAO<T> {
+public class SQLDAO<T> implements DAO<T> {
 
     @Getter
     private final SQL database;
@@ -36,7 +35,6 @@ public final class SQLDAO<T> implements DAO<T> {
             final Method write = clazz.getMethod("write", clazz);
 
             final T instance = clazz.newInstance();
-
             this.read = result -> (T) read.invoke(instance, result);
             this.write = argument -> (Object[]) write.invoke(instance, argument);
         } catch (Throwable throwable) {
@@ -54,8 +52,9 @@ public final class SQLDAO<T> implements DAO<T> {
     public final void save(@NotNull final T... values) {
         final String sql = getAnnotation().value();
 
-        for (final T value : values)
-            database.executeUpdate(sql, write.apply(value));
+        for (final T value : values) {
+          database.executeUpdate(sql, write.apply(value));
+        }
     }
 
     @Override @SneakyThrows
@@ -67,7 +66,10 @@ public final class SQLDAO<T> implements DAO<T> {
     @Override @SneakyThrows
     public boolean contains(final @NotNull Object key) {
         final String sql = getAnnotation().value();
-        return database.executeQuery(sql, key).next();
+
+        try (final ResultSet result = database.executeQuery(sql, key)) {
+            return result.next();
+        }
     }
 
     @Override @NotNull @SneakyThrows(SQLException.class)
@@ -75,8 +77,8 @@ public final class SQLDAO<T> implements DAO<T> {
         final String sql = getAnnotation().value();
 
         final T argument = database.getFirst(sql, read, key);
-        if (argument == null) throw new ValueNotFoundException("Value not found");
 
+        if (argument == null) throw new ValueNotFoundException("Value not found");
         return argument;
     }
 
@@ -86,10 +88,10 @@ public final class SQLDAO<T> implements DAO<T> {
         return database.getAll(sql, read);
     }
 
-    @Nullable
     @SneakyThrows
     public Query getAnnotation() {
         final StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+
         for (int i = 2; i < elements.length; i++) {
             final StackTraceElement element = elements[i];
 
@@ -106,6 +108,7 @@ public final class SQLDAO<T> implements DAO<T> {
             if (method == null) continue;
 
             final Query annotation = method.getAnnotation(Query.class);
+
             if (annotation == null) continue;
 
             return annotation;
