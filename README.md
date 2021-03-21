@@ -5,7 +5,7 @@
 The databases project is a annotation based **Connection provider and Query** for **SQL** and **NoSQL** databases such as **MongoDB, MySQL and Redis**.
 Here you can find the source code and documentation of this project.
 
-The project will have full support for MongoDB, MySQL, POSTGRESQL, H2 and SQLITE.
+The project will have full support for MongoDB, MySQL, PostgreSQL, H2 and SQLITE.
 
 # How to install
 
@@ -13,19 +13,23 @@ Maven
 
 ```
 <dependency>
-	 <groupId>com.github.celesteoficial</groupId>
-	 <artifactId>databases</artifactId>
-	 <version>VERSION</version>
- </dependency>
+    <groupId>com.github.celesteoficial</groupId>
+    <artifactId>databases</artifactId>
+    <version>VERSION</version>
+</dependency>
 ```
 
 Gradle
 
-`implementation 'com.github.celesteoficial:databases:VERSION'`
+```
+dependencies {
+   implementation 'com.github.celesteoficial:databases:VERSION'
+}
+```
 
 # Using the API
 
-To use the API, you should create a ConnectionFactory to access the database with the credentials.
+To use the **API**, you should create a ConnectionFactory to access the database with the credentials.
 The connection is created between multiple properties, described below
 
 ```
@@ -49,7 +53,10 @@ H2 - "H2"
 SQLite - "SQLITE", "SQL", "LITE"
 ```
 
-Alright! Now you already know what properties this API uses to create the connection and what properties each type of database uses, now let's check the ConnectionFactory example
+---
+
+
+Alright! Now you already know what properties is used to create the connection and what properties each type of database uses, now let's check the ConnectionFactory example
 
 ```
 @Getter
@@ -105,7 +112,8 @@ The startDAO method while creating a new DAO<User> is used like this:
 
 ```
 @NotNull
-    public <T extends Serializable<T>> DAO<T> startDAO(@NotNull final Database database, @NotNull final Class<T> clazz) throws DAOException {
+    public <T extends Serializable<T>> DAO<T> startDAO(@NotNull final Database database, 
+                                                       @NotNull final Class<T> clazz) throws DAOException {
         switch (database.getType()) {
             case MONGODB:
                 return new MongoDBDAO<>((MongoDB) database, clazz);
