@@ -1,0 +1,27 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id 'java-library'
+}
+
+dependencies {
+    /*
+    DATABASE DEPENDENCY
+    */
+    implementation 'redis.clients:jedis:3.5.2'
+    implementation 'com.rabbitmq:amqp-client:5.11.0'
+
+    /*
+    DEPENDENCY
+    */
+    implementation 'org.reflections:reflections:0.9.12'
+
+    /*
+    FRAMEWORK
+    */
+    implementation project(':shared')
+    api project(':shared')
+}
+
+shadowJar {
+    archiveFileName = "messenger-${project.version}.jar"
+}

@@ -1,4 +1,5 @@
 rootProject.name = 'databases'
-include 'redis-provider'
-include 'database-provider'
+include 'storage'
+include 'messenger'
+include 'shared'
 
