@@ -1,6 +1,6 @@
 package com.celeste.messenger.model.dao.rabbitmq;
 
-import com.celeste.messenger.AbstractListener;
+import com.celeste.messenger.model.*;
 import com.celeste.messenger.annotation.Subscribe;
 import com.celeste.messenger.model.dao.MessengerDAO;
 import com.celeste.messenger.model.database.provider.rabbitmq.RabbitMQ;

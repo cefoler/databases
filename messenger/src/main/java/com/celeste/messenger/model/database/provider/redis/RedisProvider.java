@@ -28,6 +28,8 @@ public final class RedisProvider implements Redis {
   @Override
   public void init() throws FailedConnectionException {
     try {
+      Class.forName("com.rabbitmq.client.ConnectionFactory");
+
       final JedisPoolConfig config = new JedisPoolConfig();
 
       config.setMinIdle(10);

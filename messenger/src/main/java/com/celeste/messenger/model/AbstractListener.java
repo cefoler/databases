@@ -1,4 +1,4 @@
-package com.celeste.messenger;
+package com.celeste.messenger.model;
 
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Delivery;

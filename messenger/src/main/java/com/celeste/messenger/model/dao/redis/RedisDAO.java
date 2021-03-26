@@ -1,7 +1,7 @@
 package com.celeste.messenger.model.dao.redis;
 
-import com.celeste.messenger.AbstractListener;
 import com.celeste.messenger.annotation.Subscribe;
+import com.celeste.messenger.model.*;
 import com.celeste.messenger.model.dao.MessengerDAO;
 import com.celeste.messenger.model.database.provider.redis.Redis;
 import com.celeste.shared.model.dao.exception.DAOException;

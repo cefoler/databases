@@ -1,5 +1,6 @@
 package com.celeste.messenger.model.database.provider.rabbitmq;
 
+import com.celeste.messenger.model.database.type.MessengerType;
 import com.celeste.shared.model.database.provider.exception.FailedConnectionException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -7,7 +8,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import com.celeste.messenger.model.database.type.MessengerType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class RabbitMQProvider implements RabbitMQ {
   @Override
   public void init() throws FailedConnectionException {
     try {
-      Class.forName("com.rabbitmq.client.ConnectionFactory");
+      Class.forName("redis.clients.jedis.JedisPoolConfig");
 
       final ConnectionFactory factory = new ConnectionFactory();
 
