@@ -3,6 +3,8 @@ plugins {
     id 'java-library'
 }
 
+sourceCompatibility = 1.8
+
 dependencies {
     /*
     DATABASE DEPENDENCY

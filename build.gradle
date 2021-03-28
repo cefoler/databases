@@ -5,6 +5,9 @@ subprojects {
     group 'com.celeste'
     version '3.0-SNAPSHOT'
 
+    sourceCompatibility = 1.11
+    targetCompatibility = 1.11
+
     repositories {
         mavenLocal()
         mavenCentral()
