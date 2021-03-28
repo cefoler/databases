@@ -13,8 +13,6 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.23'
     implementation 'org.postgresql:postgresql:42.2.19'
 
-    implementation 'org.mongodb:mongo-java-driver:3.12.8'
-
     /*
     CONNECTION POOL DEPENDENCY
     */
