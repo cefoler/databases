@@ -7,7 +7,7 @@ import com.celeste.storage.model.dao.StorageDAO;
 import com.celeste.storage.model.dao.sql.SQLDAO;
 import com.celeste.storage.model.database.provider.Storage;
 import com.celeste.storage.model.database.provider.sql.function.SQLFunction;
-import com.celeste.storage.model.Serializable;
+import com.celeste.storage.model.Storable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public interface SQL extends Storage {
   Connection getConnection() throws FailedConnectionException;
 
   @Override @NotNull
-  default <T extends Serializable<T>> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException {
+  default <T extends Storable<T>> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException {
     return new SQLDAO<>(this, entity);
   }
 
