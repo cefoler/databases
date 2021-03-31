@@ -40,4 +40,5 @@ subprojects {
     tasks.withType(Jar) {
         destinationDirectory.set(file("$rootDir/target/"))
     }
+
 }
