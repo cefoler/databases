@@ -19,7 +19,7 @@ public interface MongoDB extends Storage {
   Datastore getDatastore() throws FailedConnectionException;
 
   @Override @NotNull
-  default <T extends Storable<T>> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException {
+  default <T extends Storable> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException {
     return new MongoDBDAO<>(this, entity);
   }
 

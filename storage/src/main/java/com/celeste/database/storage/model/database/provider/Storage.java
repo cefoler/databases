@@ -14,7 +14,7 @@ public interface Storage extends Database {
   StorageType getStorageType();
 
   @NotNull
-  <T extends Storable<T>> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException;
+  <T extends Storable> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException;
 
   @Override @NotNull
   default DatabaseType getDatabaseType() {

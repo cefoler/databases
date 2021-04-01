@@ -30,7 +30,7 @@ public interface SQL extends Storage {
   Connection getConnection() throws FailedConnectionException;
 
   @Override @NotNull
-  default <T extends Storable<T>> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException {
+  default <T extends Storable> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException {
     return new SQLDAO<>(this, entity);
   }
 
