@@ -3,7 +3,6 @@ package com.celeste.database.messenger.model.dao.redis;
 import com.celeste.database.messenger.annotation.Subscribe;
 import com.celeste.database.messenger.model.AbstractListener;
 import com.celeste.database.messenger.model.dao.MessengerDAO;
-import com.celeste.messenger.model.*;
 import com.celeste.database.messenger.model.database.provider.redis.Redis;
 import com.celeste.database.shared.model.dao.exception.DAOException;
 import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
