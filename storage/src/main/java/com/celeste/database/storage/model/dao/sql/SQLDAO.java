@@ -31,12 +31,12 @@ public final class SQLDAO<T> implements StorageDAO<T> {
       this.database = database;
 
       final Method read = clazz.getMethod("read", ResultSet.class);
-      final Method write = clazz.getMethod("write", clazz);
+      final Method write = clazz.getMethod("write");
 
       final T instance = clazz.getConstructor().newInstance();
 
       this.read = result -> (T) read.invoke(instance, result);
-      this.write = argument -> (Object[]) write.invoke(instance, argument);
+      this.write = argument -> (Object[]) write.invoke(instance);
     } catch (Throwable throwable) {
       throw new DAOException(throwable);
     }

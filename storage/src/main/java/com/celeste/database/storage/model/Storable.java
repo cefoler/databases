@@ -7,12 +7,12 @@ import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface Storable extends Serializable {
+public interface Storable<T> extends Serializable {
 
   @NotNull
-  Object read(@NotNull final ResultSet result) throws SQLException, IOException;
+  T read(@NotNull final ResultSet result) throws SQLException, IOException;
 
   @NotNull
-  Object[] write() throws SQLException, IOException;
+  Object[] write(@NotNull T value) throws SQLException, IOException;
 
 }
