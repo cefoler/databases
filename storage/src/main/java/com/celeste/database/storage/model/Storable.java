@@ -13,6 +13,6 @@ public interface Storable<T> extends Serializable {
   T read(@NotNull final ResultSet result) throws SQLException, IOException;
 
   @NotNull
-  Object[] write(@NotNull T value) throws SQLException, IOException;
+  Object[] write(@NotNull final T value) throws SQLException, IOException;
 
 }
