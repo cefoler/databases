@@ -4,7 +4,7 @@ import com.celeste.database.shared.exceptions.database.FailedConnectionException
 import com.celeste.database.shared.model.type.ConnectionType;
 import lombok.AccessLevel;
 import lombok.Getter;
-import com.celeste.database.messenger.model.database.type.MessengerType;
+import com.celeste.database.messenger.model.database.MessengerType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.*;
@@ -97,7 +97,7 @@ public final class RedisProvider implements Redis {
   }
 
   @Override @NotNull
-  public MessengerType getCacheType() {
+  public MessengerType getType() {
     return MessengerType.REDIS;
   }
 

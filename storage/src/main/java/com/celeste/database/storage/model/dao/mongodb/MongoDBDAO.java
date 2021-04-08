@@ -19,6 +19,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation for the StorageDAO interface.
+ *
+ * <p>The MongoDBDAO executes the methods of the interfaces
+ * with the default MongoDB driver</p>
+ *
+ * @param <T> Object
+ */
 @Getter(AccessLevel.PRIVATE)
 public final class MongoDBDAO<T> implements StorageDAO<T> {
 
@@ -37,6 +45,10 @@ public final class MongoDBDAO<T> implements StorageDAO<T> {
     }
   }
 
+  /**
+   * Creates the table in the MongoDB database
+   * @param name String
+   */
   @Override @SneakyThrows
   public void createTable(@NotNull final String name) {
     final MongoDatabase database = getProvider().getDatabase();
@@ -48,6 +60,11 @@ public final class MongoDBDAO<T> implements StorageDAO<T> {
     this.collection = database.getCollection(name, clazz);
   }
 
+  /**
+   * Saves the value by the key in the database;
+   * @param key Object
+   * @param value T
+   */
   @Override @SneakyThrows
   public final void save(@NotNull final Object key, @NotNull final T value) {
     final ReplaceOptions options = new ReplaceOptions()
@@ -57,18 +74,36 @@ public final class MongoDBDAO<T> implements StorageDAO<T> {
     collection.replaceOne(bson, value, options);
   }
 
+  /**
+   * Deletes a Object through it's key.
+   * @param key Object
+   */
   @Override
   public void delete(@NotNull Object key) {
     final Bson bson = Filters.eq(key);
     collection.deleteOne(bson);
   }
 
+  /**
+   * Check if the key contains a object.
+   * @param key Object
+   *
+   * @return Boolean
+   */
   @Override @SneakyThrows
   public boolean contains(@NotNull final Object key) {
     final Bson bson = Filters.eq(key);
     return collection.countDocuments(bson) > 0;
   }
 
+  /**
+   * Returns a value from the key provided
+   * @param key Object
+   *
+   * @return T
+   * @throws ValueNotFoundException Throws if it doesn't have a value
+   * with that key
+   */
   @Override @NotNull
   public T find(@NotNull final Object key) throws ValueNotFoundException {
     final Bson bson = Filters.eq(key);
@@ -82,6 +117,10 @@ public final class MongoDBDAO<T> implements StorageDAO<T> {
     return argument;
   }
 
+  /**
+   * Gets all values storaged in the database
+   * @return List
+   */
   @Override @NotNull
   public List<T> findAll() {
     final List<T> arguments = new ArrayList<>();
@@ -94,6 +133,7 @@ public final class MongoDBDAO<T> implements StorageDAO<T> {
 
     return arguments;
   }
+
 
   private boolean collectionExists(final String collectionName) throws FailedConnectionException {
     for (final String name : provider.getDatabase().listCollectionNames()) {

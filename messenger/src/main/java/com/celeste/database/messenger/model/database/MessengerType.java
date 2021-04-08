@@ -1,4 +1,4 @@
-package com.celeste.database.messenger.model.database.type;
+package com.celeste.database.messenger.model.database;
 
 import com.celeste.database.messenger.model.database.provider.Messenger;
 import com.celeste.database.messenger.model.database.provider.rabbitmq.RabbitMQProvider;
@@ -10,6 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The MessengerType contains all possible types of databases that
+ * this framework can access and estabilish a connection.
+ */
 @Getter
 public enum MessengerType {
 

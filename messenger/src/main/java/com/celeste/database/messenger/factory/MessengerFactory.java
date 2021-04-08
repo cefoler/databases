@@ -2,7 +2,7 @@ package com.celeste.database.messenger.factory;
 
 import com.celeste.database.messenger.model.database.provider.Messenger;
 import com.celeste.database.shared.exceptions.database.FailedConnectionException;
-import com.celeste.database.messenger.model.database.type.MessengerType;
+import com.celeste.database.messenger.model.database.MessengerType;
 import com.celeste.database.shared.model.type.ConnectionType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,9 +19,9 @@ import java.util.Properties;
  * <p>To estabilish connection with the Messenger, you should always provide
  * the Driver and Credentials in the Properties and the ConnectionType.</p>
  *
- * <p>The type of the connection are LOCAL (The Messenger is installed) in
+ * <p>The type of the connection are LOCAL (The Messenger is installed in
  * the machine the program will execute or in another machine that doesn't block
- * remote access. Or CLUSTER, a connection created by a cluster in another machine
+ * remote access) or CLUSTER, a connection created by a cluster in another machine
  * that is only used for the Messenger.</p>
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

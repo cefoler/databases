@@ -12,13 +12,30 @@ import redis.clients.jedis.JedisCluster;
 
 public interface Redis extends Messenger<Jedis> {
 
+  /**
+   * Returns the JedisCluster, if the ConnectionType
+   * is LOCAL, this object is null.
+   * @return JedisCluster
+   */
   @Nullable
   JedisCluster getCluster();
 
+  /**
+   * Returns the Jedis connection from that slot in the Cluster.
+   * If the ConnectionType is LOCAL, this object is null.
+   * @param slot int
+   *
+   * @return Jedis
+   */
+  @Nullable
   Jedis getConnectionFromSlot(int slot);
 
+  /**
+   * Creates a new RedisDAO
+   * @return MessengerDAO
+   */
   @Override @NotNull
-  default MessengerDAO createDAO() throws DAOException, FailedConnectionException {
+  default MessengerDAO createDAO() {
     return new RedisDAO(this);
   }
 

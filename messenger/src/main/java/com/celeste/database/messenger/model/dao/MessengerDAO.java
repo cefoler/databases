@@ -9,10 +9,28 @@ import org.reflections.Reflections;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
+/**
+ * This class represents the universal DAO for the Messengers,
+ * here you can publish a message into the channel and subscribe instances.
+ */
 public interface MessengerDAO {
 
+  /**
+   * Publish a new message through the channel provided
+   * @param message String
+   * @param channelName String
+   *
+   * @throws FailedConnectionException Throws when the connection fails
+   */
   void publish(@NotNull final String message, @NotNull final String channelName) throws FailedConnectionException;
 
+  /**
+   * Subscribes a new PubSub and it's channel name
+   * @param instance Object
+   * @param channelsName String
+   *
+   * @throws FailedConnectionException Throws when the connection fails
+   */
   void subscribe(@NotNull final Object instance, @NotNull final String channelsName) throws FailedConnectionException;
 
   default void subscribeAll(@NotNull final Class<?> plugin, @NotNull final Object instance) throws FailedConnectionException, DAOException {

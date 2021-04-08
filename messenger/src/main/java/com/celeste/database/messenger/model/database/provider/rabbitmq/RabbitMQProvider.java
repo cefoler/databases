@@ -1,6 +1,6 @@
 package com.celeste.database.messenger.model.database.provider.rabbitmq;
 
-import com.celeste.database.messenger.model.database.type.MessengerType;
+import com.celeste.database.messenger.model.database.MessengerType;
 import com.celeste.database.shared.exceptions.database.FailedConnectionException;
 import com.celeste.database.shared.model.type.ConnectionType;
 import com.rabbitmq.client.Channel;
@@ -64,7 +64,7 @@ public class RabbitMQProvider implements RabbitMQ {
   }
 
   @Override @NotNull
-  public MessengerType getCacheType() {
+  public MessengerType getType() {
     return MessengerType.RABBITMQ;
   }
 

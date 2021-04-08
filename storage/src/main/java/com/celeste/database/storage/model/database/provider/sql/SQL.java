@@ -21,14 +21,48 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public interface SQL extends Storage {
 
+  /**
+   * Executes a update in the database through that Query
+   * @param sql String
+   * @param values Object...
+   *
+   * @return Integer, it should return 1 if it was successful
+   * @throws ValueNotFoundException Throws if the value wasn't found in the database
+   * @throws FailedConnectionException Throws if the connection failed
+   */
   int executeUpdate(@NotNull final String sql, @NotNull final Object... values) throws ValueNotFoundException, FailedConnectionException;
 
+  /**
+   * Executes a Query by the String provided and uses the values
+   * for the specified Query values needed.
+   * @param sql String
+   * @param values Object...
+   *
+   * @return ResultSet
+   * @throws ValueNotFoundException Throws if the value wasn't found
+   * @throws FailedConnectionException Throws if the connection failed
+   */
   @NotNull
   ResultSet executeQuery(@NotNull final String sql, @NotNull final Object... values) throws ValueNotFoundException, FailedConnectionException;
 
+  /**
+   * Gets the connection from the database
+   *
+   * @return Connection
+   * @throws FailedConnectionException Throws if the connection failed
+   */
   @NotNull
   Connection getConnection() throws FailedConnectionException;
 
+  /**
+   * Creates a DAO for that Object. The object should explicitly
+   * implement Storable to enable serializing
+   * @param entity Class
+   * @param <T> Entity
+   *
+   * @return StorageDAO
+   * @throws DAOException Throws if it wasn't able to create a DAO
+   */
   @Override @NotNull
   default <T extends Storable> StorageDAO<T> createDAO(@NotNull final Class<T> entity) throws DAOException {
     return new SQLDAO<>(this, entity);

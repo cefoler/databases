@@ -17,6 +17,14 @@ import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Implementation for the StorageDAO interface.
+ *
+ * <p>The SQLDAO executes the methods of the interfaces
+ * with the SQL driver</p>
+ *
+ * @param <T> Object
+ */
 @Getter(AccessLevel.PRIVATE)
 public final class SQLDAO<T> implements StorageDAO<T> {
 
@@ -26,6 +34,7 @@ public final class SQLDAO<T> implements StorageDAO<T> {
   private final SQLFunction<ResultSet, T> read;
   private final SQLFunction<T, Object[]> write;
 
+  @SuppressWarnings("unchecked")
   public SQLDAO(@NotNull final SQL database, @NotNull final Class<T> clazz) throws DAOException {
     try {
       this.database = database;
@@ -42,24 +51,45 @@ public final class SQLDAO<T> implements StorageDAO<T> {
     }
   }
 
+  /**
+   * Creates the table in the SQL database
+   * The parameter name is null, this was only added for the MongoDB.
+   */
   @Override @SneakyThrows
   public void createTable(final String name) {
     final String sql = getAnnotation().value();
     database.executeUpdate(sql);
   }
 
+  /**
+   * Saves the value into the SQL database
+   * @param key This is null, please ignore.
+   * @param value T
+   */
   @Override @SneakyThrows
   public final void save(final Object key, @NotNull final T value) {
     final String sql = getAnnotation().value();
     database.executeUpdate(sql, write.apply(value));
   }
 
+  /**
+   * Deletes a value from the database through
+   * the key.
+   * @param key Object
+   */
   @Override @SneakyThrows
   public void delete(@NotNull final Object key) {
     final String sql = getAnnotation().value();
     database.executeUpdate(sql, key);
   }
 
+  /**
+   * Check if it contains a value through the
+   * key provided
+   * @param key Object
+   *
+   * @return Boolean
+   */
   @Override @SneakyThrows
   public boolean contains(@NotNull final Object key) {
     final String sql = getAnnotation().value();
@@ -69,6 +99,13 @@ public final class SQLDAO<T> implements StorageDAO<T> {
     }
   }
 
+  /**
+   * Finds the object through the key provided
+   * @param key Object
+   *
+   * @return T
+   * @throws ValueNotFoundException Throws if no value exists on that key
+   */
   @Override @NotNull @SneakyThrows(FailedConnectionException.class)
   public T find(@NotNull final Object key) throws ValueNotFoundException {
     final String sql = getAnnotation().value();
@@ -80,6 +117,10 @@ public final class SQLDAO<T> implements StorageDAO<T> {
     return argument;
   }
 
+  /**
+   * Gets all values storaged in the database
+   * @return List
+   */
   @Override @NotNull @SneakyThrows
   public List<T> findAll() {
     final String sql = getAnnotation().value();

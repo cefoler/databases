@@ -13,6 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The StorageType contains all possible types of database that
+ * this framework can access and estabilish a connection.
+ */
 @Getter
 public enum StorageType {
 
@@ -33,7 +37,13 @@ public enum StorageType {
     this.names = ImmutableList.copyOf(names);
   }
 
-  public static StorageType getStorage(@NotNull final String storage) {
+  /**
+   * Get the storage by their name
+   * @param storage String
+   *
+   * @return StorageType
+   */
+  public static StorageType getStorage(final String storage) {
     return Arrays.stream(values())
         .filter(type -> type.getNames().contains(storage.toUpperCase()))
         .findFirst()
