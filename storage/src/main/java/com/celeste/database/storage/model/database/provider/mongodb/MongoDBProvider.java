@@ -1,16 +1,15 @@
 package com.celeste.database.storage.model.database.provider.mongodb;
 
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
-import com.celeste.database.storage.model.database.type.StorageType;
+import com.celeste.database.shared.model.type.ConnectionType;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
+import com.celeste.database.storage.model.database.StorageType;
 import com.mongodb.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.connection.ClusterSettings;
 import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.connection.SocketSettings;
-import dev.morphia.Datastore;
-import dev.morphia.Morphia;
-import dev.morphia.mapping.MapperOptions;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Synchronized;
@@ -27,31 +26,24 @@ import java.util.concurrent.TimeUnit;
 public final class MongoDBProvider implements MongoDB {
 
   private final Properties properties;
+  private final ConnectionType connectionType;
 
   private MongoClient client;
-  private Datastore datastore;
+  private MongoDatabase database;
 
-  public MongoDBProvider(@NotNull final Properties properties) throws FailedConnectionException {
+  public MongoDBProvider(@NotNull final Properties properties, final ConnectionType connectionType) throws FailedConnectionException {
     this.properties = properties;
-
+    this.connectionType = connectionType;
+    
     init();
   }
 
   @Override @Synchronized
   public void init() throws FailedConnectionException {
     try {
-      Class.forName("com.mongodb.client.MongoClients");
-
-      final Block<ClusterSettings.Builder> cluster = builder -> builder.hosts(
-          Arrays.asList(getServer(properties))
-      );
-
-      final MongoCredential credential = MongoCredential.createCredential(
-          properties.getProperty("username"),
-          properties.getProperty("database"),
-          properties.getProperty("password").toCharArray()
-      );
-
+      /*
+       * Settings that are the same in CLUSTER and LOCAL type
+       */
       final Block<ConnectionPoolSettings.Builder> connection = builder -> builder
           .minSize(1)
           .maxSize(30)
@@ -71,26 +63,51 @@ public final class MongoDBProvider implements MongoDB {
           MongoClientSettings.getDefaultCodecRegistry(),
           CodecRegistries.fromProviders(pojo)
       );
+      
+      switch (connectionType) {
+        case LOCAL: {
+          Class.forName("com.mongodb.client.MongoClients");
 
-      final MongoClientSettings settings = MongoClientSettings.builder()
-          .applyToClusterSettings(cluster)
-          .credential(credential)
-          .applyToConnectionPoolSettings(connection)
-          .applyToSocketSettings(socket)
-          .codecRegistry(codec)
-          .retryWrites(true)
-          .readPreference(ReadPreference.primaryPreferred())
-          .build();
+          final Block<ClusterSettings.Builder> cluster = builder -> builder.hosts(
+              Arrays.asList(getServer(properties))
+          );
 
-      final MapperOptions options = MapperOptions.builder()
-          .enablePolymorphicQueries(true)
-          .cacheClassLookups(true)
-          .build();
+          final MongoCredential credential = MongoCredential.createCredential(
+              properties.getProperty("username"),
+              properties.getProperty("database"),
+              properties.getProperty("password").toCharArray()
+          );
 
-      this.client = MongoClients.create(settings);
-      this.datastore = Morphia.createDatastore(client, properties.getProperty("database"), options);
+          final MongoClientSettings settings = MongoClientSettings.builder()
+              .applyToClusterSettings(cluster)
+              .credential(credential)
+              .applyToConnectionPoolSettings(connection)
+              .applyToSocketSettings(socket)
+              .codecRegistry(codec)
+              .retryWrites(true)
+              .readPreference(ReadPreference.primaryPreferred())
+              .build();
 
-      datastore.ensureIndexes();
+          this.client = MongoClients.create(settings);
+          this.database = client.getDatabase(properties.getProperty("database"));
+        }
+        case CLUSTER: {
+          Class.forName("com.mongodb.client.MongoClients");
+
+          final ConnectionString url = new ConnectionString(properties.getProperty("url"));
+          final MongoClientSettings settings = MongoClientSettings.builder()
+              .applyConnectionString(url)
+              .applyToConnectionPoolSettings(connection)
+              .applyToSocketSettings(socket)
+              .codecRegistry(codec)
+              .retryWrites(true)
+              .readPreference(ReadPreference.primaryPreferred())
+              .build();
+
+          this.client = MongoClients.create(settings);
+          this.database = client.getDatabase(properties.getProperty("database"));
+        }
+      }
     } catch (Throwable throwable) {
       throw new FailedConnectionException(throwable);
     }
@@ -102,7 +119,7 @@ public final class MongoDBProvider implements MongoDB {
   }
 
   @Override
-  public boolean isClose() {
+  public boolean isClosed() {
     return client == null;
   }
 
@@ -119,10 +136,15 @@ public final class MongoDBProvider implements MongoDB {
   }
 
   @Override @NotNull
-  public Datastore getDatastore() throws FailedConnectionException {
-    if (datastore == null) throw new FailedConnectionException("Connection has been closed");
+  public MongoDatabase getDatabase() throws FailedConnectionException {
+    if (database == null) throw new FailedConnectionException("Connection has been closed");
 
-    return datastore;
+    return database;
+  }
+
+  @Override @NotNull
+  public ConnectionType getConnectionType() {
+    return connectionType;
   }
 
   @NotNull

@@ -1,4 +1,4 @@
-package com.celeste.database.shared.model.dao.exception;
+package com.celeste.database.shared.exceptions.dao;
 
 import org.jetbrains.annotations.NotNull;
 

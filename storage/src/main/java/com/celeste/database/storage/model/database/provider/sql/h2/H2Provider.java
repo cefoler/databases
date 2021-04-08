@@ -1,9 +1,10 @@
 package com.celeste.database.storage.model.database.provider.sql.h2;
 
-import com.celeste.database.shared.model.dao.exception.ValueNotFoundException;
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
+import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
+import com.celeste.database.shared.model.type.ConnectionType;
 import com.celeste.database.storage.model.database.provider.sql.SQL;
-import com.celeste.database.storage.model.database.type.StorageType;
+import com.celeste.database.storage.model.database.StorageType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -27,7 +28,7 @@ public final class H2Provider implements SQL {
 
   private Connection connection;
 
-  public H2Provider(@NotNull final Properties properties) throws FailedConnectionException {
+  public H2Provider(@NotNull final Properties properties, final ConnectionType connectionType) throws FailedConnectionException {
     this.properties = properties;
     this.connectionUrl = "jdbc:h2:{path}";
 
@@ -57,7 +58,7 @@ public final class H2Provider implements SQL {
   }
 
   @Override @SneakyThrows
-  public boolean isClose() {
+  public boolean isClosed() {
     return connection.isClosed();
   }
 

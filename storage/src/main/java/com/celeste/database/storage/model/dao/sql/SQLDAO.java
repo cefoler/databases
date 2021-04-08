@@ -1,9 +1,9 @@
 package com.celeste.database.storage.model.dao.sql;
 
-import com.celeste.database.shared.model.dao.exception.DAOException;
-import com.celeste.database.shared.model.dao.exception.ValueNotFoundException;
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
-import com.celeste.database.storage.annotation.Query;
+import com.celeste.database.shared.exceptions.dao.DAOException;
+import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
+import com.celeste.database.storage.annotations.Query;
 import com.celeste.database.storage.model.dao.StorageDAO;
 import com.celeste.database.storage.model.database.provider.sql.SQL;
 import com.celeste.database.storage.model.database.provider.sql.function.SQLFunction;
@@ -43,17 +43,15 @@ public final class SQLDAO<T> implements StorageDAO<T> {
   }
 
   @Override @SneakyThrows
-  public void createTable() {
+  public void createTable(final String name) {
     final String sql = getAnnotation().value();
     database.executeUpdate(sql);
   }
 
-  @Override @SafeVarargs @SneakyThrows
-  public final void save(@NotNull final T... values) {
+  @Override @SneakyThrows
+  public final void save(final Object key, @NotNull final T value) {
     final String sql = getAnnotation().value();
-
-    for (final T value : values)
-      database.executeUpdate(sql, write.apply(value));
+    database.executeUpdate(sql, write.apply(value));
   }
 
   @Override @SneakyThrows

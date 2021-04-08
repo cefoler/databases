@@ -2,7 +2,7 @@ package com.celeste.database.messenger.model.dao.rabbitmq;
 
 import com.celeste.database.messenger.model.dao.MessengerDAO;
 import com.celeste.database.messenger.model.database.provider.rabbitmq.RabbitMQ;
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
 import com.rabbitmq.client.Channel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package com.celeste.database.messenger.annotation;
+package com.celeste.database.messenger.annotations;
 
 import org.jetbrains.annotations.NotNull;
 

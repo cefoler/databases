@@ -1,7 +1,8 @@
 package com.celeste.database.messenger.model.database.provider.rabbitmq;
 
 import com.celeste.database.messenger.model.database.type.MessengerType;
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
+import com.celeste.database.shared.model.type.ConnectionType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -18,11 +19,13 @@ public class RabbitMQProvider implements RabbitMQ {
 
   @Getter(AccessLevel.PRIVATE)
   private final Properties properties;
+  private final ConnectionType connectionType;
 
   private Connection connection;
 
-  public RabbitMQProvider(@NotNull final Properties properties) throws FailedConnectionException {
+  public RabbitMQProvider(@NotNull final Properties properties, final ConnectionType connectionType) throws FailedConnectionException {
     this.properties = properties;
+    this.connectionType = connectionType;
 
     init();
   }
@@ -56,13 +59,18 @@ public class RabbitMQProvider implements RabbitMQ {
   }
 
   @Override
-  public boolean isClose() {
+  public boolean isClosed() {
     return !connection.isOpen();
   }
 
   @Override @NotNull
   public MessengerType getCacheType() {
     return MessengerType.RABBITMQ;
+  }
+
+  @Override @NotNull
+  public ConnectionType getConnectionType() {
+    return connectionType;
   }
 
   @Override @NotNull

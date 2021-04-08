@@ -1,16 +1,15 @@
 package com.celeste.database.storage.model.dao;
 
-import com.celeste.database.shared.model.dao.DAO;
-import com.celeste.database.shared.model.dao.exception.ValueNotFoundException;
+import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface StorageDAO<T> extends DAO {
+public interface StorageDAO<T> {
 
-  void createTable();
+  void createTable(final String name);
 
-  void save(@NotNull final T... values);
+  void save(final Object key, @NotNull final T value);
 
   void delete(@NotNull final Object key);
 

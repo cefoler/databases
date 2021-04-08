@@ -1,8 +1,9 @@
 package com.celeste.database.storage.model.database.provider.sql.mysql;
 
-import com.celeste.database.shared.model.dao.exception.ValueNotFoundException;
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
-import com.celeste.database.storage.model.database.type.StorageType;
+import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
+import com.celeste.database.shared.model.type.ConnectionType;
+import com.celeste.database.storage.model.database.StorageType;
 import com.celeste.database.storage.model.database.provider.sql.SQL;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -26,7 +27,7 @@ public final class MySQLProvider implements SQL {
 
   private HikariDataSource hikari;
 
-  public MySQLProvider(@NotNull final Properties properties) throws FailedConnectionException {
+  public MySQLProvider(@NotNull final Properties properties, final ConnectionType connectionType) throws FailedConnectionException {
     this.properties = properties;
     this.connectionUrl = "jdbc:mysql://{hostname}:{port}/{database}";
 
@@ -84,7 +85,7 @@ public final class MySQLProvider implements SQL {
   }
 
   @Override
-  public boolean isClose() {
+  public boolean isClosed() {
     return hikari.isClosed();
   }
 

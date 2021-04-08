@@ -11,13 +11,13 @@ dependencies {
     implementation 'com.h2database:h2:1.4.200'
 
     implementation 'mysql:mysql-connector-java:8.0.23'
+    implementation 'org.mongodb:mongo-java-driver:3.12.8'
     implementation 'org.postgresql:postgresql:42.2.19'
 
     /*
     CONNECTION POOL DEPENDENCY
     */
     implementation 'com.zaxxer:HikariCP:4.0.3'
-    implementation 'dev.morphia.morphia:morphia-core:2.2.0-SNAPSHOT'
 
     /*
     FRAMEWORK

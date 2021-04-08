@@ -1,4 +1,4 @@
-package com.celeste.database.storage.annotation;
+package com.celeste.database.storage.annotations;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,14 +1,13 @@
 package com.celeste.database.messenger.model.database.provider.redis;
 
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
+import com.celeste.database.shared.model.type.ConnectionType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import com.celeste.database.messenger.model.database.type.MessengerType;
 import org.jetbrains.annotations.NotNull;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.Protocol;
+import org.jetbrains.annotations.Nullable;
+import redis.clients.jedis.*;
 
 import java.util.Properties;
 
@@ -16,11 +15,20 @@ public final class RedisProvider implements Redis {
 
   @Getter(AccessLevel.PRIVATE)
   private final Properties properties;
+  private final ConnectionType connectionType;
 
   private JedisPool jedis;
 
-  public RedisProvider(@NotNull final Properties properties) throws FailedConnectionException {
+  /**
+   * Instance of the JedisCluster. If the connection
+   * type is LOCAL, this will be null.
+   */
+  @Nullable
+  private JedisCluster cluster;
+
+  public RedisProvider(@NotNull final Properties properties, final ConnectionType connectionType) throws FailedConnectionException {
     this.properties = properties;
+    this.connectionType = connectionType;
 
     init();
   }
@@ -28,8 +36,6 @@ public final class RedisProvider implements Redis {
   @Override
   public void init() throws FailedConnectionException {
     try {
-      Class.forName("com.rabbitmq.client.ConnectionFactory");
-
       final JedisPoolConfig config = new JedisPoolConfig();
 
       config.setMinIdle(10);
@@ -46,17 +52,38 @@ public final class RedisProvider implements Redis {
       config.setJmxEnabled(true);
       config.setTestWhileIdle(true);
 
-      this.jedis = new JedisPool(
-          config,
-          properties.getProperty("hostname"),
-          Integer.parseInt(properties.getProperty("port")),
-          Protocol.DEFAULT_TIMEOUT,
-          properties.getProperty("password"),
-          false
-      );
+      switch (connectionType) {
+        case LOCAL: {
+          this.jedis = new JedisPool(
+              config,
+              properties.getProperty("hostname"),
+              Integer.parseInt(properties.getProperty("port")),
+              Protocol.DEFAULT_TIMEOUT,
+              properties.getProperty("password"),
+              false
+          );
+        }
+        case CLUSTER: {
+          // TODO: Add multiple hosts and ports
+          final HostAndPort hostAndPort = new HostAndPort(
+              properties.getProperty("hostname"),
+              Integer.getInteger(properties.getProperty("port"))
+          );
+
+          this.cluster = new JedisCluster(
+              hostAndPort,
+              config
+          );
+        }
+      }
     } catch (Throwable throwable) {
       throw new FailedConnectionException(throwable);
     }
+  }
+
+  @Override @Nullable
+  public JedisCluster getCluster() {
+    return cluster;
   }
 
   @Override
@@ -65,7 +92,7 @@ public final class RedisProvider implements Redis {
   }
 
   @Override
-  public boolean isClose() {
+  public boolean isClosed() {
     return jedis.isClosed();
   }
 
@@ -74,11 +101,29 @@ public final class RedisProvider implements Redis {
     return MessengerType.REDIS;
   }
 
+  @Override
+  public @NotNull ConnectionType getConnectionType() {
+    return connectionType;
+  }
+
   @Override @NotNull
   public Jedis getConnection() throws FailedConnectionException {
-    if (isClose()) throw new FailedConnectionException("Connection has been closed");
+    if (isClosed()) throw new FailedConnectionException("Connection has been closed");
 
     return jedis.getResource();
+  }
+
+  /**
+   * Returns a Jedis connection with that slot in the Cluster
+   * @param slot Slot of the Jedis in the Cluster
+   *
+   * @return Jedis
+   */
+  @Override @Nullable
+  public Jedis getConnectionFromSlot(final int slot) {
+    if (connectionType == ConnectionType.LOCAL) throw new UnsupportedOperationException("You can't use Cluster methods in a local connection");
+
+    return cluster != null ? cluster.getConnectionFromSlot(slot) : null;
   }
 
 }

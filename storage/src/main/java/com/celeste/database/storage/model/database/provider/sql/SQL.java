@@ -1,8 +1,8 @@
 package com.celeste.database.storage.model.database.provider.sql;
 
-import com.celeste.database.shared.model.dao.exception.DAOException;
-import com.celeste.database.shared.model.dao.exception.ValueNotFoundException;
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
+import com.celeste.database.shared.exceptions.dao.DAOException;
+import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
 import com.celeste.database.storage.model.Storable;
 import com.celeste.database.storage.model.dao.StorageDAO;
 import com.celeste.database.storage.model.database.provider.Storage;

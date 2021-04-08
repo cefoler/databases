@@ -10,9 +10,9 @@ import java.io.IOException;
 public abstract class AbstractListener extends JedisPubSub implements DeliverCallback {
 
   @Override
-  public abstract void onMessage(@NotNull final String channel, @NotNull final String message);
+  public abstract void onMessage(final String channel, final String message);
 
   @Override
-  public abstract void handle(@NotNull final String channel, @NotNull final Delivery delivery) throws IOException;
+  public abstract void handle(final String channel, final Delivery delivery) throws IOException;
 
 }

@@ -1,16 +1,15 @@
 package com.celeste.database.messenger.model.dao;
 
-import com.celeste.database.messenger.annotation.Subscribe;
-import com.celeste.database.shared.model.dao.DAO;
-import com.celeste.database.shared.model.dao.exception.DAOException;
-import com.celeste.database.shared.model.database.provider.exception.FailedConnectionException;
+import com.celeste.database.messenger.annotations.Subscribe;
+import com.celeste.database.shared.exceptions.dao.DAOException;
+import com.celeste.database.shared.exceptions.database.FailedConnectionException;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
-public interface MessengerDAO extends DAO {
+public interface MessengerDAO {
 
   void publish(@NotNull final String message, @NotNull final String channelName) throws FailedConnectionException;
 

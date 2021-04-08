@@ -1,4 +1,4 @@
-package com.celeste.database.shared.model.database.type;
+package com.celeste.database.shared.model.type;
 
 import com.google.common.collect.ImmutableList;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public enum DatabaseType {
   }
 
   @NotNull
-  public static DatabaseType getDataBase(@NotNull final String database) {
+  public static DatabaseType getDatabase(@NotNull final String database) {
     return Arrays.stream(values())
         .filter(type -> type.getNames().contains(database.toUpperCase()))
         .findFirst()

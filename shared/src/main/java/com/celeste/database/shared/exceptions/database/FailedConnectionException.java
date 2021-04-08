@@ -1,4 +1,4 @@
-package com.celeste.database.shared.model.database.provider.exception;
+package com.celeste.database.shared.exceptions.database;
 
 import org.jetbrains.annotations.NotNull;
 

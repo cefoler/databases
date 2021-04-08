@@ -1,10 +1,10 @@
 package com.celeste.database.storage.model.database.provider;
 
-import com.celeste.database.shared.model.dao.exception.DAOException;
-import com.celeste.database.shared.model.database.provider.Database;
-import com.celeste.database.shared.model.database.type.DatabaseType;
+import com.celeste.database.shared.exceptions.dao.DAOException;
+import com.celeste.database.shared.model.Database;
+import com.celeste.database.shared.model.type.DatabaseType;
 import com.celeste.database.storage.model.dao.StorageDAO;
-import com.celeste.database.storage.model.database.type.StorageType;
+import com.celeste.database.storage.model.database.StorageType;
 import com.celeste.database.storage.model.Storable;
 import org.jetbrains.annotations.NotNull;
 
