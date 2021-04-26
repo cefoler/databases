@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Property {
+public @interface Get {
+
+  String[] value();
 
 }
