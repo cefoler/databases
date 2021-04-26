@@ -1,31 +1,18 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "6.1.0"
-    id 'java-library'
+    id 'java'
+}
+
+version 'unspecified'
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
-    /*
-    DATABASE DEPENDENCY
-    */
-    implementation 'org.xerial:sqlite-jdbc:3.34.0'
-    implementation 'com.h2database:h2:1.4.200'
-
-    implementation 'mysql:mysql-connector-java:8.0.23'
-    implementation 'org.postgresql:postgresql:42.2.19'
-
-    /*
-    CONNECTION POOL DEPENDENCY
-    */
-    implementation 'com.zaxxer:HikariCP:4.0.3'
-    implementation 'dev.morphia.morphia:morphia-core:2.2.0-SNAPSHOT'
-
-    /*
-    FRAMEWORK
-    */
-    implementation project(':shared')
-    api project(':shared')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
-shadowJar {
-    archiveFileName = "storage-${project.version}.jar"
+test {
+    useJUnitPlatform()
 }

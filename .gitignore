@@ -143,7 +143,7 @@ local.properties
 # CDT- autotools
 .autotools
 
-# Java com.celeste.messenger.annotation processor (APT)
+# Java annotation processor (APT)
 .factorypath
 
 # PDT-specific (PHP Development Tools)
