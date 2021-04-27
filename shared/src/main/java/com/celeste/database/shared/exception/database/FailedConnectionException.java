@@ -1,12 +1,10 @@
-package com.celeste.database.shared.exceptions.database;
+package com.celeste.database.shared.exception.database;
 
-import com.celeste.database.shared.exceptions.dao.DAOException;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The class {@code FailedConnectionException} is a checked {@code Exception}
- * class that inherits the {@link DatabaseException} class
- * that is, it is an exception that needs to be catch.
+ * The class {@code FailedConnectionException} is a checked {@code Exception} class that inherits
+ * the {@link DatabaseException} class that is, it is an exception that needs to be catch.
  *
  * <p> The class is called when the connection with the database
  * failed </p>

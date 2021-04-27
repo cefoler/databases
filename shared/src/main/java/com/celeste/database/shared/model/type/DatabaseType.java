@@ -1,17 +1,16 @@
 package com.celeste.database.shared.model.type;
 
 import com.google.common.collect.ImmutableList;
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 public enum DatabaseType {
 
   STORAGE("STORAGE", "STGE"),
-  MESSENGER("MESSENGER", "CACHE");
+  MESSENGER("MESSENGER", "MSG");
 
   @NotNull
   private final List<String> names;

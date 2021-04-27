@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    /*
-    DATABASE DEPENDENCY
-    */
+    /**
+     * STORAGE DEPENDENCY
+     */
     implementation 'org.xerial:sqlite-jdbc:3.34.0'
     implementation 'com.h2database:h2:1.4.200'
 
@@ -14,16 +14,16 @@ dependencies {
     implementation 'org.mongodb:mongo-java-driver:3.12.8'
     implementation 'org.postgresql:postgresql:42.2.19'
 
-    /*
-    CONNECTION POOL DEPENDENCY
-    */
+    /**
+     * CONNECTION POOL DEPENDENCY
+     */
     implementation 'com.zaxxer:HikariCP:4.0.3'
 
-    /*
-    FRAMEWORK
-    */
+
+    /**
+     * FRAMEWORK
+     */
     implementation project(':shared')
-    api project(':shared')
 }
 
 shadowJar {

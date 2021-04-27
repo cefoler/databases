@@ -1,17 +1,9 @@
 package com.celeste.database.storage.model.database.provider.sql.sqlite;
 
-import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
-import com.celeste.database.shared.exceptions.database.FailedConnectionException;
-import com.celeste.database.shared.model.type.ConnectionType;
-import com.celeste.database.storage.model.database.provider.sql.SQL;
+import com.celeste.database.shared.exception.dao.ValueNotFoundException;
+import com.celeste.database.shared.exception.database.FailedConnectionException;
 import com.celeste.database.storage.model.database.StorageType;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.Synchronized;
-import org.jetbrains.annotations.NotNull;
-import org.sqlite.jdbc4.JDBC4Connection;
-
+import com.celeste.database.storage.model.database.provider.sql.SQL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -19,6 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import lombok.Synchronized;
+import org.jetbrains.annotations.NotNull;
+import org.sqlite.jdbc4.JDBC4Connection;
 
 @Getter(AccessLevel.PRIVATE)
 public final class SQLiteProvider implements SQL {
@@ -28,14 +26,15 @@ public final class SQLiteProvider implements SQL {
 
   private Connection connection;
 
-  public SQLiteProvider(@NotNull final Properties properties, final ConnectionType connectionType) throws FailedConnectionException {
+  public SQLiteProvider(@NotNull final Properties properties) throws FailedConnectionException {
     this.properties = properties;
     this.connectionUrl = "jdbc:sqlite:{path}";
 
     init();
   }
 
-  @Override @Synchronized
+  @Override
+  @Synchronized
   public void init() throws FailedConnectionException {
     try {
       Class.forName("org.sqlite.jdbc4.JDBC4Connection");
@@ -53,23 +52,28 @@ public final class SQLiteProvider implements SQL {
     }
   }
 
-  @Override @Synchronized @SneakyThrows
+  @Override
+  @Synchronized
+  @SneakyThrows
   public void shutdown() {
     connection.close();
   }
 
-  @Override @SneakyThrows
+  @Override
+  @SneakyThrows
   public boolean isClosed() {
     return connection.isClosed();
   }
 
-  @Override @NotNull
+  @Override
+  @NotNull
   public StorageType getStorageType() {
     return StorageType.SQLITE;
   }
 
   @Override
-  public int executeUpdate(@NotNull final String sql, @NotNull final Object... values) throws ValueNotFoundException, FailedConnectionException {
+  public int executeUpdate(@NotNull final String sql, @NotNull final Object... values)
+      throws ValueNotFoundException, FailedConnectionException {
     try (final PreparedStatement statement = getConnection().prepareStatement(sql)) {
       applyValues(statement, values);
       return statement.executeUpdate();
@@ -78,8 +82,10 @@ public final class SQLiteProvider implements SQL {
     }
   }
 
-  @Override @NotNull
-  public ResultSet executeQuery(@NotNull final String sql, @NotNull final Object... values) throws ValueNotFoundException, FailedConnectionException {
+  @Override
+  @NotNull
+  public ResultSet executeQuery(@NotNull final String sql, @NotNull final Object... values)
+      throws ValueNotFoundException, FailedConnectionException {
     try {
       final PreparedStatement statement = getConnection().prepareStatement(sql);
 
@@ -90,9 +96,12 @@ public final class SQLiteProvider implements SQL {
     }
   }
 
-  @Override @NotNull
+  @Override
+  @NotNull
   public Connection getConnection() throws FailedConnectionException {
-    if (connection == null) throw new FailedConnectionException("Connection has been closed");
+    if (connection == null) {
+      throw new FailedConnectionException("Connection has been closed");
+    }
 
     return connection;
   }

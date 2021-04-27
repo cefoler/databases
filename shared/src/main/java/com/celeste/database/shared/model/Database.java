@@ -1,6 +1,6 @@
 package com.celeste.database.shared.model;
 
-import com.celeste.database.shared.exceptions.database.FailedConnectionException;
+import com.celeste.database.shared.exception.database.FailedConnectionException;
 import com.celeste.database.shared.model.type.DatabaseType;
 import org.jetbrains.annotations.NotNull;
 

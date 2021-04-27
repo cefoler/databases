@@ -1,21 +1,20 @@
 package com.celeste.database.storage.model.dao.sql;
 
-import com.celeste.database.shared.exceptions.dao.DAOException;
-import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
-import com.celeste.database.shared.exceptions.database.FailedConnectionException;
-import com.celeste.database.storage.annotations.Query;
+import com.celeste.database.shared.exception.dao.DAOException;
+import com.celeste.database.shared.exception.dao.ValueNotFoundException;
+import com.celeste.database.shared.exception.database.FailedConnectionException;
+import com.celeste.database.storage.annotation.Query;
 import com.celeste.database.storage.model.dao.StorageDAO;
 import com.celeste.database.storage.model.database.provider.sql.SQL;
 import com.celeste.database.storage.model.database.provider.sql.function.SQLFunction;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Implementation for the StorageDAO interface.
@@ -52,10 +51,11 @@ public final class SQLDAO<T> implements StorageDAO<T> {
   }
 
   /**
-   * Creates the table in the SQL database
-   * The parameter name is null, this was only added for the MongoDB.
+   * Creates the table in the SQL database The parameter name is null, this was only added for the
+   * MongoDB.
    */
-  @Override @SneakyThrows
+  @Override
+  @SneakyThrows
   public void createTable(final String name) {
     final String sql = getAnnotation().value();
     database.executeUpdate(sql);
@@ -63,34 +63,37 @@ public final class SQLDAO<T> implements StorageDAO<T> {
 
   /**
    * Saves the value into the SQL database
-   * @param key This is null, please ignore.
+   *
+   * @param key   This is null, please ignore.
    * @param value T
    */
-  @Override @SneakyThrows
+  @Override
+  @SneakyThrows
   public final void save(final Object key, @NotNull final T value) {
     final String sql = getAnnotation().value();
     database.executeUpdate(sql, write.apply(value));
   }
 
   /**
-   * Deletes a value from the database through
-   * the key.
+   * Deletes a value from the database through the key.
+   *
    * @param key Object
    */
-  @Override @SneakyThrows
+  @Override
+  @SneakyThrows
   public void delete(@NotNull final Object key) {
     final String sql = getAnnotation().value();
     database.executeUpdate(sql, key);
   }
 
   /**
-   * Check if it contains a value through the
-   * key provided
-   * @param key Object
+   * Check if it contains a value through the key provided
    *
+   * @param key Object
    * @return Boolean
    */
-  @Override @SneakyThrows
+  @Override
+  @SneakyThrows
   public boolean contains(@NotNull final Object key) {
     final String sql = getAnnotation().value();
 
@@ -101,33 +104,41 @@ public final class SQLDAO<T> implements StorageDAO<T> {
 
   /**
    * Finds the object through the key provided
-   * @param key Object
    *
+   * @param key Object
    * @return T
    * @throws ValueNotFoundException Throws if no value exists on that key
    */
-  @Override @NotNull @SneakyThrows(FailedConnectionException.class)
+  @Override
+  @NotNull
+  @SneakyThrows(FailedConnectionException.class)
   public T find(@NotNull final Object key) throws ValueNotFoundException {
     final String sql = getAnnotation().value();
 
     final T argument = database.getFirst(sql, read, key);
 
-    if (argument == null) throw new ValueNotFoundException("Value not found");
+    if (argument == null) {
+      throw new ValueNotFoundException("Value not found");
+    }
 
     return argument;
   }
 
   /**
    * Gets all values storaged in the database
+   *
    * @return List
    */
-  @Override @NotNull @SneakyThrows
+  @Override
+  @NotNull
+  @SneakyThrows
   public List<T> findAll() {
     final String sql = getAnnotation().value();
     return database.getAll(sql, read);
   }
 
-  @NotNull @SneakyThrows
+  @NotNull
+  @SneakyThrows
   public Query getAnnotation() {
     final StackTraceElement[] elements = Thread.currentThread().getStackTrace();
 
@@ -144,11 +155,15 @@ public final class SQLDAO<T> implements StorageDAO<T> {
           .findFirst()
           .orElse(null);
 
-      if (method == null) continue;
+      if (method == null) {
+        continue;
+      }
 
       final Query annotation = method.getAnnotation(Query.class);
 
-      if (annotation == null) continue;
+      if (annotation == null) {
+        continue;
+      }
 
       return annotation;
     }

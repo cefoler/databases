@@ -1,31 +1,28 @@
 package com.celeste.database.messenger.model.database.provider.rabbitmq;
 
 import com.celeste.database.messenger.model.database.MessengerType;
-import com.celeste.database.shared.exceptions.database.FailedConnectionException;
-import com.celeste.database.shared.model.type.ConnectionType;
+import com.celeste.database.shared.exception.database.FailedConnectionException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.Executors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.util.Properties;
-import java.util.concurrent.Executors;
-
 public class RabbitMQProvider implements RabbitMQ {
 
   @Getter(AccessLevel.PRIVATE)
   private final Properties properties;
-  private final ConnectionType connectionType;
 
   private Connection connection;
 
-  public RabbitMQProvider(@NotNull final Properties properties, final ConnectionType connectionType) throws FailedConnectionException {
+  public RabbitMQProvider(@NotNull final Properties properties)
+      throws FailedConnectionException {
     this.properties = properties;
-    this.connectionType = connectionType;
 
     init();
   }
@@ -53,7 +50,8 @@ public class RabbitMQProvider implements RabbitMQ {
     }
   }
 
-  @Override @SneakyThrows
+  @Override
+  @SneakyThrows
   public void shutdown() {
     connection.close();
   }
@@ -63,24 +61,23 @@ public class RabbitMQProvider implements RabbitMQ {
     return !connection.isOpen();
   }
 
-  @Override @NotNull
-  public MessengerType getType() {
-    return MessengerType.RABBITMQ;
-  }
-
-  @Override @NotNull
-  public ConnectionType getConnectionType() {
-    return connectionType;
-  }
-
-  @Override @NotNull
+  @Override
+  @NotNull
   public Channel getConnection() throws FailedConnectionException {
     try {
-      if (connection == null) throw new FailedConnectionException("Connection has been closed");
+      if (connection == null) {
+        throw new FailedConnectionException("Connection has been closed");
+      }
       return connection.createChannel();
     } catch (IOException exception) {
       throw new FailedConnectionException(exception);
     }
+  }
+
+  @Override
+  @NotNull
+  public MessengerType getType() {
+    return MessengerType.RABBITMQ;
   }
 
 }

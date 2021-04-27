@@ -1,23 +1,21 @@
 package com.celeste.database.storage.model.database.provider.sql.mysql;
 
-import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
-import com.celeste.database.shared.exceptions.database.FailedConnectionException;
-import com.celeste.database.shared.model.type.ConnectionType;
+import com.celeste.database.shared.exception.dao.ValueNotFoundException;
+import com.celeste.database.shared.exception.database.FailedConnectionException;
 import com.celeste.database.storage.model.database.StorageType;
 import com.celeste.database.storage.model.database.provider.sql.SQL;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Synchronized;
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Synchronized;
+import org.jetbrains.annotations.NotNull;
 
 @Getter(AccessLevel.PRIVATE)
 public final class MySQLProvider implements SQL {
@@ -27,14 +25,15 @@ public final class MySQLProvider implements SQL {
 
   private HikariDataSource hikari;
 
-  public MySQLProvider(@NotNull final Properties properties, final ConnectionType connectionType) throws FailedConnectionException {
+  public MySQLProvider(@NotNull final Properties properties) throws FailedConnectionException {
     this.properties = properties;
     this.connectionUrl = "jdbc:mysql://{hostname}:{port}/{database}";
 
     init();
   }
 
-  @Override @Synchronized
+  @Override
+  @Synchronized
   public void init() throws FailedConnectionException {
     try {
       final HikariConfig config = new HikariConfig();
@@ -79,7 +78,8 @@ public final class MySQLProvider implements SQL {
     }
   }
 
-  @Override @Synchronized
+  @Override
+  @Synchronized
   public void shutdown() {
     hikari.close();
   }
@@ -89,13 +89,15 @@ public final class MySQLProvider implements SQL {
     return hikari.isClosed();
   }
 
-  @Override @NotNull
+  @Override
+  @NotNull
   public StorageType getStorageType() {
     return StorageType.MYSQL;
   }
 
   @Override
-  public int executeUpdate(@NotNull final String sql, @NotNull final Object... values) throws ValueNotFoundException, FailedConnectionException {
+  public int executeUpdate(@NotNull final String sql, @NotNull final Object... values)
+      throws ValueNotFoundException, FailedConnectionException {
     try (
         final Connection connection = getConnection();
         final PreparedStatement statement = connection.prepareStatement(sql)
@@ -107,8 +109,10 @@ public final class MySQLProvider implements SQL {
     }
   }
 
-  @Override @NotNull
-  public ResultSet executeQuery(@NotNull final String sql, @NotNull final Object... values) throws ValueNotFoundException, FailedConnectionException {
+  @Override
+  @NotNull
+  public ResultSet executeQuery(@NotNull final String sql, @NotNull final Object... values)
+      throws ValueNotFoundException, FailedConnectionException {
     try (
         final Connection connection = getConnection();
         final PreparedStatement statement = connection.prepareStatement(sql)
@@ -120,7 +124,8 @@ public final class MySQLProvider implements SQL {
     }
   }
 
-  @Override @NotNull
+  @Override
+  @NotNull
   public Connection getConnection() throws FailedConnectionException {
     try {
       return hikari.getConnection();

@@ -1,15 +1,14 @@
 package com.celeste.database.storage.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * The Storable is a serializable interface used in Object models
- * to implement the Read and Write methods, used in the SQL databases.
+ * The Storable is a serializable interface used in Object models to implement the Read and Write
+ * methods, used in the SQL databases.
  *
  * <p>If you are using MongoDB, this methods should be implemented
  * but returned null</p>

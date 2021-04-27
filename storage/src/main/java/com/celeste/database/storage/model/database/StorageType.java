@@ -1,21 +1,20 @@
 package com.celeste.database.storage.model.database;
 
 import com.celeste.database.storage.model.database.provider.Storage;
-import com.celeste.database.storage.model.database.provider.sql.h2.H2Provider;
-import com.celeste.database.storage.model.database.provider.sql.postgresql.PostgreSQLProvider;
 import com.celeste.database.storage.model.database.provider.mongodb.MongoDBProvider;
+import com.celeste.database.storage.model.database.provider.sql.h2.H2Provider;
 import com.celeste.database.storage.model.database.provider.sql.mysql.MySQLProvider;
+import com.celeste.database.storage.model.database.provider.sql.postgresql.PostgreSQLProvider;
 import com.celeste.database.storage.model.database.provider.sql.sqlite.SQLiteProvider;
 import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
+import java.util.List;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * The StorageType contains all possible types of database that
- * this framework can access and estabilish a connection.
+ * The StorageType contains all possible types of database that this framework can access and
+ * establish a connection.
  */
 @Getter
 public enum StorageType {
@@ -39,8 +38,8 @@ public enum StorageType {
 
   /**
    * Get the storage by their name
-   * @param storage String
    *
+   * @param storage String
    * @return StorageType
    */
   public static StorageType getStorage(final String storage) {

@@ -1,45 +1,45 @@
 package com.celeste.database.storage.model.dao;
 
-import com.celeste.database.shared.exceptions.dao.ValueNotFoundException;
-import org.jetbrains.annotations.NotNull;
-
+import com.celeste.database.shared.exception.dao.ValueNotFoundException;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public interface StorageDAO<T> {
 
   /**
    * Creates the table in the database
+   *
    * @param name String
    */
   void createTable(final String name);
 
   /**
-   * Saves a value in the database with the
-   * provided key
-   * @param key Object
+   * Saves a value in the database with the provided key
+   *
+   * @param key   Object
    * @param value T
    */
   void save(final Object key, @NotNull final T value);
 
   /**
    * Deletes the value through the key provided
+   *
    * @param key Object
    */
   void delete(@NotNull final Object key);
 
   /**
-   * Check if the value exists by the key
-   * provided
-   * @param key Object
+   * Check if the value exists by the key provided
    *
+   * @param key Object
    * @return Boolean
    */
   boolean contains(@NotNull final Object key);
 
   /**
    * Get the value by the provided key
-   * @param key Object
    *
+   * @param key Object
    * @return T
    * @throws ValueNotFoundException Throws if the value wasn't found
    */
@@ -48,6 +48,7 @@ public interface StorageDAO<T> {
 
   /**
    * Get all objects from the database
+   *
    * @return List
    */
   @NotNull

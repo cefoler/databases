@@ -4,15 +4,14 @@ import com.celeste.database.messenger.model.database.provider.Messenger;
 import com.celeste.database.messenger.model.database.provider.rabbitmq.RabbitMQProvider;
 import com.celeste.database.messenger.model.database.provider.redis.RedisProvider;
 import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
+import java.util.List;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * The MessengerType contains all possible types of databases that
- * this framework can access and estabilish a connection.
+ * The MessengerType contains all possible types of databases that this framework can access and
+ * establish a connection.
  */
 @Getter
 public enum MessengerType {
@@ -26,7 +25,8 @@ public enum MessengerType {
   @NotNull
   private final List<String> names;
 
-  MessengerType(@NotNull final Class<? extends Messenger<?>> provider, @NotNull final String... names) {
+  MessengerType(@NotNull final Class<? extends Messenger<?>> provider,
+      @NotNull final String... names) {
     this.provider = provider;
     this.names = ImmutableList.copyOf(names);
   }
