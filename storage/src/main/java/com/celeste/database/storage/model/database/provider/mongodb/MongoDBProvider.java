@@ -65,7 +65,7 @@ public final class MongoDBProvider implements MongoDB {
           CodecRegistries.fromProviders(pojo)
       );
 
-      if (properties.contains("url")) {
+      if (properties.contains("url") && !properties.getProperty("url").equals("")) {
         final ConnectionString url = new ConnectionString(properties.getProperty("url"));
         final MongoClientSettings settings = MongoClientSettings.builder()
             .applyConnectionString(url)
