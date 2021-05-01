@@ -1,4 +1,4 @@
-package com.celeste.databases.core.model.annotation;
+package com.celeste.databases.storage.model.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 
 @Inherited
 @Documented
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Get {
+public @interface Order {
 
   String[] value();
 
