@@ -1,3 +1,21 @@
 dependencies {
+    /**
+     * STORAGE DEPENDENCY
+     */
+    implementation 'org.xerial:sqlite-jdbc:3.34.0'
+    implementation 'com.h2database:h2:1.4.200'
+
+    implementation 'mysql:mysql-connector-java:8.0.23'
+    implementation 'org.postgresql:postgresql:42.2.19'
+    implementation 'org.mongodb:mongo-java-driver:3.12.8'
+
+    /**
+     * CONNECTION POOL DEPENDENCY
+     */
+    implementation 'com.zaxxer:HikariCP:4.0.3'
+
+    /**
+     * SHARED FRAMEWORK
+     */
     implementation project(":core")
 }

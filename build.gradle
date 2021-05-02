@@ -15,7 +15,7 @@ subprojects {
 
     dependencies {
         /**
-         * FRAMEWORK
+         * LIBRARY FRAMEWORK
          */
         implementation 'com.google.guava:guava:30.1.1-jre'
 
@@ -27,12 +27,6 @@ subprojects {
 
         compileOnly 'org.jetbrains:annotations:20.1.0'
         annotationProcessor 'org.jetbrains:annotations:20.1.0'
-
-        /**
-         * TEST FRAMEWORK
-         */
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     }
 
     jar {
