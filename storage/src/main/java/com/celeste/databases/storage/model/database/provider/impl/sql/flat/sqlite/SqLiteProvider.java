@@ -1,4 +1,4 @@
-package com.celeste.databases.storage.model.database.provider.impl.sql.h2;
+package com.celeste.databases.storage.model.database.provider.impl.sql.flat.sqlite;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
@@ -12,14 +12,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.h2.jdbc.JdbcConnection;
 
-public final class H2Provider implements Sql {
+public final class SqLiteProvider implements Sql {
 
   private static final String URI;
   private static final Pattern PATH;
   private static final Pattern NAME;
 
   static {
-    URI = "jdbc:h2:<path>/<name>";
+    URI = "jdbc:sqlite:<path>/<name>.db";
     PATH = Pattern.compile("<path>", Pattern.LITERAL);
     NAME = Pattern.compile("<name>", Pattern.LITERAL);
   }
@@ -27,7 +27,7 @@ public final class H2Provider implements Sql {
   private final LocalCredentials credentials;
   private NonClosableConnection connection;
 
-  public H2Provider(final LocalCredentials credentials) throws FailedConnectionException {
+  public SqLiteProvider(final LocalCredentials credentials) throws FailedConnectionException {
     this.credentials = credentials;
 
     init();
@@ -36,7 +36,7 @@ public final class H2Provider implements Sql {
   @Override
   public synchronized void init() throws FailedConnectionException {
     try {
-      Class.forName("org.h2.jdbc.JdbcConnection");
+      Class.forName("org.sqlite.jdbc4.JDBC4Connection");
 
       final String name = credentials.getName();
       final String path = credentials.getPath().getAbsolutePath();
@@ -63,12 +63,17 @@ public final class H2Provider implements Sql {
   }
 
   @Override
-  public boolean isClosed() throws FailedConnectionException{
+  public boolean isClosed() throws FailedConnectionException {
     try {
       return connection.isClosed();
     } catch (SQLException exception) {
       throw new FailedConnectionException(exception);
     }
+  }
+
+  @Override
+  public NonClosableConnection getConnection() {
+    return connection;
   }
 
 }
