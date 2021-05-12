@@ -4,7 +4,6 @@ import com.celeste.databases.core.adapter.Json;
 import com.celeste.databases.core.adapter.exception.JsonDeserializeException;
 import com.celeste.databases.core.adapter.exception.JsonSerializeException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jetbrains.annotations.NotNull;
 
 public final class JacksonAdapter implements Json {
 
@@ -16,8 +15,7 @@ public final class JacksonAdapter implements Json {
   }
 
   @Override
-  @NotNull
-  public String serialize(@NotNull final Object value) throws JsonSerializeException {
+  public String serialize(final Object value) throws JsonSerializeException {
     try {
       return mapper.writeValueAsString(value);
     } catch (Throwable throwable) {
@@ -26,8 +24,7 @@ public final class JacksonAdapter implements Json {
   }
 
   @Override
-  @NotNull
-  public <T> T deserialize(@NotNull final String json, @NotNull final Class<T> clazz)
+  public <T> T deserialize(final String json, final Class<T> clazz)
       throws JsonDeserializeException {
     try {
       return mapper.readValue(json, clazz);
@@ -36,7 +33,6 @@ public final class JacksonAdapter implements Json {
     }
   }
 
-  @NotNull
   public static JacksonAdapter getInstance() {
     return INSTANCE;
   }

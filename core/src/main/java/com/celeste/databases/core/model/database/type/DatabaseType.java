@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 public enum DatabaseType {
@@ -15,12 +14,11 @@ public enum DatabaseType {
 
   private final List<String> names;
 
-  DatabaseType(@NotNull final String... names) {
+  DatabaseType(final String... names) {
     this.names = ImmutableList.copyOf(names);
   }
 
-  @NotNull
-  public static DatabaseType getDatabase(@NotNull final String database) {
+  public static DatabaseType getDatabase(final String database) {
     return Arrays.stream(values())
         .filter(type -> type.getNames().contains(database.toUpperCase()))
         .findFirst()

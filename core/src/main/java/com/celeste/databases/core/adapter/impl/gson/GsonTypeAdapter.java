@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
@@ -30,15 +29,15 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
 
   private final boolean maintain;
 
-  public GsonTypeAdapter(@NotNull final Class<T> base) {
+  public GsonTypeAdapter(final Class<T> base) {
     this(base, "type");
   }
 
-  public GsonTypeAdapter(@NotNull final Class<T> base, @NotNull final String fieldName) {
+  public GsonTypeAdapter(final Class<T> base, final String fieldName) {
     this(base, fieldName, false);
   }
 
-  public GsonTypeAdapter(@NotNull final Class<T> base, @NotNull final String fieldName,
+  public GsonTypeAdapter(final Class<T> base, final String fieldName,
       final boolean maintain) {
     this.base = base;
     this.fieldName = fieldName;
@@ -47,9 +46,7 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
     this.subtypeToLabel = new LinkedHashMap<>();
   }
 
-  @NotNull
-  public GsonTypeAdapter<T> registerSubtype(@NotNull final Class<? extends T> subtype,
-      @NotNull final String label) {
+  public GsonTypeAdapter<T> registerSubtype(final Class<? extends T> subtype, final String label) {
     if (subtypeToLabel.containsKey(subtype) || labelToSubtype.containsKey(label)) {
       throw new IllegalArgumentException("Types and labels must be unique.");
     }
@@ -60,21 +57,19 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
     return this;
   }
 
-  @NotNull
-  public GsonTypeAdapter<T> registerSubtype(@NotNull final Class<? extends T> subType) {
+  public GsonTypeAdapter<T> registerSubtype(final Class<? extends T> subType) {
     return registerSubtype(subType, subType.getSimpleName());
   }
 
-  @NotNull
   @SafeVarargs
-  public final GsonTypeAdapter<T> registerSubtypes(@NotNull final Class<? extends T>... subTypes) {
+  public final GsonTypeAdapter<T> registerSubtypes(final Class<? extends T>... subTypes) {
     Arrays.stream(subTypes).forEach(this::registerSubtype);
     return this;
   }
 
   @Nullable
   @SuppressWarnings("ObjectAllocationInLoop")
-  public <U> TypeAdapter<U> create(@NotNull final Gson gson, @NotNull final TypeToken<U> token) {
+  public <U> TypeAdapter<U> create(final Gson gson, final TypeToken<U> token) {
     if (token.getRawType() != base) {
       return null;
     }
@@ -93,9 +88,8 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
     return new TypeAdapter<U>() {
 
       @Override
-      @NotNull
       @SuppressWarnings("unchecked")
-      public U read(@NotNull final JsonReader reader) {
+      public U read(final JsonReader reader) {
         final JsonElement json = Streams.parse(reader);
         final JsonElement newJson = maintain
             ? json.getAsJsonObject().get(fieldName)
@@ -119,8 +113,7 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
 
       @Override
       @SuppressWarnings("unchecked")
-      public void write(@NotNull final JsonWriter writer, @NotNull final U value)
-          throws IOException {
+      public void write(final JsonWriter writer, final U value) throws IOException {
         final Class<?> clazz = value.getClass();
 
         final String label = subtypeToLabel.get(clazz);

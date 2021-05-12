@@ -1,18 +1,17 @@
 package com.celeste.databases.core.model.database.provider;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
+import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
 import com.celeste.databases.core.model.database.type.DatabaseType;
-import org.jetbrains.annotations.NotNull;
 
 public interface Database {
 
   void init() throws FailedConnectionException;
 
-  void shutdown();
+  void shutdown() throws FailedShutdownException;
 
-  boolean isClosed();
+  boolean isClosed() throws FailedConnectionException;
 
-  @NotNull
   DatabaseType getDatabaseType();
 
 }

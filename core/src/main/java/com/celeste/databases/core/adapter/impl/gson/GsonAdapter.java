@@ -6,7 +6,6 @@ import com.celeste.databases.core.adapter.exception.JsonSerializeException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
-import org.jetbrains.annotations.NotNull;
 
 public final class GsonAdapter implements Json {
 
@@ -20,19 +19,17 @@ public final class GsonAdapter implements Json {
   }
 
   @SafeVarargs
-  public final <T> void registerAdapter(@NotNull final Class<T> type,
-      @NotNull final Class<? extends T>... subTypes) {
+  public final <T> void registerAdapter(final Class<T> type, final Class<? extends T>... subTypes) {
     final GsonTypeAdapter<T> adapter = new GsonTypeAdapter<>(type)
         .registerSubtypes(subTypes);
 
-    gson = gson.newBuilder()
+    this.gson = gson.newBuilder()
         .registerTypeAdapterFactory(adapter)
         .create();
   }
 
   @Override
-  @NotNull
-  public String serialize(@NotNull final Object value) throws JsonSerializeException {
+  public String serialize(final Object value) throws JsonSerializeException {
     try {
       final String json = gson.toJson(value);
 
@@ -47,8 +44,7 @@ public final class GsonAdapter implements Json {
   }
 
   @Override
-  @NotNull
-  public <T> T deserialize(@NotNull final String json, @NotNull final Class<T> clazz)
+  public <T> T deserialize(final String json, final Class<T> clazz)
       throws JsonDeserializeException {
     try {
       final T instance = gson.fromJson(json, clazz);
@@ -64,7 +60,6 @@ public final class GsonAdapter implements Json {
     }
   }
 
-  @NotNull
   public static GsonAdapter getInstance() {
     return INSTANCE;
   }

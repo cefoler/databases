@@ -1,5 +1,5 @@
 package com.celeste.databases.storage.factory;
 
-public class StorageFactory {
+public final class StorageFactory {
 
 }

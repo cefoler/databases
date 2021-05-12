@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -17,7 +16,7 @@ public final class Validation {
 
   @SuppressWarnings("RedundantThrows")
   public static <T extends Throwable> boolean isTrue(final boolean expected,
-      @NotNull final Supplier<T> orElse) throws T {
+      final Supplier<T> orElse) throws T {
     if (!expected) {
       orElse.get();
     }
@@ -27,8 +26,8 @@ public final class Validation {
 
   @SuppressWarnings("RedundantThrows")
   @SneakyThrows(ReflectiveOperationException.class)
-  public static <T extends Throwable> boolean isTrue(final boolean expected,
-      @NotNull final Class<T> orElse) throws T {
+  public static <T extends Throwable> boolean isTrue(final boolean expected, final Class<T> orElse)
+      throws T {
     if (!expected) {
       final Constructor<?> constructor = Reflection.getConstructor(orElse, String.class);
       Reflection.instance(constructor, "The expression cannot be false");
@@ -47,8 +46,8 @@ public final class Validation {
 
   @SuppressWarnings("RedundantThrows")
   public static <T extends Throwable> boolean isFalse(final boolean expected,
-      @NotNull final Supplier<T> orElse) throws T {
-    if (expected) {
+      final Supplier<T> orElse) throws T {
+    if (!expected) {
       orElse.get();
     }
 
@@ -58,8 +57,8 @@ public final class Validation {
   @SuppressWarnings("RedundantThrows")
   @SneakyThrows(ReflectiveOperationException.class)
   public static <T extends Throwable> boolean isFalse(final boolean expected,
-      @NotNull final Class<T> orElse) throws T {
-    if (expected) {
+      final Class<T> orElse) throws T {
+    if (!expected) {
       final Constructor<?> constructor = Reflection.getConstructor(orElse, String.class);
       Reflection.instance(constructor, "The expression cannot be true");
     }
@@ -68,17 +67,16 @@ public final class Validation {
   }
 
   public static boolean isFalse(final boolean expected) {
-    if (expected) {
+    if (!expected) {
       throw new IllegalArgumentException("The expression cannot be true");
     }
 
     return false;
   }
 
-  @NotNull
-  @SuppressWarnings({"ConstantConditions", "RedundantThrows"})
+  @SuppressWarnings("RedundantThrows")
   public static <T, U extends Throwable> T notNull(@Nullable final T value,
-      @NotNull final Supplier<U> orElse) throws U {
+      final Supplier<U> orElse) throws U {
     if (value == null) {
       orElse.get();
     }
@@ -86,11 +84,10 @@ public final class Validation {
     return value;
   }
 
-  @NotNull
-  @SuppressWarnings({"ConstantConditions", "RedundantThrows"})
+  @SuppressWarnings("RedundantThrows")
   @SneakyThrows(ReflectiveOperationException.class)
-  public static <T, U extends Throwable> T notNull(@Nullable final T value,
-      @NotNull final Class<U> orElse) throws U {
+  public static <T, U extends Throwable> T notNull(@Nullable final T value, final Class<U> orElse)
+      throws U {
     if (value == null) {
       final Constructor<?> constructor = Reflection.getConstructor(orElse, String.class);
       Reflection.instance(constructor, "The object cannot be null");
@@ -99,7 +96,6 @@ public final class Validation {
     return value;
   }
 
-  @NotNull
   public static <T> T notNull(@Nullable final T value) {
     if (value == null) {
       throw new NullPointerException("The object cannot be null");
@@ -108,10 +104,9 @@ public final class Validation {
     return value;
   }
 
-  @NotNull
-  @SuppressWarnings({"ConstantConditions", "RedundantThrows"})
+  @SuppressWarnings("RedundantThrows")
   public static <T, U extends Throwable> T notEmpty(@Nullable final T value,
-      @NotNull final Supplier<U> orElse) throws U {
+      final Supplier<U> orElse) throws U {
     if (value == null
         || value instanceof Object[] && ((Object[]) value).length == 0
         || value instanceof Collection && ((Collection<?>) value).isEmpty()
@@ -123,11 +118,10 @@ public final class Validation {
     return value;
   }
 
-  @NotNull
-  @SuppressWarnings({"ConstantConditions", "RedundantThrows"})
+  @SuppressWarnings("RedundantThrows")
   @SneakyThrows(ReflectiveOperationException.class)
-  public static <T, U extends Throwable> T notEmpty(@Nullable final T value,
-      @NotNull final Class<U> orElse) throws U {
+  public static <T, U extends Throwable> T notEmpty(@Nullable final T value, final Class<U> orElse)
+      throws U {
     if (value == null) {
       final Constructor<?> constructor = Reflection.getConstructor(orElse, String.class);
       Reflection.instance(constructor, "The object cannot be null");
@@ -156,7 +150,6 @@ public final class Validation {
     return value;
   }
 
-  @NotNull
   public static <T> T notEmpty(@Nullable final T value) {
     if (value == null) {
       throw new NullPointerException("The object cannot be null");
@@ -181,10 +174,9 @@ public final class Validation {
     return value;
   }
 
-  @NotNull
-  @SuppressWarnings({"ConstantConditions", "RedundantThrows"})
+  @SuppressWarnings("RedundantThrows")
   public static <T, U extends Throwable> T noNullElements(@Nullable final T value,
-      @NotNull final Supplier<U> orElse) throws U {
+      final Supplier<U> orElse) throws U {
     if (value == null
         || (value instanceof Object[] && Arrays.stream(((Object[]) value))
         .anyMatch(Objects::isNull))
@@ -199,10 +191,8 @@ public final class Validation {
     return value;
   }
 
-  @NotNull
-  @SuppressWarnings("ConstantConditions")
   @SneakyThrows(ReflectiveOperationException.class)
-  public static <T> T noNullElements(@Nullable final T value, @NotNull final Class<T> orElse) {
+  public static <T> T noNullElements(@Nullable final T value, final Class<T> orElse) {
     if (value == null) {
       final Constructor<?> constructor = Reflection.getConstructor(orElse, String.class);
       Reflection.instance(constructor, "The object cannot be null");
@@ -226,7 +216,6 @@ public final class Validation {
     return value;
   }
 
-  @NotNull
   public static <T> T noNullElements(@Nullable final T value) {
     if (value == null) {
       throw new NullPointerException("The object cannot be null");
