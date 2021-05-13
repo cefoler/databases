@@ -23,7 +23,7 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
-public class MongoDbProvider implements MongoDb {
+public final class MongoDbProvider implements MongoDb {
 
   private final RemoteCredentials credentials;
 
@@ -52,7 +52,9 @@ public class MongoDbProvider implements MongoDb {
       final boolean ssl = credentials.isSsl();
 
       final Properties properties = credentials.getOther();
-      final String authentication = properties.getProperty("authentication");
+
+      final String uri = properties.getProperty("uri", "");
+      final String authentication = properties.getProperty("authentication", "admin");
 
       final Block<ConnectionPoolSettings.Builder> connection = builder -> builder
           .minSize(1)
@@ -73,18 +75,15 @@ public class MongoDbProvider implements MongoDb {
           MongoClientSettings.getDefaultCodecRegistry(),
           CodecRegistries.fromProviders(pojo));
 
-      if (properties.containsKey("uri")) {
-        final String uri = properties.getProperty("uri");
-
+      if (!uri.isEmpty()) {
         final ConnectionString connectionUri = new ConnectionString(uri);
         final MongoClientSettings settings = MongoClientSettings.builder()
             .applyConnectionString(connectionUri)
             .applyToConnectionPoolSettings(connection)
             .applyToSocketSettings(socket)
-            .applyToSslSettings(tls)
             .codecRegistry(codec)
-            .retryWrites(true)
             .readPreference(ReadPreference.primaryPreferred())
+            .retryWrites(true)
             .build();
 
         this.client = MongoClients.create(settings);
@@ -99,15 +98,17 @@ public class MongoDbProvider implements MongoDb {
       final MongoCredential credential = MongoCredential
           .createCredential(username, authentication, password.toCharArray());
 
+      final Block<SslSettings.Builder> tls = builder -> builder.enabled(ssl);
+
       final MongoClientSettings settings = MongoClientSettings.builder()
           .applyToClusterSettings(cluster)
-          .credential(credential)
           .applyToConnectionPoolSettings(connection)
           .applyToSocketSettings(socket)
           .applyToSslSettings(tls)
           .codecRegistry(codec)
-          .retryWrites(true)
+          .credential(credential)
           .readPreference(ReadPreference.primaryPreferred())
+          .retryWrites(true)
           .build();
 
       this.client = MongoClients.create(settings);
@@ -118,13 +119,18 @@ public class MongoDbProvider implements MongoDb {
   }
 
   @Override
-  public void shutdown() throws FailedShutdownException {
+  public void shutdown() {
     client.close();
   }
 
   @Override
-  public boolean isClosed() throws FailedConnectionException {
-    return client.isC;
+  public boolean isClosed() {
+    try {
+      client.listDatabases();
+      return true;
+    } catch (Throwable throwable) {
+      return false;
+    }
   }
 
   @Override
