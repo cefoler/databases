@@ -38,8 +38,8 @@ public final class GsonAdapter implements Json {
       }
 
       return json;
-    } catch (Throwable throwable) {
-      throw new JsonSerializeException(throwable);
+    } catch (Exception exception) {
+      throw new JsonSerializeException(exception.getCause());
     }
   }
 
@@ -55,8 +55,8 @@ public final class GsonAdapter implements Json {
       }
 
       return instance;
-    } catch (Throwable throwable) {
-      throw new JsonDeserializeException(throwable);
+    } catch (Exception exception) {
+      throw new JsonDeserializeException(exception.getCause());
     }
   }
 

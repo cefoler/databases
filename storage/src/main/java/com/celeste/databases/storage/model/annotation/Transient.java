@@ -11,8 +11,6 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Set {
-
-  String[] value();
+public @interface Transient {
 
 }

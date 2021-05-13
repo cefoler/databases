@@ -3,6 +3,8 @@ package com.celeste.databases.storage.model.database.provider.impl.mongodb;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
 import com.celeste.databases.core.model.entity.RemoteCredentials;
+import com.celeste.databases.storage.model.database.type.StorageType;
+import com.google.common.flogger.FluentLogger;
 import com.mongodb.Block;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -19,6 +21,8 @@ import com.mongodb.connection.SslSettings;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -40,6 +44,7 @@ public final class MongoDbProvider implements MongoDb {
   public void init() throws FailedConnectionException {
     try {
       Class.forName("com.mongodb.client.MongoClients");
+      Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
 
       final String hostname = credentials.getHostname();
       final int port = credentials.getPort();
@@ -113,8 +118,8 @@ public final class MongoDbProvider implements MongoDb {
 
       this.client = MongoClients.create(settings);
       this.database = client.getDatabase(database);
-    } catch (Throwable throwable) {
-      throw new FailedConnectionException(throwable);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 
@@ -128,9 +133,14 @@ public final class MongoDbProvider implements MongoDb {
     try {
       client.listDatabases();
       return true;
-    } catch (Throwable throwable) {
+    } catch (Exception exception) {
       return false;
     }
+  }
+
+  @Override
+  public StorageType getStorageType() {
+    return StorageType.MONGODB;
   }
 
   @Override

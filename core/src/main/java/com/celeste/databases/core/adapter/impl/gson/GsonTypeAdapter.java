@@ -104,8 +104,7 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
         final TypeAdapter<U> type = (TypeAdapter<U>) labels.get(label);
 
         if (type == null) {
-          throw new JsonParseException("Cannot deserialize " + base + " on SubType named "
-              + label);
+          throw new JsonParseException("Cannot deserialize " + base + " on SubType named " + label);
         }
 
         return type.fromJsonTree(json);

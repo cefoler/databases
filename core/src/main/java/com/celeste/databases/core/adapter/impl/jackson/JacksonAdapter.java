@@ -18,8 +18,8 @@ public final class JacksonAdapter implements Json {
   public String serialize(final Object value) throws JsonSerializeException {
     try {
       return mapper.writeValueAsString(value);
-    } catch (Throwable throwable) {
-      throw new JsonSerializeException(throwable);
+    } catch (Exception exception) {
+      throw new JsonSerializeException(exception.getCause());
     }
   }
 
@@ -28,8 +28,8 @@ public final class JacksonAdapter implements Json {
       throws JsonDeserializeException {
     try {
       return mapper.readValue(json, clazz);
-    } catch (Throwable throwable) {
-      throw new JsonDeserializeException(throwable);
+    } catch (Exception exception) {
+      throw new JsonDeserializeException(exception.getCause());
     }
   }
 

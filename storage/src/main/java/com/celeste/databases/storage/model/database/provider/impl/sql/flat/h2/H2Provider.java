@@ -4,6 +4,7 @@ import com.celeste.databases.core.model.database.provider.exception.FailedConnec
 import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
 import com.celeste.databases.core.model.entity.LocalCredentials;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
+import com.celeste.databases.storage.model.database.type.StorageType;
 import com.celeste.databases.storage.model.entity.impl.NonClosableConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -50,8 +51,8 @@ public final class H2Provider implements Sql {
 
       final Connection closableConnection = new JdbcConnection(newUri, properties);
       this.connection = new NonClosableConnection(closableConnection);
-    } catch (Throwable throwable) {
-      throw new FailedConnectionException(throwable);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 
@@ -59,8 +60,8 @@ public final class H2Provider implements Sql {
   public synchronized void shutdown() throws FailedShutdownException {
     try {
       connection.shutdown();
-    } catch (SQLException exception) {
-      throw new FailedShutdownException(exception);
+    } catch (Exception exception) {
+      throw new FailedShutdownException(exception.getCause());
     }
   }
 
@@ -68,9 +69,14 @@ public final class H2Provider implements Sql {
   public boolean isClosed() throws FailedConnectionException {
     try {
       return connection.isClosed();
-    } catch (SQLException exception) {
-      throw new FailedConnectionException(exception);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception.getCause());
     }
+  }
+
+  @Override
+  public StorageType getStorageType() {
+    return StorageType.H2;
   }
 
   @Override

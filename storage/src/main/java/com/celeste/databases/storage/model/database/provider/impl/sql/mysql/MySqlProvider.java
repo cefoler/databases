@@ -3,6 +3,7 @@ package com.celeste.databases.storage.model.database.provider.impl.sql.mysql;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.entity.RemoteCredentials;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
+import com.celeste.databases.storage.model.database.type.StorageType;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
@@ -90,8 +91,8 @@ public final class MySqlProvider implements Sql {
       config.addDataSourceProperty("socketTimeout", String.valueOf(TimeUnit.SECONDS.toMillis(30)));
 
       this.hikari = new HikariDataSource(config);
-    } catch (Throwable throwable) {
-      throw new FailedConnectionException(throwable);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 
@@ -106,11 +107,16 @@ public final class MySqlProvider implements Sql {
   }
 
   @Override
+  public StorageType getStorageType() {
+    return StorageType.MYSQL;
+  }
+
+  @Override
   public Connection getConnection() throws FailedConnectionException {
     try {
       return hikari.getConnection();
-    } catch (SQLException exception) {
-      throw new FailedConnectionException(exception);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 

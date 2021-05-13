@@ -1,9 +1,11 @@
 package com.celeste.databases.core.adapter.type;
 
 import com.google.common.collect.ImmutableList;
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 public enum JsonType {
@@ -21,7 +23,14 @@ public enum JsonType {
     return Arrays.stream(values())
         .filter(type -> type.getNames().contains(json.toUpperCase()))
         .findFirst()
-        .orElseThrow(() -> new NullPointerException("Invalid json: " + json));
+        .orElseThrow(() -> new InvalidParameterException("Invalid json: " + json));
+  }
+
+  public static JsonType getStorage(final String json, @Nullable final JsonType orElse) {
+    return Arrays.stream(values())
+        .filter(type -> type.getNames().contains(json.toUpperCase()))
+        .findFirst()
+        .orElse(orElse);
   }
 
 }
