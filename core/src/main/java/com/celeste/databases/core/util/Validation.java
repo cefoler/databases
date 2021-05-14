@@ -15,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
 public final class Validation {
 
   @SuppressWarnings("RedundantThrows")
-  public static <T extends Throwable> boolean isTrue(final boolean expected,
-      final Supplier<T> orElse) throws T {
-    if (!expected) {
+  public static <T extends Throwable> boolean isTrue(final boolean value, final Supplier<T> orElse)
+      throws T {
+    if (!value) {
       orElse.get();
     }
 
@@ -26,9 +26,9 @@ public final class Validation {
 
   @SuppressWarnings("RedundantThrows")
   @SneakyThrows(ReflectiveOperationException.class)
-  public static <T extends Throwable> boolean isTrue(final boolean expected, final Class<T> orElse)
+  public static <T extends Throwable> boolean isTrue(final boolean value, final Class<T> orElse)
       throws T {
-    if (!expected) {
+    if (!value) {
       final Constructor<?> constructor = Reflection.getConstructor(orElse, String.class);
       Reflection.instance(constructor, "The expression cannot be false");
     }
@@ -45,9 +45,9 @@ public final class Validation {
   }
 
   @SuppressWarnings("RedundantThrows")
-  public static <T extends Throwable> boolean isFalse(final boolean expected,
+  public static <T extends Throwable> boolean isFalse(final boolean value,
       final Supplier<T> orElse) throws T {
-    if (!expected) {
+    if (!value) {
       orElse.get();
     }
 
@@ -56,9 +56,9 @@ public final class Validation {
 
   @SuppressWarnings("RedundantThrows")
   @SneakyThrows(ReflectiveOperationException.class)
-  public static <T extends Throwable> boolean isFalse(final boolean expected,
-      final Class<T> orElse) throws T {
-    if (!expected) {
+  public static <T extends Throwable> boolean isFalse(final boolean value, final Class<T> orElse)
+      throws T {
+    if (!value) {
       final Constructor<?> constructor = Reflection.getConstructor(orElse, String.class);
       Reflection.instance(constructor, "The expression cannot be true");
     }
@@ -66,8 +66,8 @@ public final class Validation {
     return false;
   }
 
-  public static boolean isFalse(final boolean expected) {
-    if (!expected) {
+  public static boolean isFalse(final boolean value) {
+    if (!value) {
       throw new IllegalArgumentException("The expression cannot be true");
     }
 

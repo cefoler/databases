@@ -1,10 +1,8 @@
 package com.celeste.databases.storage.model.database.dao.impl.mongodb;
 
 import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundException;
+import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.storage.model.database.dao.AbstractStorageDao;
-import com.celeste.databases.storage.model.database.dao.exception.DeleteException;
-import com.celeste.databases.storage.model.database.dao.exception.FindException;
-import com.celeste.databases.storage.model.database.dao.exception.SaveException;
 import com.celeste.databases.storage.model.database.provider.impl.mongodb.MongoDb;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -16,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import lombok.SneakyThrows;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -23,7 +22,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
   private final MongoCollection<Document> collection;
 
-  public MongoDbDao(final MongoDb storage, final Class<T> entity) {
+  public MongoDbDao(final MongoDb storage, final Class<T> entity) throws FailedConnectionException {
     super(storage, entity);
 
     final String collection = getEntity().getName();
@@ -32,7 +31,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
   @SafeVarargs
   @Override
-  public final void save(final T... entities) throws SaveException {
+  public final void save(final T... entities) throws FailedConnectionException {
     try {
       final ReplaceOptions options = new ReplaceOptions().upsert(true);
 
@@ -45,13 +44,13 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
         collection.replaceOne(bson, document, options);
       }
     } catch (Exception exception) {
-      throw new SaveException(exception.getCause());
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 
   @SafeVarargs
   @Override
-  public final void delete(final T... entities) throws DeleteException {
+  public final void delete(final T... entities) throws FailedConnectionException {
     try {
       for (final T entity : entities) {
         final Object key = getEntity().getKey(entity);
@@ -60,19 +59,23 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
         collection.deleteOne(bson);
       }
     } catch (Exception exception) {
-      throw new DeleteException(exception.getCause());
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 
   @Override
-  public boolean contains(final Object key) {
-    final Bson bson = Filters.eq(key);
+  public boolean contains(final Object key) throws FailedConnectionException {
+    try {
+      final Bson bson = Filters.eq(key);
 
-    return collection.countDocuments(bson) > 1;
+      return collection.countDocuments(bson) > 1;
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception.getCause());
+    }
   }
 
   @Override
-  public T find(final Object key) throws FindException {
+  public T find(final Object key) throws ValueNotFoundException, FailedConnectionException {
     try {
       final Bson bson = Filters.eq(key);
       final Document document = collection.find(bson).first();
@@ -82,13 +85,15 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       }
 
       return deserialize(document);
+    } catch (ValueNotFoundException exception) {
+      throw new ValueNotFoundException(exception.getCause());
     } catch (Exception exception) {
-      throw new FindException(exception.getCause());
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 
   @Override
-  public List<T> findAll() throws FindException {
+  public List<T> findAll() throws FailedConnectionException {
     try {
       final List<T> entities = new ArrayList<>();
 
@@ -103,24 +108,30 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
       return entities;
     } catch (Exception exception) {
-      throw new FindException(exception.getCause());
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 
-  private MongoCollection<Document> createCollection(final String name) {
-    final MongoDatabase database = getDatabase().getDatabase();
+  private MongoCollection<Document> createCollection(final String collectionName)
+      throws FailedConnectionException {
+    try {
+      final MongoDatabase database = getDatabase().getDatabase();
 
-    for (final String collectionName : database.listCollectionNames()) {
-      if (name.equalsIgnoreCase(collectionName)) {
-        return database.getCollection(name);
+      for (final String name : database.listCollectionNames()) {
+        if (collectionName.equalsIgnoreCase(name)) {
+          return database.getCollection(collectionName);
+        }
       }
-    }
 
-    database.createCollection(name);
-    return database.getCollection(name);
+      database.createCollection(collectionName);
+      return database.getCollection(collectionName);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception.getCause());
+    }
   }
 
-  private Document serialize(final T entity) throws IllegalAccessException {
+  @SneakyThrows
+  private Document serialize(final T entity) {
     final Map<String, Object> values = getEntity().getValues(entity);
     final Document document = new Document();
 
@@ -128,7 +139,8 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     return document;
   }
 
-  private T deserialize(final Document document) throws ReflectiveOperationException {
+  @SneakyThrows
+  private T deserialize(final Document document) {
     final Map<String, Field> values = getEntity().getValues();
     final T entity = getClazz().getConstructor().newInstance();
 

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import lombok.SneakyThrows;
 
 public final class Entity<T> {
 
@@ -57,15 +58,23 @@ public final class Entity<T> {
     return key;
   }
 
-  public Object getKey(final T instance) throws IllegalAccessException {
+  @SneakyThrows
+  public Object getKey(final T instance) {
     return key.get(instance);
+  }
+
+  public String getKeyName() {
+    return key.getAnnotation(Name.class) != null
+        ? key.getAnnotation(Name.class).value().toLowerCase()
+        : key.getName().toLowerCase();
   }
 
   public Map<String, Field> getValues() {
     return new LinkedHashMap<>(values);
   }
 
-  public Map<String, Object> getValues(final T instance) throws IllegalAccessException {
+  @SneakyThrows
+  public Map<String, Object> getValues(final T instance) {
     final Map<String, Object> newValues = new LinkedHashMap<>();
 
     for (final Entry<String, Field> entry : values.entrySet()) {
