@@ -7,7 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class JacksonAdapter implements Json {
 
-  private static final JacksonAdapter INSTANCE = new JacksonAdapter();
+  private static final JacksonAdapter INSTANCE;
+
+  static {
+    INSTANCE = new JacksonAdapter();
+  }
+
   private final ObjectMapper mapper;
 
   private JacksonAdapter() {

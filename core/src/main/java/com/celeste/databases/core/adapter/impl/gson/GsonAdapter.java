@@ -9,7 +9,12 @@ import java.io.IOException;
 
 public final class GsonAdapter implements Json {
 
-  private static final GsonAdapter INSTANCE = new GsonAdapter();
+  private static final GsonAdapter INSTANCE;
+
+  static {
+    INSTANCE = new GsonAdapter();
+  }
+
   private Gson gson;
 
   private GsonAdapter() {

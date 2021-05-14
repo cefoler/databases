@@ -4,6 +4,7 @@ import com.celeste.databases.core.adapter.exception.JsonSerializeException;
 import com.celeste.databases.core.adapter.impl.jackson.JacksonAdapter;
 import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundException;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
+import com.celeste.databases.core.util.Wrapper;
 import com.celeste.databases.storage.model.database.dao.AbstractStorageDao;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
 import java.lang.reflect.Field;
@@ -21,14 +22,14 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
   public SqlDao(final Sql storage, final Class<T> entity) {
     super(storage, entity);
-
-    final String table = getEntity().getCollection();
-    createTable(table);
+    createTable();
   }
 
   @SafeVarargs
   @Override
   public final void save(final T... entities) {
+    final String table = getEntity().getName();
+    Field field;
 
   }
 
@@ -53,37 +54,36 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     return null;
   }
 
-  private void createTable(final String table) {
-
+  private void createTable() {
   }
 
-  private int update(final String sql, final Object... values)
+  private int executeUpdate(final String sql, final Object... values)
       throws ValueNotFoundException, FailedConnectionException {
     try (
         final Connection connection = getDatabase().getConnection();
         final PreparedStatement statement = connection.prepareStatement(sql)
     ) {
-      apply(statement, values);
+      applyValues(statement, values);
       return statement.executeUpdate();
     } catch (SQLException exception) {
       throw new ValueNotFoundException(exception);
     }
   }
 
-  private ResultSet query(final String sql, final Object... values)
+  private ResultSet executeQuery(final String sql, final Object... values)
       throws ValueNotFoundException, FailedConnectionException {
     try (
         final Connection connection = getDatabase().getConnection();
         final PreparedStatement statement = connection.prepareStatement(sql)
     ) {
-      apply(statement, values);
+      applyValues(statement, values);
       return statement.executeQuery();
     } catch (SQLException exception) {
       throw new ValueNotFoundException(exception);
     }
   }
 
-  private void apply(final PreparedStatement statement, final Object... values)
+  private void applyValues(final PreparedStatement statement, final Object... values)
       throws FailedConnectionException {
     final AtomicInteger index = new AtomicInteger(1);
 
@@ -96,12 +96,29 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     }
   }
 
-  private T getFirst(final String sql, final Object... values) {
-
+  private T getFirst(final String sql, final Object... values)
+      throws ValueNotFoundException, FailedConnectionException {
+    try (final ResultSet result = executeQuery(sql, values)) {
+      return deserialize(result);
+    } catch (SQLException | ReflectiveOperationException exception) {
+      throw new ValueNotFoundException(exception);
+    }
   }
 
-  private List<T> getAll(final String sql, final Object... values) {
+  private List<T> getAll(final String sql, final Object... values)
+      throws ValueNotFoundException, FailedConnectionException {
+    final List<T> entities = new ArrayList<>();
 
+    try (final ResultSet result = executeQuery(sql, values)) {
+      while (result.next()) {
+        final T entity = deserialize(result);
+        entities.add(entity);
+      }
+    } catch (SQLException | ReflectiveOperationException exception) {
+      throw new ValueNotFoundException(exception);
+    }
+
+    return entities;
   }
 
   private Object[] serialize(final T entity) throws IllegalAccessException, JsonSerializeException {
@@ -109,7 +126,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     final List<Object> newValues = new ArrayList<>();
 
     for (final Object object : values.values()) {
-      final Object newObject = !instanceOfWrapper(object)
+      final Object newObject = !Wrapper.isWrapper(object)
           ? JacksonAdapter.getInstance().serialize(object)
           : object;
 
@@ -143,7 +160,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       }
 
       final Class<?> clazz = field.getType();
-      final Object newObject = getObject(object, clazz);
+      final Object newObject = convertToRealObject(object, clazz);
 
       field.set(entity, newObject);
       values.remove(columnName);
@@ -156,13 +173,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     return entity;
   }
 
-  private boolean instanceOfWrapper(final Object object) {
-    return object instanceof String || object instanceof Integer || object instanceof Double
-        || object instanceof Boolean || object instanceof Long || object instanceof Float
-        || object instanceof Character || object instanceof Byte || object instanceof Short;
-  }
-
-  private Object getObject(final Object object, final Class<?> clazz) {
+  private Object convertToRealObject(final Object object, final Class<?> clazz) {
     try {
       if (!(object instanceof String)) {
         return object;
@@ -173,6 +184,10 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     } catch (Exception exception) {
       return object;
     }
+  }
+
+  private String convertWrapperToJdbc(final Class<?> clazz) {
+    if (clazz.equals()
   }
 
 }

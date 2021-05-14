@@ -5,7 +5,6 @@ import com.celeste.databases.storage.model.annotation.Key;
 import com.celeste.databases.storage.model.annotation.Name;
 import com.celeste.databases.storage.model.annotation.Storable;
 import com.celeste.databases.storage.model.annotation.Transient;
-import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 
 public final class Entity<T> {
 
-  private final String collection;
+  private final String name;
 
   private final Field key;
   private final Map<String, Field> values;
@@ -27,7 +26,7 @@ public final class Entity<T> {
     Validation.notNull(storable, () ->
         new IllegalArgumentException("An @Storable annotation was not found on that entity."));
 
-    this.collection = storable.value().toLowerCase();
+    this.name = storable.value().toLowerCase();
 
     final List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
         .peek(field -> field.setAccessible(true))
@@ -50,8 +49,8 @@ public final class Entity<T> {
             LinkedHashMap::new));
   }
 
-  public String getCollection() {
-    return collection;
+  public String getName() {
+    return name;
   }
 
   public Field getKey() {

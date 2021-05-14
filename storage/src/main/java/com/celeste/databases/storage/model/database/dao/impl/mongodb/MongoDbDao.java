@@ -26,7 +26,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   public MongoDbDao(final MongoDb storage, final Class<T> entity) {
     super(storage, entity);
 
-    final String collection = getEntity().getCollection();
+    final String collection = getEntity().getName();
     this.collection = createCollection(collection);
   }
 
