@@ -5,12 +5,13 @@ import com.celeste.databases.storage.model.annotation.Key;
 import com.celeste.databases.storage.model.annotation.Name;
 import com.celeste.databases.storage.model.annotation.Storable;
 import com.celeste.databases.storage.model.annotation.Transient;
+import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public final class Entity<T> {
@@ -26,7 +27,7 @@ public final class Entity<T> {
     Validation.notNull(storable, () ->
         new IllegalArgumentException("An @Storable annotation was not found on that entity."));
 
-    this.collection = storable.value();
+    this.collection = storable.value().toLowerCase();
 
     final List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
         .peek(field -> field.setAccessible(true))
@@ -42,11 +43,11 @@ public final class Entity<T> {
     this.values = fields.stream()
         .collect(Collectors.toMap(
             field -> field.getAnnotation(Name.class) != null
-                ? field.getAnnotation(Name.class).value()
-                : field.getName(),
+                ? field.getAnnotation(Name.class).value().toLowerCase()
+                : field.getName().toLowerCase(),
             field -> field,
             (field, field2) -> field2,
-            TreeMap::new));
+            LinkedHashMap::new));
   }
 
   public String getCollection() {
@@ -62,11 +63,11 @@ public final class Entity<T> {
   }
 
   public Map<String, Field> getValues() {
-    return values;
+    return new LinkedHashMap<>(values);
   }
 
   public Map<String, Object> getValues(final T instance) throws IllegalAccessException {
-    final Map<String, Object> newValues = new TreeMap<>();
+    final Map<String, Object> newValues = new LinkedHashMap<>();
 
     for (final Entry<String, Field> entry : values.entrySet()) {
       final String key = entry.getKey();

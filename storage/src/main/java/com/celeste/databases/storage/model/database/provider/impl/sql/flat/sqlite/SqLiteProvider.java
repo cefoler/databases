@@ -49,7 +49,7 @@ public final class SqLiteProvider implements Sql {
 
       final Connection closableConnection = new JdbcConnection(newUri, properties);
       this.connection = new NonClosableConnection(closableConnection);
-    } catch (Exception throwable) {
+    } catch (Exception exception) {
       throw new FailedConnectionException(exception.getCause());
     }
   }

@@ -129,18 +129,15 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   }
 
   private T deserialize(final Document document) throws ReflectiveOperationException {
+    final Map<String, Field> values = getEntity().getValues();
     final T entity = getClazz().getConstructor().newInstance();
 
-    for (final Entry<String, Field> entry : getEntity().getValues().entrySet()) {
+    for (final Entry<String, Field> entry : values.entrySet()) {
       final String name = entry.getKey();
       final Field field = entry.getValue();
 
-      if (document.containsKey(name)) {
-        final Object object = document.get(name);
-        field.set(entity, object);
-      } else {
-        field.set(entity, null);
-      }
+      final Object object = document.getOrDefault(name, null);
+      field.set(entity, object);
     }
 
     return entity;

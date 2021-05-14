@@ -72,8 +72,8 @@ public final class PostgreSqlProvider implements Sql {
       config.addDataSourceProperty("socketTimeout", String.valueOf(TimeUnit.SECONDS.toMillis(30)));
 
       this.hikari = new HikariDataSource(config);
-    } catch (Exception throwable) {
-      throw new FailedConnectionException(throwable.getCause());
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception.getCause());
     }
   }
 
