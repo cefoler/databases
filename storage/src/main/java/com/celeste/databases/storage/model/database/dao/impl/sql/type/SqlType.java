@@ -1,26 +1,33 @@
 package com.celeste.databases.storage.model.database.dao.impl.sql.type;
 
 import com.celeste.databases.storage.model.entity.Entity;
+import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
+@Getter
 public enum SqlType {
 
-  SAVE {
+  SAVE("SAVE") {
     @Override
     public String getSql(final Entity<?> entity) {
-      final String table = entity.getName();
       final Map<String, Field> values = entity.getValues();
 
       final StringBuilder builder = new StringBuilder()
           .append("REPLACE INTO ")
-          .append(table)
+          .append(entity.getName())
           .append(" VALUES (");
 
       final int size = values.size();
 
       for (int index = 1; index <= size; index++) {
-        final String expression = index == size ? "?," : "?);";
+        final String expression = index != size ? "?," : "?);";
 
         builder.append(expression);
       }
@@ -28,15 +35,14 @@ public enum SqlType {
       return builder.toString();
     }
   },
-  DELETE {
+  DELETE("DELETE") {
     @Override
     public String getSql(final Entity<?> entity) {
-      final String table = entity.getName();
-      final String key = entity.getKeyName();
+      final String key = entity.getKey().getKey();
 
       final StringBuilder builder = new StringBuilder()
           .append("DELETE FROM ")
-          .append(table)
+          .append(entity.getName())
           .append(" WHERE ")
           .append(key)
           .append(" = ?;");
@@ -44,45 +50,14 @@ public enum SqlType {
       return builder.toString();
     }
   },
-  CONTAINS {
+  CONTAINS("CONTAINS") {
     @Override
     public String getSql(final Entity<?> entity) {
-      final String table = entity.getName();
-      final String key = entity.getKeyName();
+      final String key = entity.getKey().getKey();
 
       final StringBuilder builder = new StringBuilder()
           .append("SELECT 1 FROM ")
-          .append(table)
-          .append(" WHERE")
-          .append(key)
-          .append(" = ?;");
-
-      return builder.toString();
-    }
-  },
-  FIND {
-    @Override
-    public String getSql(final Entity<?> entity) {
-      final String table = entity.getName();
-      final String key = entity.getKeyName();
-      final Map<String, Field> values = entity.getValues();
-
-      final StringBuilder builder = new StringBuilder()
-          .append("SELECT ");
-
-      for (final String name : values.keySet()) {
-        final int size = values.size();
-        builder.append(name);
-
-        if (size != 1) {
-          builder.append(", ");
-        }
-
-        values.remove(name);
-      }
-
-      builder.append(" FROM ")
-          .append(table)
+          .append(entity.getName())
           .append(" WHERE ")
           .append(key)
           .append(" = ?;");
@@ -90,68 +65,120 @@ public enum SqlType {
       return builder.toString();
     }
   },
-  FIND_ALL {
+  FIND("FIND") {
     @Override
     public String getSql(final Entity<?> entity) {
-      final String table = entity.getName();
+      final String key = entity.getKey().getKey();
       final Map<String, Field> values = entity.getValues();
 
       final StringBuilder builder = new StringBuilder()
           .append("SELECT ");
 
+      final Map<String, Field> cache = entity.getValues();
+
       for (final String name : values.keySet()) {
-        final int size = values.size();
+        final int size = cache.size();
         builder.append(name);
 
         if (size != 1) {
           builder.append(", ");
         }
 
-        values.remove(name);
+        cache.remove(name);
       }
 
       builder.append(" FROM ")
-          .append(table)
+          .append(entity.getName())
+          .append(" WHERE ")
+          .append(key)
+          .append(" = ?;");
+
+      return builder.toString();
+    }
+  },
+  FIND_ALL("FIND_ALL", "FINDALL") {
+    @Override
+    public String getSql(final Entity<?> entity) {
+      final Map<String, Field> values = entity.getValues();
+
+      final StringBuilder builder = new StringBuilder()
+          .append("SELECT ");
+
+      final Map<String, Field> cache = entity.getValues();
+
+      for (final String name : values.keySet()) {
+        builder.append(name);
+
+        if (cache.size() != 1) {
+          builder.append(", ");
+        }
+
+        cache.remove(name);
+      }
+
+      builder.append(" FROM ")
+          .append(entity.getName())
           .append(";");
 
       return builder.toString();
     }
   },
-  CREATE_TABLE {
+  CREATE_TABLE("CREATE_TABLE", "CREATETABLE") {
     @Override
     public String getSql(final Entity<?> entity) {
-      final String table = entity.getName();
-      final Field key = entity.getKey();
-      final String keyName = entity.getKeyName();
-      final Map<String, Field> values = entity.getValues();
+      final Entry<String, Field> key = entity.getKey();
+      final VariableType keyVariable = VariableType.getVariable(key.getValue().getType());
 
-      final Class<?> keyClazz = key.getType();
-      final VariableType keyVariable = VariableType.getVariable(keyClazz);
-      final String keyVariableName = keyVariable.getName();
+      final StringBuilder builder = new StringBuilder()
+          .append("CREATE TABLE IF NOT EXISTS ")
+          .append(entity.getName())
+          .append(" (")
+          .append(key.getKey())
+          .append(" ")
+          .append(keyVariable.getName())
+          .append(" PRIMARY KEY, ");
 
-      final StringBuffer buffer = new StringBuffer(" ")
-          .append("CREATE TABLE IF NOT EXISTS")
-          .append(table)
-          .append("(")
-          .append(keyName)
-          .append(keyVariableName)
-          .append(",");
+      final Map<String, Field> cache = entity.getValues();
 
-      values.forEach((name, field) -> {
-        final Class<?> clazz = field.getType();
-        final VariableType variable = VariableType.getVariable(clazz);
-        final String variableName = variable.getName();
+      for (final Entry<String, Field> entry : entity.getValues().entrySet()) {
+        final VariableType variable = VariableType.getVariable(entry.getValue().getType());
 
-        buffer.append(name)
-            .append(variableName)
-            .append(",");
-      });
+        builder.append(entry.getKey())
+            .append(" ")
+            .append(variable.getName());
 
-      buffer.append(");");
+        if (cache.size() != 1) {
+          builder.append(", ");
+        }
 
-      return buffer.toString();
+        cache.remove(entry.getKey());
+      }
+
+      builder.append(");");
+
+      return builder.toString();
     }
   };
+
+  private final List<String> names;
+
+  SqlType(final String... names) {
+    this.names = ImmutableList.copyOf(names);
+  }
+
+  public static SqlType getSql(final String sql) {
+    return Arrays.stream(values())
+        .filter(type -> type.getNames().contains(sql.toUpperCase()))
+        .findFirst()
+        .orElseThrow(() -> new InvalidParameterException("Invalid sql: " + sql));
+  }
+
+  public static SqlType getSql(final String sql, @Nullable final SqlType orElse) {
+    return Arrays.stream(values())
+        .filter(type -> type.getNames().contains(sql.toUpperCase()))
+        .findFirst()
+        .orElse(orElse);
+  }
 
   public abstract String getSql(final Entity<?> entity);
 

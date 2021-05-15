@@ -53,8 +53,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @Override
   public final void save(final T... entities) throws FailedConnectionException {
     for (final T entity : entities) {
-      final Object[] entitySerialized = serialize(entity);
-      executeUpdate(save, entitySerialized);
+      executeUpdate(save, serialize(entity));
     }
   }
 
@@ -62,16 +61,13 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @Override
   public final void delete(final T... entities) throws FailedConnectionException {
     for (final T entity : entities) {
-      final Object[] entitySerialized = serialize(entity);
-      executeUpdate(delete, entitySerialized);
+      executeUpdate(delete, serialize(entity));
     }
   }
 
   @Override
   public boolean contains(final Object key) throws FailedConnectionException {
-    final Object keySerialized = serializeObject(key);
-
-    try (final ResultSet result = executeQuery(contains, keySerialized)) {
+    try (final ResultSet result = executeQuery(contains, serializeObject(key))) {
       return result.next();
     } catch (Exception exception) {
       throw new FailedConnectionException(exception.getCause());
@@ -80,9 +76,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
   @Override
   public T find(final Object key) throws ValueNotFoundException, FailedConnectionException {
-    final Object keySerialized = serializeObject(key);
-
-    return getFirst(find, keySerialized);
+    return getFirst(find, serializeObject(key));
   }
 
   @Override
@@ -126,8 +120,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
     for (final Object value : values) {
       try {
-        final int newIndex = index.getAndIncrement();
-        statement.setObject(newIndex, value);
+        statement.setObject(index.getAndIncrement(), value);
       } catch (Exception exception) {
         throw new FailedConnectionException(exception.getCause());
       }
@@ -144,13 +137,13 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     }
   }
 
-  private List<T> getAll(final String sql, final Object... values) throws FailedConnectionException {
+  private List<T> getAll(final String sql, final Object... values)
+      throws FailedConnectionException {
     final List<T> entities = new ArrayList<>();
 
     try (final ResultSet result = executeQuery(sql, values)) {
       while (result.next()) {
-        final T entity = deserialize(result);
-        entities.add(entity);
+        entities.add(deserialize(result));
       }
     } catch (SQLException exception) {
       throw new FailedConnectionException(exception.getCause());
@@ -179,9 +172,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     final List<String> columnNames = new ArrayList<>();
 
     for (int index = 1; index <= columnCount; index++) {
-      final String columnName = metaData.getColumnName(index);
-
-      columnNames.add(columnName);
+      columnNames.add(metaData.getColumnName(index));
     }
 
     for (final String columnName : columnNames) {
@@ -192,10 +183,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
         continue;
       }
 
-      final Class<?> clazz = field.getType();
-      final Object newObject = deserializeObject(object, clazz);
-
-      field.set(entity, newObject);
+      field.set(entity, deserializeObject(object, field.getType()));
       values.remove(columnName);
     }
 

@@ -13,7 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StorageFactory {
 
-  private static final StorageFactory INSTANCE = new StorageFactory();
+  private static final StorageFactory INSTANCE;
+
+  static {
+    INSTANCE = new StorageFactory();
+  }
 
   public Storage start(final Properties properties) throws FailedConnectionException {
     try {
@@ -21,13 +25,11 @@ public final class StorageFactory {
       final StorageType storage = StorageType.getStorage(driver);
 
       final AccessType access = storage.getAccess();
-
-      final Class<? extends Storage> provider = storage.getProvider();
-      final Class<? extends Credentials> credential = access.getCredential();
-
       final Credentials credentials = access.serialize(properties);
 
-      final Constructor<? extends Storage> constructor = provider.getConstructor(credential);
+      final Constructor<? extends Storage> constructor = storage.getProvider()
+          .getConstructor(access.getCredentials());
+
       return constructor.newInstance(credentials);
     } catch (Throwable throwable) {
       throw new FailedConnectionException(throwable);

@@ -25,8 +25,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   public MongoDbDao(final MongoDb storage, final Class<T> entity) throws FailedConnectionException {
     super(storage, entity);
 
-    final String collection = getEntity().getName();
-    this.collection = createCollection(collection);
+    this.collection = createCollection();
   }
 
   @SafeVarargs
@@ -81,7 +80,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       final Document document = collection.find(bson).first();
 
       if (document == null) {
-        throw new ValueNotFoundException("Value not found.");
+        throw new ValueNotFoundException("Value not found");
       }
 
       return deserialize(document);
@@ -100,9 +99,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       try (MongoCursor<Document> cursor = collection.find().cursor()) {
         while (cursor.hasNext()) {
           final Document document = cursor.next();
-          final T entity = deserialize(document);
-
-          entities.add(entity);
+          entities.add(deserialize(document));
         }
       }
 
@@ -112,19 +109,20 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     }
   }
 
-  private MongoCollection<Document> createCollection(final String collectionName)
+  private MongoCollection<Document> createCollection()
       throws FailedConnectionException {
     try {
       final MongoDatabase database = getDatabase().getDatabase();
+      final String collection = getEntity().getName();
 
       for (final String name : database.listCollectionNames()) {
-        if (collectionName.equalsIgnoreCase(name)) {
-          return database.getCollection(collectionName);
+        if (collection.equalsIgnoreCase(name)) {
+          return database.getCollection(collection);
         }
       }
 
-      database.createCollection(collectionName);
-      return database.getCollection(collectionName);
+      database.createCollection(collection);
+      return database.getCollection(collection);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception.getCause());
     }
@@ -145,11 +143,8 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     final T entity = getClazz().getConstructor().newInstance();
 
     for (final Entry<String, Field> entry : values.entrySet()) {
-      final String name = entry.getKey();
-      final Field field = entry.getValue();
-
-      final Object object = document.getOrDefault(name, null);
-      field.set(entity, object);
+      final Object object = document.getOrDefault(entry.getKey(), null);
+      entry.getValue().set(entity, object);
     }
 
     return entity;

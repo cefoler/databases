@@ -26,7 +26,7 @@ public enum JsonType {
         .orElseThrow(() -> new InvalidParameterException("Invalid json: " + json));
   }
 
-  public static JsonType getStorage(final String json, @Nullable final JsonType orElse) {
+  public static JsonType getJson(final String json, @Nullable final JsonType orElse) {
     return Arrays.stream(values())
         .filter(type -> type.getNames().contains(json.toUpperCase()))
         .findFirst()

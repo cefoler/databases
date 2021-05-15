@@ -1,5 +1,6 @@
 package com.celeste.databases.core.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -58,7 +59,7 @@ public final class Reflection {
     return getClazz(path).getConstructor(parameterClass);
   }
 
-  public static Constructor<?> getConstructor(final Class<?> clazz,
+  public static <T> Constructor<T> getConstructor(final Class<T> clazz,
       final Class<?>... parameterClass) throws NoSuchMethodException {
     return clazz.getConstructor(parameterClass);
   }
@@ -70,9 +71,9 @@ public final class Reflection {
     return constructor;
   }
 
-  public static Constructor<?> getDcConstructor(final Class<?> clazz,
+  public static <T> Constructor<T> getDcConstructor(final Class<T> clazz,
       final Class<?>... parameterClass) throws NoSuchMethodException {
-    final Constructor<?> constructor = clazz.getDeclaredConstructor(parameterClass);
+    final Constructor<T> constructor = clazz.getDeclaredConstructor(parameterClass);
     constructor.setAccessible(true);
     return constructor;
   }
@@ -87,12 +88,14 @@ public final class Reflection {
     return getClazz(path).getConstructors()[size];
   }
 
-  public static Constructor<?>[] getConstructors(final Class<?> clazz) {
-    return clazz.getConstructors();
+  public static <T> Constructor<T>[] getConstructors(final Class<T> clazz) {
+    return Arrays.stream(clazz.getConstructors())
+        .toArray(Constructor[]::new);
   }
 
-  public static Constructor<?> getConstructors(final Class<?> clazz, final int size) {
-    return clazz.getConstructors()[size];
+  public static <T> Constructor<T> getConstructors(final Class<T> clazz, final int size) {
+    return Arrays.stream(clazz.getConstructors())
+        .toArray(Constructor[]::new)[size];
   }
 
   public static Constructor<?>[] getDcConstructors(final String path)
@@ -109,14 +112,15 @@ public final class Reflection {
     return constructor;
   }
 
-  public static Constructor<?>[] getDcConstructors(final Class<?> clazz) {
+  public static <T> Constructor<T>[] getDcConstructors(final Class<T> clazz) {
     return Arrays.stream(clazz.getDeclaredConstructors())
         .peek(constructor -> constructor.setAccessible(true))
         .toArray(Constructor[]::new);
   }
 
-  public static Constructor<?> getDcConstructors(final Class<?> clazz, final int size) {
-    final Constructor<?> constructor = clazz.getDeclaredConstructors()[size];
+  public static <T> Constructor<T> getDcConstructors(final Class<T> clazz, final int size) {
+    final Constructor<T> constructor = Arrays.stream(clazz.getDeclaredConstructors())
+        .toArray(Constructor[]::new)[size];
     constructor.setAccessible(true);
     return constructor;
   }
@@ -249,6 +253,36 @@ public final class Reflection {
     final Field field = clazz.getDeclaredFields()[size];
     field.setAccessible(true);
     return field;
+  }
+
+  public static <T extends Annotation> boolean containsAnnotation(final Class<?> clazz,
+      final Class<T> annotation) {
+    return clazz.isAnnotationPresent(annotation);
+  }
+
+  public static <T extends Annotation> boolean containsAnnotation(final Constructor<?> constructor,
+      final Class<T> annotation) {
+    return constructor.isAnnotationPresent(annotation);
+  }
+
+  public static <T extends Annotation> boolean containsAnnotation(final Field field,
+      final Class<T> annotation) {
+    return field.isAnnotationPresent(annotation);
+  }
+
+  public static <T extends Annotation> T getAnnotation(final Class<?> clazz,
+      final Class<T> annotation) {
+    return clazz.getAnnotation(annotation);
+  }
+
+  public static <T extends Annotation> T getAnnotation(final Constructor<?> constructor,
+      final Class<T> annotation) {
+    return constructor.getAnnotation(annotation);
+  }
+
+  public static <T extends Annotation> T getAnnotation(final Field field,
+      final Class<T> annotation) {
+    return field.getAnnotation(annotation);
   }
 
   public static Object instance(final Constructor<?> constructor)

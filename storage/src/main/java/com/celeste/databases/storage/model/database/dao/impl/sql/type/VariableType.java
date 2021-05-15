@@ -1,7 +1,5 @@
 package com.celeste.databases.storage.model.database.dao.impl.sql.type;
 
-import com.celeste.databases.core.adapter.impl.jackson.JacksonAdapter;
-import com.celeste.databases.core.util.Wrapper;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -20,6 +18,7 @@ public enum VariableType {
   BYTE(Byte.class, "TINYINT"),
   SHORT(Short.class, "SMALLINT"),
   INTEGER(Integer.class, "INT"),
+  INT(int.class, "INT"),
   LONG(Long.class, "BIGINT"),
 
   FLOAT(Float.class, "FLOAT"),
@@ -41,7 +40,7 @@ public enum VariableType {
 
   public static VariableType getVariable(final Class<?> clazz) {
     return Arrays.stream(values())
-        .filter(type -> type.getClazz().equals(clazz))
+        .filter(type -> type.getClazz().equals(clazz) || type.getClazz().isInstance(clazz))
         .findFirst()
         .orElse(JSON);
   }

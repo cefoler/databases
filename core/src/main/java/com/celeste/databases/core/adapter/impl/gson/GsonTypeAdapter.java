@@ -48,7 +48,7 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
 
   public GsonTypeAdapter<T> registerSubtype(final Class<? extends T> subtype, final String label) {
     if (subtypeToLabel.containsKey(subtype) || labelToSubtype.containsKey(label)) {
-      throw new IllegalArgumentException("Types and labels must be unique.");
+      throw new IllegalArgumentException("Types and labels must be unique");
     }
 
     labelToSubtype.put(label, subtype);
@@ -78,8 +78,8 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
     final Map<Class<?>, TypeAdapter<?>> subtypes = new LinkedHashMap<>();
 
     for (final Entry<String, Class<?>> entry : labelToSubtype.entrySet()) {
-      final TypeAdapter<?> type = gson.getDelegateAdapter(this,
-          TypeToken.get(entry.getValue()));
+      final TypeToken<?> newToken = TypeToken.get(entry.getValue());
+      final TypeAdapter<?> type = gson.getDelegateAdapter(this, newToken);
 
       labels.put(entry.getKey(), type);
       subtypes.put(entry.getValue(), type);
@@ -88,7 +88,6 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
     return new TypeAdapter<U>() {
 
       @Override
-      @SuppressWarnings("unchecked")
       public U read(final JsonReader reader) {
         final JsonElement json = Streams.parse(reader);
         final JsonElement newJson = maintain
@@ -111,7 +110,6 @@ public final class GsonTypeAdapter<T> implements TypeAdapterFactory {
       }
 
       @Override
-      @SuppressWarnings("unchecked")
       public void write(final JsonWriter writer, final U value) throws IOException {
         final Class<?> clazz = value.getClass();
 

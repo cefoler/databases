@@ -27,25 +27,17 @@ public final class PostgreSqlProvider implements Sql {
 
       config.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
 
-      final String hostname = credentials.getHostname();
-      final int port = credentials.getPort();
+      config.addDataSourceProperty("serverName", credentials.getHostname());
+      config.addDataSourceProperty("portNumber", credentials.getPort());
 
-      final String database = credentials.getDatabase();
+      config.addDataSourceProperty("databaseName", credentials.getDatabase());
 
-      final String username = credentials.getUsername();
-      final String password = credentials.getPassword();
+      config.addDataSourceProperty("user", credentials.getUsername());
+      config.addDataSourceProperty("password", credentials.getPassword());
 
-      final boolean ssl = credentials.isSsl();
-
-      config.addDataSourceProperty("serverName", hostname);
-      config.addDataSourceProperty("portNumber", port);
-
-      config.addDataSourceProperty("databaseName", database);
-
-      config.addDataSourceProperty("user", username);
-      config.addDataSourceProperty("password", password);
-
-      config.addDataSourceProperty("sslmode", ssl ? "require" : "disable");
+      config.addDataSourceProperty("sslmode", credentials.isSsl()
+          ? "require"
+          : "disable");
 
       config.setMinimumIdle(1);
       config.setMaximumPoolSize(20);

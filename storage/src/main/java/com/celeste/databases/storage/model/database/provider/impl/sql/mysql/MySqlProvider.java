@@ -45,26 +45,16 @@ public final class MySqlProvider implements Sql {
 
       config.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
-      final String hostname = credentials.getHostname();
-      final int port = credentials.getPort();
-
-      final String database = credentials.getDatabase();
-
-      final String username = credentials.getUsername();
-      final String password = credentials.getPassword();
-
-      final boolean ssl = credentials.isSsl();
-
       final String newUri = SSL.matcher(DATABASE.matcher(PORT.matcher(HOSTNAME.matcher(URI)
-          .replaceAll(Matcher.quoteReplacement(hostname)))
-          .replaceAll(Matcher.quoteReplacement(String.valueOf(port))))
-          .replaceAll(Matcher.quoteReplacement(database)))
-          .replaceAll(Matcher.quoteReplacement(String.valueOf(ssl)));
+          .replaceAll(Matcher.quoteReplacement(credentials.getHostname())))
+          .replaceAll(Matcher.quoteReplacement(String.valueOf(credentials.getPort()))))
+          .replaceAll(Matcher.quoteReplacement(credentials.getDatabase())))
+          .replaceAll(Matcher.quoteReplacement(String.valueOf(credentials.isSsl())));
 
       config.setJdbcUrl(newUri);
 
-      config.setUsername(username);
-      config.setPassword(password);
+      config.setUsername(credentials.getUsername());
+      config.setPassword(credentials.getPassword());
 
       config.setMinimumIdle(1);
       config.setMaximumPoolSize(20);

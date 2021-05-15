@@ -38,15 +38,11 @@ public final class SqLiteProvider implements Sql {
     try {
       Class.forName("org.sqlite.jdbc4.JDBC4Connection");
 
-      final String name = credentials.getName();
-      final String path = credentials.getPath().getAbsolutePath();
-
       final String newUri = NAME.matcher(PATH.matcher(URI)
-          .replaceAll(Matcher.quoteReplacement(path)))
-          .replaceAll(Matcher.quoteReplacement(name));
-      final Properties properties = new Properties();
+          .replaceAll(Matcher.quoteReplacement(credentials.getPath().getAbsolutePath())))
+          .replaceAll(Matcher.quoteReplacement(credentials.getName()));
 
-      final Connection closableConnection = new JdbcConnection(newUri, properties);
+      final Connection closableConnection = new JdbcConnection(newUri, new Properties());
       this.connection = new NonClosableConnection(closableConnection);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception.getCause());
