@@ -2,12 +2,11 @@ package com.celeste.databases.storage.model.database.provider.impl.sql.flat.h2;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
-import com.celeste.databases.core.model.entity.LocalCredentials;
+import com.celeste.databases.core.model.entity.impl.LocalCredentials;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
 import com.celeste.databases.storage.model.database.type.StorageType;
 import com.celeste.databases.storage.model.entity.impl.NonClosableConnection;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

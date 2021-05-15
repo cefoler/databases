@@ -1,13 +1,12 @@
 package com.celeste.databases.storage.model.database.provider.impl.sql.mysql;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
-import com.celeste.databases.core.model.entity.RemoteCredentials;
+import com.celeste.databases.core.model.entity.impl.RemoteCredentials;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
 import com.celeste.databases.storage.model.database.type.StorageType;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

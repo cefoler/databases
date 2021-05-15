@@ -1,10 +1,8 @@
 package com.celeste.databases.storage.model.database.provider.impl.mongodb;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
-import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
-import com.celeste.databases.core.model.entity.RemoteCredentials;
+import com.celeste.databases.core.model.entity.impl.RemoteCredentials;
 import com.celeste.databases.storage.model.database.type.StorageType;
-import com.google.common.flogger.FluentLogger;
 import com.mongodb.Block;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;

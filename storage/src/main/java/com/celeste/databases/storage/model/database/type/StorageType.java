@@ -1,5 +1,6 @@
 package com.celeste.databases.storage.model.database.type;
 
+import com.celeste.databases.core.model.database.type.AccessType;
 import com.celeste.databases.storage.model.database.provider.Storage;
 import com.celeste.databases.storage.model.database.provider.impl.mongodb.MongoDbProvider;
 import com.celeste.databases.storage.model.database.provider.impl.sql.flat.h2.H2Provider;
@@ -16,17 +17,20 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 public enum StorageType {
 
-  MONGODB(MongoDbProvider.class, "MONGODB", "MONGOD", "MONGO"),
-  MYSQL(MySqlProvider.class, "MYSQL", "SQL"),
-  POSTGRESQL(PostgreSqlProvider.class, "POSTGRESQL", "POSTGRE", "POST"),
-  H2(H2Provider.class, "H2"),
-  SQLITE(SqLiteProvider.class, "SQLITE", "SQLT");
+  MONGODB(MongoDbProvider.class, AccessType.REMOTE, "MONGODB", "MONGOD", "MONGO"),
+  MYSQL(MySqlProvider.class, AccessType.REMOTE, "MYSQL", "SQL"),
+  POSTGRESQL(PostgreSqlProvider.class, AccessType.REMOTE, "POSTGRESQL", "POSTGRE", "POST"),
+  H2(H2Provider.class, AccessType.LOCAL, "H2"),
+  SQLITE(SqLiteProvider.class, AccessType.LOCAL, "SQLITE", "SQLT");
 
   private final Class<? extends Storage> provider;
+  private final AccessType access;
   private final List<String> names;
 
-  StorageType(final Class<? extends Storage> provider, final String... names) {
+  StorageType(final Class<? extends Storage> provider, final AccessType access,
+      final String... names) {
     this.provider = provider;
+    this.access = access;
     this.names = ImmutableList.copyOf(names);
   }
 
