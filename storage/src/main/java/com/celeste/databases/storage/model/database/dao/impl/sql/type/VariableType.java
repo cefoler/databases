@@ -12,27 +12,34 @@ import org.jetbrains.annotations.Nullable;
 @RequiredArgsConstructor
 public enum VariableType {
 
-  CHARACTER(Character.class, "TINYTEXT"),
-  STRING(String.class, "TEXT"),
+  CHARACTER(Character.class, "VARCHAR(16)"),
+  CHARACTER_PRIMITIVE(char.class, "VARCHAR(255)"),
+  STRING(String.class, "VARCHAR(255)"),
 
   BYTE(Byte.class, "TINYINT"),
+  BYTE_PRIMITIVE(byte.class, "TINYINT"),
   SHORT(Short.class, "SMALLINT"),
+  SHORT_PRIMITIVE(short.class, "SMALLINT"),
   INTEGER(Integer.class, "INT"),
-  INT(int.class, "INT"),
+  INTEGER_PRIMITIVE(int.class, "INT"),
   LONG(Long.class, "BIGINT"),
+  LONG_PRIMITIVE(long.class, "BIGINT"),
 
   FLOAT(Float.class, "FLOAT"),
+  FLOAT_PRIMITIVE(float.class, "FLOAT"),
   DOUBLE(Double.class, "DOUBLE"),
+  DOUBLE_PRIMITIVE(double.class, "DOUBLE"),
 
-  BOOLEAN(Boolean.class, "BOOL"),
+  BOOLEAN(Boolean.class, "BOOLEAN"),
+  BOOLEAN_PRIMITIVE(boolean.class, "BOOLEAN"),
 
   DATE(java.util.Date.class, "TIMESTAMP"),
   DATESQL(java.sql.Date.class, "DATE"),
   TIME(Time.class, "TIME"),
   TIMESTAMP(Timestamp.class, "TIMESTAMP"),
 
-  UUID(UUID.class, "CHAR(36)"),
-  JSON(Void.class, "TEXT"),
+  UUID(UUID.class, "VARCHAR(64)"),
+  JSON(Void.class, "VARCHAR(10000)"),
   NULL(Void.class, "NULL");
 
   private final Class<?> clazz;

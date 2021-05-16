@@ -45,7 +45,7 @@ public final class SqLiteProvider implements Sql {
       final Connection closableConnection = new JdbcConnection(newUri, new Properties());
       this.connection = new NonClosableConnection(closableConnection);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 
@@ -54,7 +54,7 @@ public final class SqLiteProvider implements Sql {
     try {
       connection.shutdown();
     } catch (Exception exception) {
-      throw new FailedShutdownException(exception.getCause());
+      throw new FailedShutdownException(exception.getMessage(), exception.getCause());
     }
   }
 
@@ -63,7 +63,7 @@ public final class SqLiteProvider implements Sql {
     try {
       return connection.isClosed();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 

@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -127,7 +128,9 @@ public enum SqlType {
     @Override
     public String getSql(final Entity<?> entity) {
       final Entry<String, Field> key = entity.getKey();
-      final VariableType keyVariable = VariableType.getVariable(key.getValue().getType());
+      final Map<String, Field> values = entity.getValues();
+
+      final VariableType variableKey = VariableType.getVariable(key.getValue().getType());
 
       final StringBuilder builder = new StringBuilder()
           .append("CREATE TABLE IF NOT EXISTS ")
@@ -135,12 +138,14 @@ public enum SqlType {
           .append(" (")
           .append(key.getKey())
           .append(" ")
-          .append(keyVariable.getName())
+          .append(variableKey.getName())
           .append(" PRIMARY KEY, ");
 
-      final Map<String, Field> cache = entity.getValues();
+      values.remove(key.getKey());
 
-      for (final Entry<String, Field> entry : entity.getValues().entrySet()) {
+      final Map<String, Field> cache = new LinkedHashMap<>(values);
+
+      for (final Entry<String, Field> entry : values.entrySet()) {
         final VariableType variable = VariableType.getVariable(entry.getValue().getType());
 
         builder.append(entry.getKey())

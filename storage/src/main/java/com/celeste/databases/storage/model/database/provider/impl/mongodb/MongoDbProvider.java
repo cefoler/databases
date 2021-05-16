@@ -117,7 +117,7 @@ public final class MongoDbProvider implements MongoDb {
       this.client = MongoClients.create(settings);
       this.database = client.getDatabase(database);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 

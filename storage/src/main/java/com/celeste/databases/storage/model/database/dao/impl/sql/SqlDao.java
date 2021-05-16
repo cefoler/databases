@@ -1,5 +1,6 @@
 package com.celeste.databases.storage.model.database.dao.impl.sql;
 
+import com.celeste.databases.core.adapter.exception.JsonDeserializeException;
 import com.celeste.databases.core.adapter.impl.jackson.JacksonAdapter;
 import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundException;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
@@ -15,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,7 +63,8 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @Override
   public final void delete(final T... entities) throws FailedConnectionException {
     for (final T entity : entities) {
-      executeUpdate(delete, serialize(entity));
+      final Object key = getEntity().getKey(entity);
+      executeUpdate(delete, serializeObject(key));
     }
   }
 
@@ -70,7 +73,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     try (final ResultSet result = executeQuery(contains, serializeObject(key))) {
       return result.next();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 
@@ -97,7 +100,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       applyValues(statement, values);
       return statement.executeUpdate();
     } catch (SQLException exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 
@@ -110,7 +113,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       applyValues(statement, values);
       return statement.executeQuery();
     } catch (SQLException exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 
@@ -122,7 +125,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       try {
         statement.setObject(index.getAndIncrement(), value);
       } catch (Exception exception) {
-        throw new FailedConnectionException(exception.getCause());
+        throw new FailedConnectionException(exception.getMessage(), exception.getCause());
       }
     }
   }
@@ -133,7 +136,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       Validation.isFalse(result.next(), () -> new ValueNotFoundException("Value not found"));
       return deserialize(result);
     } catch (SQLException exception) {
-      throw new ValueNotFoundException(exception.getCause());
+      throw new ValueNotFoundException(exception.getMessage(), exception.getCause());
     }
   }
 
@@ -146,7 +149,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
         entities.add(deserialize(result));
       }
     } catch (SQLException exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
 
     return entities;
@@ -176,14 +179,13 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     }
 
     for (final String columnName : columnNames) {
-      final Object object = result.getObject(columnName);
       final Field field = values.get(columnName);
 
       if (field == null) {
         continue;
       }
 
-      field.set(entity, deserializeObject(object, field.getType()));
+      field.set(entity, deserializeObject(result.getObject(columnName), field.getType()));
       values.remove(columnName);
     }
 
@@ -205,13 +207,18 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   }
 
   @Nullable
-  @SneakyThrows
   private Object deserializeObject(@Nullable final Object object, final Class<?> clazz) {
     final VariableType variable = VariableType.getVariable(object);
 
-    return variable.equals(VariableType.JSON)
-        ? JacksonAdapter.getInstance().deserialize(String.valueOf(object), clazz)
-        : object;
+    if (variable.equals(VariableType.STRING)) {
+      try {
+        return JacksonAdapter.getInstance().deserialize(String.valueOf(object), clazz);
+      } catch (JsonDeserializeException exception) {
+        return object;
+      }
+    }
+
+    return object;
   }
 
 }

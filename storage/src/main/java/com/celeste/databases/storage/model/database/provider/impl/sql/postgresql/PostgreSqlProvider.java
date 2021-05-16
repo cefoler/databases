@@ -64,7 +64,7 @@ public final class PostgreSqlProvider implements Sql {
 
       this.hikari = new HikariDataSource(config);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 
@@ -88,7 +88,7 @@ public final class PostgreSqlProvider implements Sql {
     try {
       return hikari.getConnection();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getCause());
+      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 
