@@ -1,9 +1,9 @@
-package com.celeste.databases.messenger.model.database.provider.impl.redis;
+package com.celeste.databases.cache.model.database.provider.impl.redis;
 
+import com.celeste.databases.cache.model.database.type.CacheType;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
 import com.celeste.databases.core.model.entity.impl.RemoteCredentials;
-import com.celeste.databases.messenger.model.database.type.MessengerType;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -80,8 +80,8 @@ public final class RedisProvider implements Redis {
   }
 
   @Override
-  public MessengerType getMessengerType() {
-    return MessengerType.REDIS;
+  public CacheType getCacheType() {
+    return CacheType.REDIS;
   }
 
 }

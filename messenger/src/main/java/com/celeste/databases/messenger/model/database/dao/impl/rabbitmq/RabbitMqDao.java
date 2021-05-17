@@ -7,8 +7,10 @@ import com.rabbitmq.client.Channel;
 
 public final class RabbitMqDao extends AbstractMessengerDao<RabbitMq> {
 
-  public RabbitMqDao(final RabbitMq messenger) {
+  public RabbitMqDao(final RabbitMq messenger) throws FailedConnectionException {
     super(messenger);
+
+    subscribeAll();
   }
 
   @Override

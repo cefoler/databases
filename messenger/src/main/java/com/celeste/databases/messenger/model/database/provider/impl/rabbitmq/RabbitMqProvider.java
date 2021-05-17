@@ -73,7 +73,7 @@ public final class RabbitMqProvider implements RabbitMq {
   }
 
   @Override
-  public MessengerType getType() {
+  public MessengerType getMessengerType() {
     return MessengerType.RABBITMQ;
   }
 
