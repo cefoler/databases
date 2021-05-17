@@ -1,6 +1,12 @@
 rootProject.name = 'databases'
+<<<<<<< HEAD
 include 'core'
 include 'storage'
 include 'messenger'
 include 'cache'
+=======
+include 'shared'
+include 'storage'
+include 'messenger'
+>>>>>>> main
 

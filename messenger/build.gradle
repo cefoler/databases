@@ -10,8 +10,19 @@ dependencies {
      */
     implementation 'org.reflections:reflections:0.9.12'
 
+<<<<<<< HEAD
     /**
      * SHARED FRAMEWORK
      */
     implementation project(":core")
+=======
+    /*
+    FRAMEWORK
+    */
+    implementation project(':shared')
+}
+
+shadowJar {
+    archiveFileName = "messenger-${project.version}.jar"
+>>>>>>> main
 }
