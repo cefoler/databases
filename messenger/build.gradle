@@ -1,8 +1,3 @@
-plugins {
-    id "com.github.johnrengelman.shadow" version "6.1.0"
-    id 'java-library'
-}
-
 dependencies {
     /**
      * MESSENGER DEPENDENCY
@@ -15,6 +10,12 @@ dependencies {
      */
     implementation 'org.reflections:reflections:0.9.12'
 
+<<<<<<< HEAD
+    /**
+     * SHARED FRAMEWORK
+     */
+    implementation project(":core")
+=======
     /*
     FRAMEWORK
     */
@@ -23,4 +24,5 @@ dependencies {
 
 shadowJar {
     archiveFileName = "messenger-${project.version}.jar"
+>>>>>>> main
 }
