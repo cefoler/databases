@@ -1,6 +1,7 @@
 package com.celeste.databases.storage.model.database.provider.impl.sql.mysql;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
+import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
 import com.celeste.databases.core.model.entity.impl.RemoteCredentials;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
 import com.celeste.databases.storage.model.database.type.StorageType;
@@ -86,13 +87,21 @@ public final class MySqlProvider implements Sql {
   }
 
   @Override
-  public synchronized void shutdown() {
-    hikari.close();
+  public synchronized void shutdown() throws FailedShutdownException {
+    try {
+      hikari.close();
+    } catch (Exception exception) {
+      throw new FailedShutdownException(exception.getMessage(), exception.getCause());
+    }
   }
 
   @Override
   public boolean isClosed() {
-    return hikari.isClosed();
+    try {
+      return hikari.isClosed();
+    } catch (Exception exception) {
+      return true;
+    }
   }
 
   @Override

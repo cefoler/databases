@@ -61,11 +61,11 @@ public final class H2Provider implements Sql {
   }
 
   @Override
-  public boolean isClosed() throws FailedConnectionException {
+  public boolean isClosed() {
     try {
       return connection.isClosed();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      return true;
     }
   }
 

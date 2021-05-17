@@ -10,7 +10,7 @@ public interface Database {
 
   void shutdown() throws FailedShutdownException;
 
-  boolean isClosed() throws FailedConnectionException;
+  boolean isClosed();
 
   DatabaseType getDatabaseType();
 

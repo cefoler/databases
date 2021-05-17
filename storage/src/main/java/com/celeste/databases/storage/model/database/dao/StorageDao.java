@@ -5,6 +5,7 @@ import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundExce
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public interface StorageDao<T> extends Dao {
 
   void save(final T... entities) throws FailedConnectionException;

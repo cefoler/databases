@@ -19,7 +19,7 @@ public final class SqLiteProvider implements Sql {
   private static final Pattern NAME;
 
   static {
-    URI = "jdbc:sqlite:<path>/<name>.db";
+    URI = "jdbc:h2:<path>/<name>.db";
     PATH = Pattern.compile("<path>", Pattern.LITERAL);
     NAME = Pattern.compile("<name>", Pattern.LITERAL);
   }
@@ -59,11 +59,11 @@ public final class SqLiteProvider implements Sql {
   }
 
   @Override
-  public boolean isClosed() throws FailedConnectionException {
+  public boolean isClosed() {
     try {
       return connection.isClosed();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      return true;
     }
   }
 

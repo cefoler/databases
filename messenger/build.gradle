@@ -1,3 +1,17 @@
 dependencies {
+    /**
+     * MESSENGER DEPENDENCY
+     */
+    implementation 'redis.clients:jedis:3.5.2'
+    implementation 'com.rabbitmq:amqp-client:5.11.0'
+
+    /**
+     * REFLECTION FRAMEWORK
+     */
+    implementation 'org.reflections:reflections:0.9.12'
+
+    /**
+     * SHARED FRAMEWORK
+     */
     implementation project(":core")
 }

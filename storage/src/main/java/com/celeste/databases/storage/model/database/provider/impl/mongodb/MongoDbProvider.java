@@ -1,6 +1,7 @@
 package com.celeste.databases.storage.model.database.provider.impl.mongodb;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
+import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
 import com.celeste.databases.core.model.entity.impl.RemoteCredentials;
 import com.celeste.databases.storage.model.database.type.StorageType;
 import com.mongodb.Block;
@@ -39,25 +40,10 @@ public final class MongoDbProvider implements MongoDb {
   }
 
   @Override
-  public void init() throws FailedConnectionException {
+  public synchronized void init() throws FailedConnectionException {
     try {
       Class.forName("com.mongodb.client.MongoClients");
       Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-
-      final String hostname = credentials.getHostname();
-      final int port = credentials.getPort();
-
-      final String database = credentials.getDatabase();
-
-      final String username = credentials.getUsername();
-      final String password = credentials.getPassword();
-
-      final boolean ssl = credentials.isSsl();
-
-      final Properties properties = credentials.getOther();
-
-      final String uri = properties.getProperty("uri", "");
-      final String authentication = properties.getProperty("authentication", "admin");
 
       final Block<ConnectionPoolSettings.Builder> connection = builder -> builder
           .minSize(1)
@@ -78,6 +64,8 @@ public final class MongoDbProvider implements MongoDb {
           MongoClientSettings.getDefaultCodecRegistry(),
           CodecRegistries.fromProviders(pojo));
 
+      final String uri = credentials.getOther().getProperty("uri", "");
+
       if (!uri.isEmpty()) {
         final ConnectionString connectionUri = new ConnectionString(uri);
         final MongoClientSettings settings = MongoClientSettings.builder()
@@ -90,18 +78,22 @@ public final class MongoDbProvider implements MongoDb {
             .build();
 
         this.client = MongoClients.create(settings);
-        this.database = client.getDatabase(database);
+        this.database = client.getDatabase(credentials.getDatabase());
         return;
       }
 
-      final ServerAddress server = new ServerAddress(hostname, port);
+      final ServerAddress server = new ServerAddress(credentials.getHostname(),
+          credentials.getPort());
+
       final Block<ClusterSettings.Builder> cluster = builder -> builder
           .hosts(Collections.singletonList(server));
 
       final MongoCredential credential = MongoCredential
-          .createCredential(username, authentication, password.toCharArray());
+          .createCredential(credentials.getUsername(),
+              credentials.getOther().getProperty("authentication", "admin"),
+              credentials.getPassword().toCharArray());
 
-      final Block<SslSettings.Builder> tls = builder -> builder.enabled(ssl);
+      final Block<SslSettings.Builder> tls = builder -> builder.enabled(credentials.isSsl());
 
       final MongoClientSettings settings = MongoClientSettings.builder()
           .applyToClusterSettings(cluster)
@@ -115,24 +107,28 @@ public final class MongoDbProvider implements MongoDb {
           .build();
 
       this.client = MongoClients.create(settings);
-      this.database = client.getDatabase(database);
+      this.database = client.getDatabase(credentials.getDatabase());
     } catch (Exception exception) {
       throw new FailedConnectionException(exception.getMessage(), exception.getCause());
     }
   }
 
   @Override
-  public void shutdown() {
-    client.close();
+  public synchronized void shutdown() throws FailedShutdownException {
+    try {
+      client.close();
+    } catch (Exception exception) {
+      throw new FailedShutdownException(exception.getMessage(), exception.getCause());
+    }
   }
 
   @Override
   public boolean isClosed() {
     try {
       client.listDatabases();
-      return true;
-    } catch (Exception exception) {
       return false;
+    } catch (Exception exception) {
+      return true;
     }
   }
 
