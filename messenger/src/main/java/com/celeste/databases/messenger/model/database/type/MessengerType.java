@@ -17,11 +17,11 @@ public enum MessengerType {
   REDIS(RedisProvider.class, AccessType.REMOTE, "REDIS", "RE"),
   RABBITMQ(RabbitMqProvider.class, AccessType.REMOTE, "RABBITMQ", "RABBIT", "RBT");
 
-  private final Class<? extends Messenger<?>> provider;
+  private final Class<? extends Messenger> provider;
   private final AccessType access;
   private final List<String> names;
 
-  MessengerType(final Class<? extends Messenger<?>> provider, final AccessType access,
+  MessengerType(final Class<? extends Messenger> provider, final AccessType access,
       final String... names) {
     this.provider = provider;
     this.access = access;

@@ -7,7 +7,6 @@ import com.celeste.databases.messenger.model.database.type.MessengerType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import java.io.IOException;
 import java.util.concurrent.Executors;
 
 public final class RabbitMqProvider implements RabbitMq {
