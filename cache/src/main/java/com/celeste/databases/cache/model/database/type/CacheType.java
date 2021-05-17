@@ -39,4 +39,5 @@ public enum CacheType {
         .findFirst()
         .orElse(orElse);
   }
+
 }
