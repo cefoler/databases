@@ -1,33 +1,33 @@
-package com.celeste.databases.storage.factory;
+package com.celeste.databases.messenger.factory;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.type.AccessType;
 import com.celeste.databases.core.model.entity.Credentials;
-import com.celeste.databases.storage.model.database.provider.Storage;
-import com.celeste.databases.storage.model.database.type.StorageType;
+import com.celeste.databases.messenger.model.database.provider.Messenger;
+import com.celeste.databases.messenger.model.database.type.MessengerType;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class StorageFactory {
+public final class MessengerFactory {
 
-  private static final StorageFactory INSTANCE;
+  private static final MessengerFactory INSTANCE;
 
   static {
-    INSTANCE = new StorageFactory();
+    INSTANCE = new MessengerFactory();
   }
 
-  public Storage start(final Properties properties) throws FailedConnectionException {
+  public Messenger start(final Properties properties) throws FailedConnectionException {
     try {
       final String driver = properties.getProperty("driver");
-      final StorageType storage = StorageType.getStorage(driver);
+      final MessengerType storage = MessengerType.getMessenger(driver);
 
       final AccessType access = storage.getAccess();
       final Credentials credentials = access.serialize(properties);
 
-      final Constructor<? extends Storage> constructor = storage.getProvider()
+      final Constructor<? extends Messenger> constructor = storage.getProvider()
           .getConstructor(access.getCredentials());
 
       return constructor.newInstance(credentials);
@@ -36,7 +36,7 @@ public final class StorageFactory {
     }
   }
 
-  public static StorageFactory getInstance() {
+  public static MessengerFactory getInstance() {
     return INSTANCE;
   }
 
