@@ -22,12 +22,12 @@ public final class MessengerFactory {
   public Messenger start(final Properties properties) throws FailedConnectionException {
     try {
       final String driver = properties.getProperty("driver");
-      final MessengerType storage = MessengerType.getMessenger(driver);
+      final MessengerType messenger = MessengerType.getMessenger(driver);
 
-      final AccessType access = storage.getAccess();
+      final AccessType access = messenger.getAccess();
       final Credentials credentials = access.serialize(properties);
 
-      final Constructor<? extends Messenger> constructor = storage.getProvider()
+      final Constructor<? extends Messenger> constructor = messenger.getProvider()
           .getConstructor(access.getCredentials());
 
       return constructor.newInstance(credentials);
