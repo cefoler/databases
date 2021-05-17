@@ -65,7 +65,7 @@ public final class RabbitMqProvider implements RabbitMq {
   }
 
   @Override
-  public Channel getConnection() throws FailedConnectionException {
+  public Channel getChannel() throws FailedConnectionException {
     try {
       return connection.createChannel();
     } catch (Exception exception) {

@@ -71,7 +71,7 @@ public final class RedisProvider implements Redis {
   }
 
   @Override
-  public Jedis getConnection() throws FailedConnectionException {
+  public Jedis getJedis() throws FailedConnectionException {
     try {
       return jedis.getResource();
     } catch (Exception exception) {

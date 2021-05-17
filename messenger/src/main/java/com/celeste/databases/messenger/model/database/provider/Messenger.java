@@ -6,9 +6,7 @@ import com.celeste.databases.core.model.database.type.DatabaseType;
 import com.celeste.databases.messenger.model.database.dao.MessengerDao;
 import com.celeste.databases.messenger.model.database.type.MessengerType;
 
-public interface Messenger<T> extends Database {
-
-  T getConnection() throws FailedConnectionException;
+public interface Messenger extends Database {
 
   MessengerType getType();
 
