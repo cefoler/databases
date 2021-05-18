@@ -3,14 +3,11 @@ subprojects {
     apply plugin: 'java'
 
     group 'com.celeste'
-    version '4.0.1-SNAPSHOT'
+    version '4.0.2-SNAPSHOT'
 
     repositories {
         mavenLocal()
         mavenCentral()
-
-        maven { url 'https://jitpack.io' }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
 
     dependencies {
@@ -18,7 +15,6 @@ subprojects {
          * LIBRARY FRAMEWORK
          */
         implementation 'com.google.guava:guava:30.1.1-jre'
-        implementation 'com.google.flogger:flogger:0.6'
 
         /**
          * ANNOTATION FRAMEWORK
