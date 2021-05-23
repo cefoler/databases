@@ -4,6 +4,7 @@ import com.celeste.databases.core.adapter.exception.JsonDeserializeException;
 import com.celeste.databases.core.adapter.impl.jackson.JacksonAdapter;
 import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundException;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
+import com.celeste.databases.core.util.Reflection;
 import com.celeste.databases.core.util.Validation;
 import com.celeste.databases.storage.model.database.dao.AbstractStorageDao;
 import com.celeste.databases.storage.model.database.dao.impl.sql.type.SqlType;
@@ -166,7 +167,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @SneakyThrows(ReflectiveOperationException.class)
   private T deserialize(final ResultSet result) throws SQLException {
     final Map<String, Field> values = getEntity().getValues();
-    final T entity = getClazz().getConstructor().newInstance();
+    final T entity = Reflection.getDcConstructor(getClazz()).newInstance();
 
     final ResultSetMetaData metaData = result.getMetaData();
     final int columnCount = metaData.getColumnCount();

@@ -61,7 +61,7 @@ public final class Entity<T> {
 
   @SneakyThrows
   public Object getKey(final T instance) {
-    return key.getValue().get(instance);
+    return Reflection.get(key.getValue(), instance);
   }
 
   public Map<String, Field> getValues() {
@@ -73,7 +73,7 @@ public final class Entity<T> {
     final Map<String, Object> newValues = new LinkedHashMap<>();
 
     for (final Entry<String, Field> entry : values.entrySet()) {
-      newValues.put(entry.getKey(), entry.getValue().get(instance));
+      newValues.put(entry.getKey(), Reflection.get(entry.getValue(), instance));
     }
 
     return newValues;

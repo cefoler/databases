@@ -2,6 +2,7 @@ package com.celeste.databases.storage.model.database.dao.impl.mongodb;
 
 import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundException;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
+import com.celeste.databases.core.util.Reflection;
 import com.celeste.databases.storage.model.database.dao.AbstractStorageDao;
 import com.celeste.databases.storage.model.database.provider.impl.mongodb.MongoDb;
 import com.mongodb.client.MongoCollection;
@@ -140,7 +141,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   @SneakyThrows
   private T deserialize(final Document document) {
     final Map<String, Field> values = getEntity().getValues();
-    final T entity = getClazz().getConstructor().newInstance();
+    final T entity = Reflection.getDcConstructor(getClazz()).newInstance();
 
     for (final Entry<String, Field> entry : values.entrySet()) {
       final Object object = document.getOrDefault(entry.getKey(), null);
