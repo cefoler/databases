@@ -1,5 +1,4 @@
 subprojects {
-    apply plugin: 'maven'
     apply plugin: 'java'
 
     group 'com.celeste'
