@@ -10,9 +10,9 @@ public interface MessengerDao extends Dao {
 
   void subscribe(final String channelName, final Object instance) throws FailedConnectionException;
 
-  void subscribeAll(final Class<?> clazz, final Object instance) throws FailedConnectionException;
+  void subscribeAll(final String prefix, final Class<?> clazz, final Object instance) throws FailedConnectionException;
 
   @SuppressWarnings("unchecked")
-  void subscribeAll(final Entry<Class<?>, Object>... entries) throws FailedConnectionException;
+  void subscribeAll(final String prefix, final Entry<Class<?>, Object>... entries) throws FailedConnectionException;
 
 }

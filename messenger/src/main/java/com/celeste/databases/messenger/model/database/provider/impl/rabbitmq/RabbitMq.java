@@ -12,7 +12,7 @@ public interface RabbitMq extends Messenger {
   Channel getChannel() throws FailedConnectionException;
 
   @Override
-  default MessengerDao createDao() throws FailedConnectionException {
+  default MessengerDao createDao() {
     return new RabbitMqDao(this);
   }
 

@@ -22,14 +22,14 @@ public abstract class AbstractMessengerDao<T extends Messenger> implements Messe
   }
 
   @Override
-  public void subscribeAll(final Class<?> clazz, final Object instance)
+  public void subscribeAll(final String prefix, final Class<?> clazz, final Object instance)
       throws FailedConnectionException {
-    subscribeAll(new SimpleImmutableEntry<>(clazz, instance));
+    subscribeAll(prefix, new SimpleImmutableEntry<>(clazz, instance));
   }
 
   @SafeVarargs
   @Override
-  public final void subscribeAll(final Entry<Class<?>, Object>... entries)
+  public final void subscribeAll(final String prefix, final Entry<Class<?>, Object>... entries)
       throws FailedConnectionException {
     try {
       final Class<?>[] parameters = Arrays.stream(entries)
@@ -40,7 +40,7 @@ public abstract class AbstractMessengerDao<T extends Messenger> implements Messe
           .map(Entry::getValue)
           .toArray();
 
-      final Reflections reflections = new Reflections("");
+      final Reflections reflections = new Reflections(prefix);
 
       for (final Class<?> clazz : reflections.getTypesAnnotatedWith(Listener.class)) {
         final Listener annotation = Reflection.getAnnotation(clazz, Listener.class);

@@ -11,7 +11,7 @@ public interface Redis extends Messenger {
   Jedis getJedis() throws FailedConnectionException;
 
   @Override
-  default MessengerDao createDao() throws FailedConnectionException {
+  default MessengerDao createDao() {
     return new RedisDao(this);
   }
 

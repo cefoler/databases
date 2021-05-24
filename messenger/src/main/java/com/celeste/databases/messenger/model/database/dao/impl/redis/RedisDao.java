@@ -8,10 +8,8 @@ import redis.clients.jedis.JedisPubSub;
 
 public final class RedisDao extends AbstractMessengerDao<Redis> {
 
-  public RedisDao(final Redis messenger) throws FailedConnectionException {
+  public RedisDao(final Redis messenger) {
     super(messenger);
-
-    subscribeAll();
   }
 
   @Override
