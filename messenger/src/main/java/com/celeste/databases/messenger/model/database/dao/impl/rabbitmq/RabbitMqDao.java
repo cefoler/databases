@@ -22,10 +22,10 @@ public final class RabbitMqDao extends AbstractMessengerDao<RabbitMq> {
   }
 
   @Override
-  public void subscribe(final String channelName, final Object instance)
+  public void subscribe(final String[] channels, final Object instance)
       throws FailedConnectionException {
     try (final Channel connection = getDatabase().getChannel()) {
-      connection.queueDeclare(channelName, false, false, false, null);
+      connection.queueDeclare(channels[0], false, false, false, null);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

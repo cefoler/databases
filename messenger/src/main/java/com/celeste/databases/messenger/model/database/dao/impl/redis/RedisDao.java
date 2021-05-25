@@ -23,10 +23,10 @@ public final class RedisDao extends AbstractMessengerDao<Redis> {
   }
 
   @Override
-  public void subscribe(final String channelName, final Object instance)
+  public void subscribe(final String[] channels, final Object instance)
       throws FailedConnectionException {
     try (final Jedis jedis = getDatabase().getJedis()) {
-      new Thread(() -> jedis.subscribe((JedisPubSub) instance, channelName)).start();
+      new Thread(() -> jedis.subscribe((JedisPubSub) instance, channels[0])).start();
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

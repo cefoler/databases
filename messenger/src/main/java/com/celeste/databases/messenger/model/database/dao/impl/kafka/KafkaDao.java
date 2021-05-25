@@ -7,6 +7,7 @@ import com.celeste.databases.messenger.model.database.pubsub.kafka.KafkaPubSub;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 public final class KafkaDao extends AbstractMessengerDao<Kafka> {
@@ -32,11 +33,11 @@ public final class KafkaDao extends AbstractMessengerDao<Kafka> {
   }
 
   @Override
-  public void subscribe(final String channelName, final Object instance) throws FailedConnectionException {
+  public void subscribe(final String[] channels, final Object instance) throws FailedConnectionException {
     try {
       final KafkaPubSub kafkaPubSub = (KafkaPubSub) instance;
 
-      kafkaPubSub.subscribe(Collections.singletonList(channelName));
+      kafkaPubSub.subscribe(Arrays.asList(channels));
       kafkaPubSub.init(getDatabase().getCredentials());
 
       getDatabase().getSubscribedChannels().add(kafkaPubSub);

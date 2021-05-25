@@ -8,7 +8,7 @@ public interface MessengerDao extends Dao {
 
   void publish(final String channelName, final String message) throws FailedConnectionException;
 
-  void subscribe(final String channelName, final Object instance) throws FailedConnectionException;
+  void subscribe(final String[] channels, final Object instance) throws FailedConnectionException;
 
   void subscribeAll(final String prefix, final Class<?> clazz, final Object instance) throws FailedConnectionException;
 
