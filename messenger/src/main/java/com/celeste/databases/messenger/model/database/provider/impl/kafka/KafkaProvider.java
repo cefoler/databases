@@ -3,12 +3,15 @@ package com.celeste.databases.messenger.model.database.provider.impl.kafka;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.provider.exception.FailedShutdownException;
 import com.celeste.databases.core.model.entity.impl.RemoteCredentials;
+import com.celeste.databases.messenger.model.database.pubsub.kafka.KafkaPubSub;
 import com.celeste.databases.messenger.model.database.type.MessengerType;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public final class KafkaProvider implements Kafka {
@@ -16,11 +19,14 @@ public final class KafkaProvider implements Kafka {
   private final RemoteCredentials credentials;
   private KafkaProducer<String, String> producer;
 
+  private final List<KafkaPubSub> subscribedChannels;
+
   private boolean connected;
 
   public KafkaProvider(final RemoteCredentials credentials) throws FailedConnectionException {
     this.credentials = credentials;
     this.connected = false;
+    this.subscribedChannels = new ArrayList<>();
 
     init();
   }
@@ -34,9 +40,9 @@ public final class KafkaProvider implements Kafka {
           credentials.getHostname() + ":" + credentials.getPort()
       );
 
-      settings.setProperty(ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, "30000");
-      settings.setProperty(ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, "30000");
-      settings.setProperty(ConsumerConfig.SOCKET_CONNECTION_SETUP_TIMEOUT_MAX_MS_CONFIG, "100000");
+      settings.setProperty(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, "30000");
+      settings.setProperty(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, "30000");
+      settings.setProperty(ProducerConfig.SOCKET_CONNECTION_SETUP_TIMEOUT_MAX_MS_CONFIG, "100000");
 
       settings.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
       settings.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
@@ -71,6 +77,11 @@ public final class KafkaProvider implements Kafka {
   @Override
   public KafkaProducer<String, String> getProducer() {
     return producer;
+  }
+
+  @Override
+  public List<KafkaPubSub> getSubscribedChannels() {
+    return null;
   }
 
 }
