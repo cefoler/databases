@@ -21,6 +21,7 @@ public final class KafkaProvider implements Kafka {
   public KafkaProvider(final RemoteCredentials credentials) throws FailedConnectionException {
     this.credentials = credentials;
     this.connected = false;
+
     init();
   }
 
@@ -30,8 +31,12 @@ public final class KafkaProvider implements Kafka {
       final Properties settings = new Properties();
       settings.setProperty(
           ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-          "" + credentials.getHostname() + ":" + credentials.getPort()
+          credentials.getHostname() + ":" + credentials.getPort()
       );
+
+      settings.setProperty(ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, "30000");
+      settings.setProperty(ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, "30000");
+      settings.setProperty(ConsumerConfig.SOCKET_CONNECTION_SETUP_TIMEOUT_MAX_MS_CONFIG, "100000");
 
       settings.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
       settings.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
@@ -61,6 +66,11 @@ public final class KafkaProvider implements Kafka {
   @Override
   public MessengerType getMessengerType() {
     return MessengerType.KAFKA;
+  }
+
+  @Override
+  public KafkaProducer<String, String> getProducer() {
+    return producer;
   }
 
 }
