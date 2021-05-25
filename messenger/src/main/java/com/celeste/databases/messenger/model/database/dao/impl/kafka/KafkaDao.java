@@ -37,7 +37,7 @@ public final class KafkaDao extends AbstractMessengerDao<Kafka> {
       final KafkaPubSub kafkaPubSub = (KafkaPubSub) instance;
 
       kafkaPubSub.subscribe(Collections.singletonList(channelName));
-      kafkaPubSub.init();
+      kafkaPubSub.init(getDatabase().getCredentials());
 
       getDatabase().getSubscribedChannels().add(kafkaPubSub);
     } catch (Exception exception) {

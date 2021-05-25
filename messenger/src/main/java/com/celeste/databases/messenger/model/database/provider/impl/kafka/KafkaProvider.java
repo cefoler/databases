@@ -17,10 +17,9 @@ import java.util.Properties;
 public final class KafkaProvider implements Kafka {
 
   private final RemoteCredentials credentials;
-  private KafkaProducer<String, String> producer;
-
   private final List<KafkaPubSub> subscribedChannels;
 
+  private KafkaProducer<String, String> producer;
   private boolean connected;
 
   public KafkaProvider(final RemoteCredentials credentials) throws FailedConnectionException {
@@ -36,7 +35,7 @@ public final class KafkaProvider implements Kafka {
     try {
       final Properties settings = new Properties();
       settings.setProperty(
-          ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+          ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
           credentials.getHostname() + ":" + credentials.getPort()
       );
 
@@ -81,7 +80,12 @@ public final class KafkaProvider implements Kafka {
 
   @Override
   public List<KafkaPubSub> getSubscribedChannels() {
-    return null;
+    return subscribedChannels;
+  }
+
+  @Override
+  public RemoteCredentials getCredentials() {
+    return credentials;
   }
 
 }

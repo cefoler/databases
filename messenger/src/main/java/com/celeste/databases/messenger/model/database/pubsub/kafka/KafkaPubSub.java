@@ -1,12 +1,12 @@
 package com.celeste.databases.messenger.model.database.pubsub.kafka;
 
+import com.celeste.databases.core.model.entity.impl.RemoteCredentials;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,7 +34,12 @@ public abstract class KafkaPubSub extends KafkaConsumer<String, String> {
    * Every 1 second, the consumer receives all records from that time
    * and executes the handle.
    */
-  public void init() {
+  public void init(final RemoteCredentials credentials) {
+    settings.setProperty(
+        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+        credentials.getHostname() + ":" + credentials.getPort()
+    );
+
     executorService.scheduleAtFixedRate(() -> {
       final ConsumerRecords<String, String> messages = poll(Duration.ofMillis(1000));
       messages.forEach(this::handle);
