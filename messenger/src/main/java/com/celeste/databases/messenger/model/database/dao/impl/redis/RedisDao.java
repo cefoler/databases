@@ -3,6 +3,8 @@ package com.celeste.databases.messenger.model.database.dao.impl.redis;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.messenger.model.database.dao.AbstractMessengerDao;
 import com.celeste.databases.messenger.model.database.provider.impl.redis.Redis;
+import com.celeste.databases.messenger.model.database.pubsub.redis.RedisPubSub;
+import com.celeste.databases.messenger.model.entity.Listener;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -13,20 +15,21 @@ public final class RedisDao extends AbstractMessengerDao<Redis> {
   }
 
   @Override
-  public void publish(final String channelName, final String message)
+  public void publish(final String channel, final String message)
       throws FailedConnectionException {
     try (final Jedis jedis = getDatabase().getJedis()) {
-      jedis.publish(channelName, message);
+      jedis.publish(channel, message);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }
   }
 
   @Override
-  public void subscribe(final String[] channels, final Object instance)
+  public void subscribe(final String channel, final Listener listener)
       throws FailedConnectionException {
     try (final Jedis jedis = getDatabase().getJedis()) {
-      new Thread(() -> jedis.subscribe((JedisPubSub) instance, channels[0])).start();
+      final RedisPubSub pubSub = new RedisPubSub(listener);
+      jedis.subscribe(pubSub, channel);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

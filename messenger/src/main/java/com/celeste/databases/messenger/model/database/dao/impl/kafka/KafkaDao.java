@@ -4,11 +4,10 @@ import com.celeste.databases.core.model.database.provider.exception.FailedConnec
 import com.celeste.databases.messenger.model.database.dao.AbstractMessengerDao;
 import com.celeste.databases.messenger.model.database.provider.impl.kafka.Kafka;
 import com.celeste.databases.messenger.model.database.pubsub.kafka.KafkaPubSub;
+import com.celeste.databases.messenger.model.entity.Listener;
+import java.util.Collections;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerRecord;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 public final class KafkaDao extends AbstractMessengerDao<Kafka> {
 
@@ -17,8 +16,8 @@ public final class KafkaDao extends AbstractMessengerDao<Kafka> {
   }
 
   @Override
-  public void publish(final String channelName, final String message) {
-    final ProducerRecord<String, String> record = new ProducerRecord<>(channelName, message);
+  public void publish(final String channel, final String message) {
+    final ProducerRecord<String, String> record = new ProducerRecord<>(channel, message);
     final Callback callback = (data, exception) -> {
       if (exception != null) {
         try {
@@ -33,14 +32,11 @@ public final class KafkaDao extends AbstractMessengerDao<Kafka> {
   }
 
   @Override
-  public void subscribe(final String[] channels, final Object instance) throws FailedConnectionException {
+  public void subscribe(final String channel, final Listener listener)
+      throws FailedConnectionException {
     try {
-      final KafkaPubSub kafkaPubSub = (KafkaPubSub) instance;
-
-      kafkaPubSub.subscribe(Arrays.asList(channels));
-      kafkaPubSub.init(getDatabase().getCredentials());
-
-      getDatabase().getSubscribedChannels().add(kafkaPubSub);
+      final KafkaPubSub pubSub = new KafkaPubSub(getDatabase(), listener);
+      pubSub.subscribe(Collections.singletonList(channel));
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

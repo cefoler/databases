@@ -39,7 +39,7 @@ public final class RabbitMqProvider implements RabbitMq {
       factory.setTopologyRecoveryEnabled(false);
       factory.setNetworkRecoveryInterval(30);
 
-      this.connection = factory.newConnection(Executors.newFixedThreadPool(20));
+      this.connection = factory.newConnection(Executors.newFixedThreadPool(5));
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

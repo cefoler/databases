@@ -18,7 +18,6 @@ import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.connection.SocketSettings;
 import com.mongodb.connection.SslSettings;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +28,6 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 public final class MongoDbProvider implements MongoDb {
 
   private final RemoteCredentials credentials;
-
   private MongoClient client;
   private MongoDatabase database;
 

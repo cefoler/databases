@@ -17,7 +17,7 @@ public enum MessengerType {
 
   REDIS(RedisProvider.class, AccessType.REMOTE, "REDIS", "RE"),
   RABBITMQ(RabbitMqProvider.class, AccessType.REMOTE, "RABBITMQ", "RABBIT", "RBT"),
-  KAFKA(KafkaProvider.class, AccessType.REMOTE, "KAFKA");
+  KAFKA(KafkaProvider.class, AccessType.REMOTE, "KAFKA", "KFK");
 
   private final Class<? extends Messenger> provider;
   private final AccessType access;

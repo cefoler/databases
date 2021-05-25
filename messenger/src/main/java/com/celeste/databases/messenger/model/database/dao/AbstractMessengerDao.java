@@ -2,12 +2,15 @@ package com.celeste.databases.messenger.model.database.dao;
 
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.util.Reflection;
-import com.celeste.databases.messenger.model.annotation.Listener;
+import com.celeste.databases.messenger.model.annotation.Subscribe;
 import com.celeste.databases.messenger.model.database.provider.Messenger;
+import com.celeste.databases.messenger.model.entity.Listener;
 import java.lang.reflect.Constructor;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.reflections.Reflections;
 
@@ -42,11 +45,14 @@ public abstract class AbstractMessengerDao<T extends Messenger> implements Messe
 
       final Reflections reflections = new Reflections(prefix);
 
-      for (final Class<?> clazz : reflections.getTypesAnnotatedWith(Listener.class)) {
-        final Listener annotation = Reflection.getAnnotation(clazz, Listener.class);
-        final Constructor<?>[] constructors = Reflection.getConstructors(clazz);
+      for (final Class<? extends Listener> clazz : reflections.getSubTypesOf(Listener.class)
+          .stream()
+          .filter(clazz -> clazz.isAnnotationPresent(Subscribe.class))
+          .collect(Collectors.toSet())) {
+        final Subscribe annotation = Reflection.getAnnotation(clazz, Subscribe.class);
+        final Constructor<? extends Listener>[] constructors = Reflection.getConstructors(clazz);
 
-        final Constructor<?> constructor = Arrays.stream(constructors)
+        final Constructor<? extends Listener> constructor = Arrays.stream(constructors)
             .filter(newConstructor -> Arrays.equals(newConstructor.getParameterTypes(), parameters))
             .findFirst()
             .orElse(null);
@@ -55,7 +61,11 @@ public abstract class AbstractMessengerDao<T extends Messenger> implements Messe
           continue;
         }
 
-        subscribe(annotation.value(), constructor.newInstance(instances));
+        final Listener listener = constructor.newInstance(instances);
+
+        for (final String channel : annotation.value()) {
+          subscribe(channel, listener);
+        }
       }
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
