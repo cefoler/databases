@@ -2,6 +2,7 @@ package com.celeste.databases.messenger.model.database.type;
 
 import com.celeste.databases.core.model.database.type.AccessType;
 import com.celeste.databases.messenger.model.database.provider.Messenger;
+import com.celeste.databases.messenger.model.database.provider.impl.kafka.KafkaProvider;
 import com.celeste.databases.messenger.model.database.provider.impl.rabbitmq.RabbitMqProvider;
 import com.celeste.databases.messenger.model.database.provider.impl.redis.RedisProvider;
 import com.google.common.collect.ImmutableList;
@@ -15,7 +16,8 @@ import org.jetbrains.annotations.Nullable;
 public enum MessengerType {
 
   REDIS(RedisProvider.class, AccessType.REMOTE, "REDIS", "RE"),
-  RABBITMQ(RabbitMqProvider.class, AccessType.REMOTE, "RABBITMQ", "RABBIT", "RBT");
+  RABBITMQ(RabbitMqProvider.class, AccessType.REMOTE, "RABBITMQ", "RABBIT", "RBT"),
+  KAFKA(KafkaProvider.class, AccessType.REMOTE, "KAFKA");
 
   private final Class<? extends Messenger> provider;
   private final AccessType access;
