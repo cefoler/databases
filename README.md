@@ -8,8 +8,6 @@ The databases project is a com.celeste.messenger.annotation based **Connection p
 for **SQL** and **NoSQL** databases such as **MongoDB, MySQL and Redis**. Here you can find the
 source code and documentation of this project.
 
-The project have full support for MongoDB, MySQL, PostgreSQL, H2, SQLite, Redis and RabbitMQ
-
 # How to install
 
 Maven
