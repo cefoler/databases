@@ -32,7 +32,7 @@ public final class RedisDao extends AbstractCacheDao<Redis> {
   }
 
   @Override
-  public String setExpiring(final String key, final int seconds, final String value) throws FailedConnectionException {
+  public String setExpiringAt(final String key, final int seconds, final String value) throws FailedConnectionException {
     try (final Jedis jedis = getDatabase().getJedis()) {
       return jedis.setex(key, seconds, value);
     } catch (Exception exception) {
@@ -68,6 +68,24 @@ public final class RedisDao extends AbstractCacheDao<Redis> {
   }
 
   @Override
+  public String get(final String key) throws FailedConnectionException {
+    try (final Jedis jedis = getDatabase().getJedis()) {
+      return jedis.get(key);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception);
+    }
+  }
+
+  @Override
+  public String get(String key, String value) throws FailedConnectionException {
+    try (final Jedis jedis = getDatabase().getJedis()) {
+      return jedis.hget(key, value);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception);
+    }
+  }
+
+  @Override
   public Map<String, String> getAll(final String key) throws FailedConnectionException {
     try (final Jedis jedis = getDatabase().getJedis()) {
       return jedis.hgetAll(key);
@@ -80,6 +98,15 @@ public final class RedisDao extends AbstractCacheDao<Redis> {
   public boolean exists(final String... key) throws FailedConnectionException {
     try (final Jedis jedis = getDatabase().getJedis()) {
       return jedis.exists(key) > 0;
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception);
+    }
+  }
+
+  @Override
+  public boolean exists(String key, String field) throws FailedConnectionException {
+    try (final Jedis jedis = getDatabase().getJedis()) {
+      return jedis.hexists(key, field);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

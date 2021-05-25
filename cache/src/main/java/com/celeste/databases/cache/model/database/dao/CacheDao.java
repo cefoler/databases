@@ -11,7 +11,7 @@ public interface CacheDao extends Dao {
 
   Long set(final String key, final String field, final String value) throws FailedConnectionException;
 
-  String setExpiring(final String key, final int seconds, final String value) throws FailedConnectionException;
+  String setExpiringAt(final String key, final int seconds, final String value) throws FailedConnectionException;
 
   void delete(final String key) throws FailedConnectionException;
 
@@ -19,8 +19,14 @@ public interface CacheDao extends Dao {
 
   void delete(final String key, final String... fields) throws FailedConnectionException;
 
+  String get(final String key) throws FailedConnectionException;
+
+  String get(final String key, final String value) throws FailedConnectionException;
+
   Map<String, String> getAll(final String key) throws FailedConnectionException;
 
   boolean exists(final String... keys) throws FailedConnectionException;
+
+  boolean exists(final String key, final String field) throws FailedConnectionException;
 
 }
