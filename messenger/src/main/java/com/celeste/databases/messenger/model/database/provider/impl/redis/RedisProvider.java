@@ -48,7 +48,7 @@ public final class RedisProvider implements Redis {
           credentials.getPassword(),
           credentials.isSsl());
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -57,7 +57,7 @@ public final class RedisProvider implements Redis {
     try {
       jedis.close();
     } catch (Exception exception) {
-      throw new FailedShutdownException(exception.getMessage(), exception.getCause());
+      throw new FailedShutdownException(exception);
     }
   }
 
@@ -75,7 +75,7 @@ public final class RedisProvider implements Redis {
     try {
       return jedis.getResource();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

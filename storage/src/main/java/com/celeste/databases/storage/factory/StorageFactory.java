@@ -32,7 +32,7 @@ public final class StorageFactory {
 
       return constructor.newInstance(credentials);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

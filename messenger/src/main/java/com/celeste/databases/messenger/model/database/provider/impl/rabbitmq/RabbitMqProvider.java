@@ -41,7 +41,7 @@ public final class RabbitMqProvider implements RabbitMq {
 
       this.connection = factory.newConnection(Executors.newFixedThreadPool(20));
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -50,7 +50,7 @@ public final class RabbitMqProvider implements RabbitMq {
     try {
       connection.close();
     } catch (Exception exception) {
-      throw new FailedShutdownException(exception.getMessage(), exception.getCause());
+      throw new FailedShutdownException(exception);
     }
   }
 
@@ -68,7 +68,7 @@ public final class RabbitMqProvider implements RabbitMq {
     try {
       return connection.createChannel();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

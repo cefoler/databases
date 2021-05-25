@@ -109,7 +109,7 @@ public final class MongoDbProvider implements MongoDb {
       this.client = MongoClients.create(settings);
       this.database = client.getDatabase(credentials.getDatabase());
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -118,7 +118,7 @@ public final class MongoDbProvider implements MongoDb {
     try {
       client.close();
     } catch (Exception exception) {
-      throw new FailedShutdownException(exception.getMessage(), exception.getCause());
+      throw new FailedShutdownException(exception);
     }
   }
 

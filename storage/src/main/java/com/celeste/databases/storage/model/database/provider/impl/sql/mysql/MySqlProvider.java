@@ -82,7 +82,7 @@ public final class MySqlProvider implements Sql {
 
       this.hikari = new HikariDataSource(config);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -91,7 +91,7 @@ public final class MySqlProvider implements Sql {
     try {
       hikari.close();
     } catch (Exception exception) {
-      throw new FailedShutdownException(exception.getMessage(), exception.getCause());
+      throw new FailedShutdownException(exception);
     }
   }
 
@@ -114,7 +114,7 @@ public final class MySqlProvider implements Sql {
     try {
       return hikari.getConnection();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

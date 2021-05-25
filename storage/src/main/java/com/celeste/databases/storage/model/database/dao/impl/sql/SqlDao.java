@@ -73,7 +73,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     try (final ResultSet result = executeQuery(contains, serializeObject(key))) {
       return result.next();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -100,7 +100,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       applyValues(statement, values);
       return statement.executeUpdate();
     } catch (SQLException exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -113,7 +113,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       applyValues(statement, values);
       return statement.executeQuery();
     } catch (SQLException exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -125,7 +125,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       try {
         statement.setObject(index.getAndIncrement(), value);
       } catch (Exception exception) {
-        throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+        throw new FailedConnectionException(exception);
       }
     }
   }
@@ -136,7 +136,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       Validation.isFalse(result.next(), () -> new ValueNotFoundException("Value not found"));
       return deserialize(result);
     } catch (SQLException exception) {
-      throw new ValueNotFoundException(exception.getMessage(), exception.getCause());
+      throw new ValueNotFoundException(exception);
     }
   }
 
@@ -149,7 +149,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
         entities.add(deserialize(result));
       }
     } catch (SQLException exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
 
     return entities;

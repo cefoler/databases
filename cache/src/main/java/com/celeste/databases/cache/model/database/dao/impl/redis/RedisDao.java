@@ -16,7 +16,7 @@ public final class RedisDao extends AbstractCacheDao<Redis> {
     try (final Jedis jedis = getDatabase().getJedis()) {
       return jedis.set(key, value);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -25,7 +25,7 @@ public final class RedisDao extends AbstractCacheDao<Redis> {
     try (final Jedis jedis = getDatabase().getJedis()) {
       jedis.del(key);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

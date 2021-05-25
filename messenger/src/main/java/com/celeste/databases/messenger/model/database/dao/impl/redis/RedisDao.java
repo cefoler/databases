@@ -18,7 +18,7 @@ public final class RedisDao extends AbstractMessengerDao<Redis> {
     try (final Jedis jedis = getDatabase().getJedis()) {
       jedis.publish(channelName, message);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -28,7 +28,7 @@ public final class RedisDao extends AbstractMessengerDao<Redis> {
     try (final Jedis jedis = getDatabase().getJedis()) {
       new Thread(() -> jedis.subscribe((JedisPubSub) instance, channelName)).start();
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

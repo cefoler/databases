@@ -58,7 +58,7 @@ public abstract class AbstractMessengerDao<T extends Messenger> implements Messe
         subscribe(annotation.value(), constructor.newInstance(instances));
       }
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

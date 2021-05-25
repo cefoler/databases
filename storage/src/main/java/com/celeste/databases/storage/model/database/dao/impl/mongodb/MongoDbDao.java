@@ -44,7 +44,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
         collection.replaceOne(bson, document, options);
       }
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -59,7 +59,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
         collection.deleteOne(bson);
       }
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -70,7 +70,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
       return collection.countDocuments(bson) > 1;
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -86,9 +86,9 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
       return deserialize(document);
     } catch (ValueNotFoundException exception) {
-      throw new ValueNotFoundException(exception.getMessage(), exception.getCause());
+      throw new ValueNotFoundException(exception);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -106,7 +106,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
       return entities;
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -125,7 +125,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       database.createCollection(collection);
       return database.getCollection(collection);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

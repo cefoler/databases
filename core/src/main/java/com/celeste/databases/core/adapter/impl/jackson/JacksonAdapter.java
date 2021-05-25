@@ -24,7 +24,7 @@ public final class JacksonAdapter implements Json {
     try {
       return mapper.writeValueAsString(value);
     } catch (Exception exception) {
-      throw new JsonSerializeException(exception.getMessage(), exception.getCause());
+      throw new JsonSerializeException(exception);
     }
   }
 
@@ -34,7 +34,7 @@ public final class JacksonAdapter implements Json {
     try {
       return mapper.readValue(json, clazz);
     } catch (Exception exception) {
-      throw new JsonDeserializeException(exception.getMessage(), exception.getCause());
+      throw new JsonDeserializeException(exception);
     }
   }
 

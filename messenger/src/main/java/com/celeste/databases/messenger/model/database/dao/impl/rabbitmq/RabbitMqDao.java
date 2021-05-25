@@ -17,7 +17,7 @@ public final class RabbitMqDao extends AbstractMessengerDao<RabbitMq> {
     try (final Channel connection = getDatabase().getChannel()) {
       connection.basicPublish("", channelName, false, null, message.getBytes());
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 
@@ -27,7 +27,7 @@ public final class RabbitMqDao extends AbstractMessengerDao<RabbitMq> {
     try (final Channel connection = getDatabase().getChannel()) {
       connection.queueDeclare(channelName, false, false, false, null);
     } catch (Exception exception) {
-      throw new FailedConnectionException(exception.getMessage(), exception.getCause());
+      throw new FailedConnectionException(exception);
     }
   }
 

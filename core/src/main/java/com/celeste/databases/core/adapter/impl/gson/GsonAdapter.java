@@ -44,7 +44,7 @@ public final class GsonAdapter implements Json {
 
       return json;
     } catch (Exception exception) {
-      throw new JsonSerializeException(exception.getMessage(), exception.getCause());
+      throw new JsonSerializeException(exception);
     }
   }
 
@@ -61,7 +61,7 @@ public final class GsonAdapter implements Json {
 
       return instance;
     } catch (Exception exception) {
-      throw new JsonDeserializeException(exception.getMessage(), exception.getCause());
+      throw new JsonDeserializeException(exception);
     }
   }
 
