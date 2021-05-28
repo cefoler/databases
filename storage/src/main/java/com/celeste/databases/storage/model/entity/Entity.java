@@ -29,7 +29,7 @@ public final class Entity<T> {
 
     this.name = storable.value().toLowerCase();
 
-    final Map<String, Field> fields = Arrays.stream(Reflection.getDcFields(clazz))
+    this.values = Arrays.stream(Reflection.getDcFields(clazz))
         .filter(field -> !Reflection.containsAnnotation(field, Transient.class))
         .collect(Collectors.toMap(
             this::getFieldName,
@@ -37,12 +37,10 @@ public final class Entity<T> {
             (field1, field2) -> field1,
             LinkedHashMap::new));
 
-    this.key = fields.entrySet().stream()
+    this.key = values.entrySet().stream()
         .filter(entry -> Reflection.containsAnnotation(entry.getValue(), Key.class))
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Entity doesn't have the @Key annotation"));
-
-    this.values = fields;
   }
 
   private String getFieldName(final Field field) {
