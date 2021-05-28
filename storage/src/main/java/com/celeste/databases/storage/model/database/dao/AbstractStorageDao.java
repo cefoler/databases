@@ -17,12 +17,12 @@ public abstract class AbstractStorageDao<T extends Database, U> implements Stora
     this.entity = new Entity<>(clazz);
   }
 
-  protected Entity<U> getEntity() {
-    return entity;
-  }
-
   protected Class<U> getClazz() {
     return clazz;
+  }
+
+  protected Entity<U> getEntity() {
+    return entity;
   }
 
   @Override
