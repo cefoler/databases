@@ -21,7 +21,7 @@ public final class RabbitMqProvider implements RabbitMq {
   }
 
   @Override
-  public void init() throws FailedConnectionException {
+  public synchronized void init() throws FailedConnectionException {
     try {
       Class.forName("com.rabbitmq.client.impl.recovery.AutorecoveringConnection");
 
@@ -46,7 +46,7 @@ public final class RabbitMqProvider implements RabbitMq {
   }
 
   @Override
-  public void shutdown() throws FailedShutdownException {
+  public synchronized void shutdown() throws FailedShutdownException {
     try {
       connection.close();
     } catch (Exception exception) {

@@ -26,7 +26,7 @@ public final class KafkaProvider implements Kafka {
   }
 
   @Override
-  public void init() throws FailedConnectionException {
+  public synchronized void init() throws FailedConnectionException {
     try {
       this.properties = new Properties();
 
@@ -51,7 +51,7 @@ public final class KafkaProvider implements Kafka {
   }
 
   @Override
-  public void shutdown() throws FailedShutdownException {
+  public synchronized void shutdown() throws FailedShutdownException {
     try {
       producer.close();
     } catch (Exception exception) {
