@@ -7,7 +7,6 @@ public abstract class AbstractStorageDao<T extends Database, U> implements Stora
 
   private final T storage;
   private final Class<U> clazz;
-
   private final Entity<U> entity;
 
   public AbstractStorageDao(final T storage, final Class<U> clazz) {
