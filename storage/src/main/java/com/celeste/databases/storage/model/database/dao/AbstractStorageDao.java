@@ -12,7 +12,6 @@ public abstract class AbstractStorageDao<T extends Database, U> implements Stora
   public AbstractStorageDao(final T storage, final Class<U> clazz) {
     this.storage = storage;
     this.clazz = clazz;
-
     this.entity = new Entity<>(clazz);
   }
 
