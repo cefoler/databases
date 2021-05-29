@@ -40,7 +40,7 @@ public enum VariableType {
   TIMESTAMP(Timestamp.class, "TIMESTAMP"),
 
   UUID(UUID.class, "VARCHAR(64)"),
-  JSON(Void.class, "VARCHAR(10240)"),
+  JSON(Void.class, "TEXT"),
   NULL(Void.class, "NULL");
 
   private final Class<?> clazz;
