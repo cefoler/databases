@@ -2,7 +2,7 @@ subprojects {
     apply plugin: 'java'
 
     group 'com.celeste'
-    version '4.1.1-SNAPSHOT'
+    version '4.1.2-SNAPSHOT'
 
     repositories {
         mavenLocal()
