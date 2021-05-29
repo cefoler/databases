@@ -4,6 +4,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.UUID;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +15,7 @@ public enum VariableType {
 
   CHARACTER(Character.class, "VARCHAR(16)"),
   CHARACTER_PRIMITIVE(char.class, "VARCHAR(16)"),
-  STRING(String.class, "VARCHAR(10240)"),
+  STRING(String.class, "VARCHAR(1024)"),
 
   BYTE(Byte.class, "TINYINT"),
   BYTE_PRIMITIVE(byte.class, "TINYINT"),
