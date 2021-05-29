@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 public enum VariableType {
 
   CHARACTER(Character.class, "VARCHAR(16)"),
-  CHARACTER_PRIMITIVE(char.class, "VARCHAR(255)"),
-  STRING(String.class, "VARCHAR(255)"),
+  CHARACTER_PRIMITIVE(char.class, "VARCHAR(16)"),
+  STRING(String.class, "VARCHAR(1024)"),
 
   BYTE(Byte.class, "TINYINT"),
   BYTE_PRIMITIVE(byte.class, "TINYINT"),
@@ -39,7 +39,7 @@ public enum VariableType {
   TIMESTAMP(Timestamp.class, "TIMESTAMP"),
 
   UUID(UUID.class, "VARCHAR(64)"),
-  JSON(Void.class, "VARCHAR(10000)"),
+  JSON(Void.class, "VARCHAR(10240)"),
   NULL(Void.class, "NULL");
 
   private final Class<?> clazz;
