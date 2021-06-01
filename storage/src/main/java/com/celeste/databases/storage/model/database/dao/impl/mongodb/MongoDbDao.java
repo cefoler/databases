@@ -150,6 +150,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       System.out.println(entry.getKey());
       System.out.println(entry.getValue());
       final Object object = document.getOrDefault(entry.getKey(), null);
+      System.out.println(object);
       System.out.println("D");
       entry.getValue().set(entity, object);
       System.out.println("E");
