@@ -144,7 +144,12 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     final T entity = Reflection.getDcConstructor(getClazz()).newInstance();
 
     for (final Entry<String, Field> entry : values.entrySet()) {
+      System.out.println(entry.getKey());
+      System.out.println(entry.getValue());
+
       final Object object = document.getOrDefault(entry.getKey(), null);
+      System.out.println(object);
+
       entry.getValue().set(entity, object);
     }
 
