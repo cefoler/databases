@@ -140,12 +140,19 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
   @SneakyThrows
   private T deserialize(final Document document) {
+    System.out.println("A");
     final Map<String, Field> values = getEntity().getValues();
+    System.out.println("B");
     final T entity = Reflection.getDcConstructor(getClazz()).newInstance();
+    System.out.println("C");
 
     for (final Entry<String, Field> entry : values.entrySet()) {
+      System.out.println(entry.getKey());
+      System.out.println(entry.getValue());
       final Object object = document.getOrDefault(entry.getKey(), null);
+      System.out.println("D");
       entry.getValue().set(entity, object);
+      System.out.println("E");
     }
 
     return entity;
