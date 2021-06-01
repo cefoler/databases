@@ -114,8 +114,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     }
   }
 
-  private MongoCollection<Document> createCollection()
-      throws FailedConnectionException {
+  private MongoCollection<Document> createCollection() throws FailedConnectionException {
     try {
       final MongoDatabase database = getDatabase().getDatabase();
       final String collection = getEntity().getName();
