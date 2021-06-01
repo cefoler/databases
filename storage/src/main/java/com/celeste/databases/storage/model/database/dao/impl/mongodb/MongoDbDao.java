@@ -21,7 +21,7 @@ import org.bson.conversions.Bson;
 
 public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
-  private final MongoCollection<Document> collection;
+  private final MongoCollection<T> collection;
 
   public MongoDbDao(final MongoDb storage, final Class<T> entity) throws FailedConnectionException {
     super(storage, entity);
@@ -41,7 +41,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
         final Bson bson = Filters.eq(key);
         final Document document = serialize(entity);
 
-        collection.replaceOne(bson, document, options);
+        collection.replaceOne(bson, entity, options);
       }
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
@@ -78,15 +78,14 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   public T find(final Object key) throws ValueNotFoundException, FailedConnectionException {
     try {
       final Bson bson = Filters.eq(key);
-      final Document document = collection.find(bson).first();
-
-      if (document == null) {
-        throw new ValueNotFoundException("Value not found");
-      }
-
-      return deserialize(document);
-    } catch (ValueNotFoundException exception) {
-      throw new ValueNotFoundException(exception);
+      return collection.find(bson).first();
+//      final Document document = collection.find(bson).first();
+//
+//      if (document == null) {
+//        throw new ValueNotFoundException("Value not found");
+//      }
+//
+//      return deserialize(document);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }
@@ -97,10 +96,11 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     try {
       final List<T> entities = new ArrayList<>();
 
-      try (MongoCursor<Document> cursor = collection.find().cursor()) {
+      try (MongoCursor<T> cursor = collection.find().cursor()) {
         while (cursor.hasNext()) {
-          final Document document = cursor.next();
-          entities.add(deserialize(document));
+          entities.add(cursor.next());
+//          final Document document = cursor.next();
+//          entities.add(deserialize(document));
         }
       }
 
@@ -110,7 +110,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     }
   }
 
-  private MongoCollection<Document> createCollection()
+  private MongoCollection<T> createCollection()
       throws FailedConnectionException {
     try {
       final MongoDatabase database = getDatabase().getDatabase();
@@ -118,12 +118,12 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
       for (final String name : database.listCollectionNames()) {
         if (collection.equalsIgnoreCase(name)) {
-          return database.getCollection(collection);
+          return database.getCollection(collection, getClazz());
         }
       }
 
       database.createCollection(collection);
-      return database.getCollection(collection);
+      return database.getCollection(collection, getClazz());
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }
