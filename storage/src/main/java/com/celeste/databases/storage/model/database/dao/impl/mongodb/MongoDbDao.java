@@ -1,5 +1,7 @@
 package com.celeste.databases.storage.model.database.dao.impl.mongodb;
 
+import com.celeste.databases.core.adapter.impl.gson.GsonAdapter;
+import com.celeste.databases.core.adapter.impl.jackson.JacksonAdapter;
 import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundException;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.util.Reflection;
@@ -12,9 +14,11 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -144,7 +148,15 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     final T entity = Reflection.getDcConstructor(getClazz()).newInstance();
 
     for (final Entry<String, Field> entry : values.entrySet()) {
-      final Object object = document.getOrDefault(entry.getKey(), null);
+      Object object = document.getOrDefault(entry.getKey(), null);
+
+      if (object instanceof Document) {
+        final Class<?> clazz = Reflection.getClazz(entry.getValue());
+        final String json = ((Document) object).toJson();
+
+        object = GsonAdapter.getInstance().deserialize(json, clazz);
+      }
+
       entry.getValue().set(entity, object);
     }
 
