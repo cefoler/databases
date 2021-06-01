@@ -154,7 +154,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
         final Class<?> clazz = Reflection.getClazz(entry.getValue());
         final String json = ((Document) object).toJson();
 
-        object = GsonAdapter.getInstance().deserialize(json, clazz);
+        object = JacksonAdapter.getInstance().deserialize(json, clazz);
       }
 
       entry.getValue().set(entity, object);
