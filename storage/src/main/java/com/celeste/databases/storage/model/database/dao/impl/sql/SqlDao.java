@@ -59,12 +59,26 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     }
   }
 
+  @Override
+  public void save(final List<T> entities) throws FailedConnectionException {
+    for (T entity : entities) {
+      save(entity);
+    }
+  }
+
   @SafeVarargs
   @Override
   public final void delete(final T... entities) throws FailedConnectionException {
     for (final T entity : entities) {
       final Object key = getEntity().getKey(entity);
       executeUpdate(delete, serializeObject(key));
+    }
+  }
+
+  @Override
+  public void delete(final List<T> entities) throws FailedConnectionException {
+    for (T entity : entities) {
+      delete(entity);
     }
   }
 

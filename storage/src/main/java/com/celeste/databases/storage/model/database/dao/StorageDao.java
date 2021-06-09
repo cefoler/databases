@@ -10,8 +10,12 @@ public interface StorageDao<T> extends Dao {
   @SuppressWarnings("unchecked")
   void save(final T... entities) throws FailedConnectionException;
 
+  void save(final List<T> entities) throws FailedConnectionException;
+
   @SuppressWarnings("unchecked")
   void delete(final T... entities) throws FailedConnectionException;
+
+  void delete(final List<T> entities) throws FailedConnectionException;
 
   boolean contains(final Object key) throws FailedConnectionException;
 
