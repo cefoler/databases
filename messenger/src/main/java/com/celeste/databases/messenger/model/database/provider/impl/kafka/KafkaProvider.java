@@ -36,7 +36,8 @@ public final class KafkaProvider implements Kafka {
 
       properties.setProperty(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, "30000");
       properties.setProperty(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, "30000");
-      properties.setProperty(ProducerConfig.SOCKET_CONNECTION_SETUP_TIMEOUT_MAX_MS_CONFIG, "100000");
+      properties.setProperty(ProducerConfig.SOCKET_CONNECTION_SETUP_TIMEOUT_MAX_MS_CONFIG,
+          "100000");
 
       properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
           StringSerializer.class.getName());

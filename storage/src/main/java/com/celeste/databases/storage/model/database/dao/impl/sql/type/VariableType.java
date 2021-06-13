@@ -4,7 +4,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.UUID;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
