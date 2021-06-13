@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,15 +55,13 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @SafeVarargs
   @Override
   public final void save(final T... entities) throws FailedConnectionException {
-    for (final T entity : entities) {
-      executeUpdate(save, serialize(entity));
-    }
+    save(Arrays.asList(entities));
   }
 
   @Override
   public void save(final List<T> entities) throws FailedConnectionException {
-    for (T entity : entities) {
-      save(entity);
+    for (final T entity : entities) {
+      executeUpdate(save, serialize(entity));
     }
   }
 

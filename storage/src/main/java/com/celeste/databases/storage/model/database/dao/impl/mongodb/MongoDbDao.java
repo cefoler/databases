@@ -11,6 +11,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import java.util.Arrays;
 import lombok.SneakyThrows;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -34,6 +35,11 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   @SafeVarargs
   @Override
   public final void save(final T... entities) throws FailedConnectionException {
+    save(Arrays.asList(entities));
+  }
+
+  @Override
+  public void save(final List<T> entities) throws FailedConnectionException {
     try {
       final ReplaceOptions options = new ReplaceOptions().upsert(true);
 
@@ -47,13 +53,6 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       }
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
-    }
-  }
-
-  @Override
-  public void save(final List<T> entities) throws FailedConnectionException {
-    for (T entity : entities) {
-      save(entity);
     }
   }
 
