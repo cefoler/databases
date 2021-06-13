@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 public final class MySqlProvider implements Sql {
 
   private static final String URI;
-
   private static final Pattern HOSTNAME;
   private static final Pattern PORT;
   private static final Pattern DATABASE;

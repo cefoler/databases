@@ -15,7 +15,6 @@ import org.h2.jdbc.JdbcConnection;
 public final class H2Provider implements Sql {
 
   private static final String URI;
-
   private static final Pattern PATH;
   private static final Pattern NAME;
 
