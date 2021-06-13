@@ -1,7 +1,6 @@
 package com.celeste.databases.storage.model.database.dao.impl.mongodb;
 
 import com.celeste.databases.core.adapter.impl.gson.GsonAdapter;
-import com.celeste.databases.core.adapter.impl.jackson.JacksonAdapter;
 import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundException;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.util.Reflection;
@@ -12,16 +11,15 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
@@ -52,6 +50,13 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
     }
   }
 
+  @Override
+  public void save(final List<T> entities) throws FailedConnectionException {
+    for (T entity : entities) {
+      save(entity);
+    }
+  }
+
   @SafeVarargs
   @Override
   public final void delete(final T... entities) throws FailedConnectionException {
@@ -64,6 +69,13 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       }
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
+    }
+  }
+
+  @Override
+  public void delete(final List<T> entities) throws FailedConnectionException {
+    for (T entity : entities) {
+      delete(entity);
     }
   }
 

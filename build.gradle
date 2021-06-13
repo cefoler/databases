@@ -21,8 +21,8 @@ subprojects {
         compileOnly 'org.projectlombok:lombok:1.18.20'
         annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
-        compileOnly 'org.jetbrains:annotations:20.1.0'
-        annotationProcessor 'org.jetbrains:annotations:20.1.0'
+        compileOnly 'org.jetbrains:annotations:21.0.1'
+        annotationProcessor 'org.jetbrains:annotations:21.0.1'
 
         /**
          * TEST FRAMEWORK
