@@ -5,9 +5,9 @@ import com.celeste.databases.storage.model.entity.Entity;
 
 public abstract class AbstractStorageDao<T extends Database, U> implements StorageDao<U> {
 
-  private final T storage;
-  private final Class<U> clazz;
-  private final Entity<U> entity;
+  protected final T storage;
+  protected final Class<U> clazz;
+  protected final Entity<U> entity;
 
   public AbstractStorageDao(final T storage, final Class<U> clazz) {
     this.storage = storage;
