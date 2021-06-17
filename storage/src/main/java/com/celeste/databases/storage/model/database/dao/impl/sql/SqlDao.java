@@ -183,23 +183,25 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     final T entity = Reflection.getDcConstructor(getClazz()).newInstance();
 
     final ResultSetMetaData metaData = result.getMetaData();
-    final int columnCount = metaData.getColumnCount();
+    final int count = metaData.getColumnCount();
 
-    final List<String> columnNames = new ArrayList<>();
+    final List<String> names = new ArrayList<>();
 
-    for (int index = 1; index <= columnCount; index++) {
-      columnNames.add(metaData.getColumnName(index));
+    for (int index = 1; index <= count; index++) {
+      names.add(metaData.getColumnName(index));
     }
 
-    for (final String columnName : columnNames) {
-      final Field field = values.get(columnName);
+    for (final String name : names) {
+      final Field field = values.get(name);
 
       if (field == null) {
         continue;
       }
 
-      field.set(entity, deserializeObject(result.getObject(columnName), field.getType()));
-      values.remove(columnName);
+      final Object object = result.getObject(name);
+      field.set(entity, deserializeObject(object, field.getType()));
+
+      values.remove(name);
     }
 
     for (final Field field : values.values()) {

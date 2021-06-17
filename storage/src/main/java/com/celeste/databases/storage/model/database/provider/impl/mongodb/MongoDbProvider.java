@@ -73,6 +73,7 @@ public final class MongoDbProvider implements MongoDb {
             .codecRegistry(codec)
             .readPreference(ReadPreference.primaryPreferred())
             .retryWrites(true)
+            .retryWrites(true)
             .build();
 
         this.client = MongoClients.create(settings);
