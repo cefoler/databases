@@ -7,7 +7,12 @@ import com.celeste.databases.messenger.model.database.type.MessengerType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public final class RabbitMqProvider implements RabbitMq {
 
@@ -39,7 +44,9 @@ public final class RabbitMqProvider implements RabbitMq {
       factory.setTopologyRecoveryEnabled(false);
       factory.setNetworkRecoveryInterval(30);
 
-      this.connection = factory.newConnection(Executors.newFixedThreadPool(5));
+      final ExecutorService executor = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 5L,
+          TimeUnit.MINUTES, new SynchronousQueue<>());
+      this.connection = factory.newConnection(executor);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

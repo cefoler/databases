@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class AbstractCacheDao<T extends Cache> implements CacheDao {
 
-  private final T cache;
+  protected final T cache;
 
   @Override
   public T getDatabase() {

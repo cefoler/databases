@@ -41,12 +41,8 @@ public final class RedisProvider implements Redis {
       config.setJmxEnabled(true);
       config.setTestWhileIdle(true);
 
-      this.jedis = new JedisPool(config,
-          credentials.getHostname(),
-          credentials.getPort(),
-          Protocol.DEFAULT_TIMEOUT,
-          credentials.getPassword(),
-          credentials.isSsl());
+      this.jedis = new JedisPool(config, credentials.getHostname(), credentials.getPort(),
+          Protocol.DEFAULT_TIMEOUT, credentials.getPassword(), credentials.isSsl());
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

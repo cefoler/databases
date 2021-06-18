@@ -30,9 +30,8 @@ public final class KafkaProvider implements Kafka {
     try {
       this.properties = new Properties();
 
-      properties.setProperty(
-          ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-          credentials.getHostname() + ":" + credentials.getPort());
+      properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, credentials.getHostname()
+          + ":" + credentials.getPort());
 
       properties.setProperty(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, "30000");
       properties.setProperty(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, "30000");
