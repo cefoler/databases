@@ -207,7 +207,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       return Arrays.stream(clazz.getEnumConstants())
           .filter(enumeration -> String.valueOf(enumeration).equals(enumerationName))
           .findFirst()
-          .orElseThrow(() -> new JsonDeserializeException("This object isn't an invalid instance"));
+          .orElseThrow(() -> new JsonDeserializeException("Object isn't an invalid instance"));
     }
 
     return object;

@@ -5,6 +5,7 @@ import com.celeste.databases.cache.model.database.type.CacheType;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.type.AccessType;
 import com.celeste.databases.core.model.entity.Credentials;
+import com.celeste.databases.core.util.Reflection;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
 import lombok.AccessLevel;
@@ -27,10 +28,10 @@ public final class CacheFactory {
       final AccessType access = cache.getAccess();
       final Credentials credentials = access.serialize(properties);
 
-      final Constructor<? extends Cache> constructor = cache.getProvider()
-          .getConstructor(access.getCredentials());
+      final Constructor<? extends Cache> constructor = Reflection.getConstructor(
+          cache.getProvider(), access.getCredentials());
 
-      return constructor.newInstance(credentials);
+      return Reflection.instance(constructor, credentials);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

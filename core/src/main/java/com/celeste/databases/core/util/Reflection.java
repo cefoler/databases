@@ -285,12 +285,12 @@ public final class Reflection {
     return field.getAnnotation(annotation);
   }
 
-  public static Object instance(final Constructor<?> constructor)
+  public static <T> T instance(final Constructor<T> constructor)
       throws IllegalAccessException, InvocationTargetException, InstantiationException {
     return constructor.newInstance();
   }
 
-  public static Object instance(final Constructor<?> constructor, final Object... args)
+  public static <T> T instance(final Constructor<T> constructor, final Object... args)
       throws IllegalAccessException, InvocationTargetException, InstantiationException {
     return constructor.newInstance(args);
   }

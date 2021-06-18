@@ -7,6 +7,8 @@ import com.celeste.databases.storage.model.annotation.Name;
 import com.celeste.databases.storage.model.annotation.Storable;
 import com.celeste.databases.storage.model.annotation.Transient;
 import java.lang.reflect.Field;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,10 +33,7 @@ public final class Entity<T> {
 
     this.values = Arrays.stream(Reflection.getDcFields(clazz))
         .filter(field -> !Reflection.containsAnnotation(field, Transient.class))
-        .collect(Collectors.toMap(
-            this::getFieldName,
-            field -> field,
-            (field1, field2) -> field1,
+        .collect(Collectors.toMap(this::getFieldName, field -> field, (field1, field2) -> field1,
             LinkedHashMap::new));
 
     this.key = values.entrySet().stream()
@@ -71,7 +70,8 @@ public final class Entity<T> {
     final Map<String, Object> newValues = new LinkedHashMap<>();
 
     for (final Entry<String, Field> entry : values.entrySet()) {
-      newValues.put(entry.getKey(), Reflection.get(entry.getValue(), instance));
+      final Object object = Reflection.get(entry.getValue(), instance);
+      newValues.put(entry.getKey(), object);
     }
 
     return newValues;

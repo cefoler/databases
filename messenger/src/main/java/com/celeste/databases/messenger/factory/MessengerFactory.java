@@ -3,6 +3,7 @@ package com.celeste.databases.messenger.factory;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.type.AccessType;
 import com.celeste.databases.core.model.entity.Credentials;
+import com.celeste.databases.core.util.Reflection;
 import com.celeste.databases.messenger.model.database.provider.Messenger;
 import com.celeste.databases.messenger.model.database.type.MessengerType;
 import java.lang.reflect.Constructor;
@@ -27,10 +28,10 @@ public final class MessengerFactory {
       final AccessType access = messenger.getAccess();
       final Credentials credentials = access.serialize(properties);
 
-      final Constructor<? extends Messenger> constructor = messenger.getProvider()
-          .getConstructor(access.getCredentials());
+      final Constructor<? extends Messenger> constructor = Reflection.getConstructor(
+          messenger.getProvider(), access.getCredentials());
 
-      return constructor.newInstance(credentials);
+      return Reflection.instance(constructor, credentials);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

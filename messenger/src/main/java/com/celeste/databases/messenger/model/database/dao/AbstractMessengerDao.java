@@ -5,8 +5,8 @@ import com.celeste.databases.core.util.Reflection;
 import com.celeste.databases.messenger.model.annotation.Subscribe;
 import com.celeste.databases.messenger.model.database.provider.Messenger;
 import com.celeste.databases.messenger.model.entity.Listener;
+import com.google.common.collect.Maps;
 import java.lang.reflect.Constructor;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -16,7 +16,7 @@ import org.reflections.Reflections;
 @RequiredArgsConstructor
 public abstract class AbstractMessengerDao<T extends Messenger> implements MessengerDao {
 
-  private final T messenger;
+  protected final T messenger;
 
   @Override
   public T getDatabase() {
@@ -26,7 +26,7 @@ public abstract class AbstractMessengerDao<T extends Messenger> implements Messe
   @Override
   public void subscribeAll(final String prefix, final Class<?> clazz, final Object instance)
       throws FailedConnectionException {
-    subscribeAll(prefix, new SimpleImmutableEntry<>(clazz, instance));
+    subscribeAll(prefix, Maps.immutableEntry(clazz, instance));
   }
 
   @SafeVarargs

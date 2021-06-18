@@ -3,6 +3,7 @@ package com.celeste.databases.storage.factory;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.model.database.type.AccessType;
 import com.celeste.databases.core.model.entity.Credentials;
+import com.celeste.databases.core.util.Reflection;
 import com.celeste.databases.storage.model.database.provider.Storage;
 import com.celeste.databases.storage.model.database.type.StorageType;
 import java.lang.reflect.Constructor;
@@ -27,10 +28,10 @@ public final class StorageFactory {
       final AccessType access = storage.getAccess();
       final Credentials credentials = access.serialize(properties);
 
-      final Constructor<? extends Storage> constructor = storage.getProvider()
-          .getConstructor(access.getCredentials());
+      final Constructor<? extends Storage> constructor = Reflection.getConstructor(
+          storage.getProvider(), access.getCredentials());
 
-      return constructor.newInstance(credentials);
+      return Reflection.instance(constructor, credentials);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }
