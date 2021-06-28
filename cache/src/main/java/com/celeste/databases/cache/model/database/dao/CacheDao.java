@@ -2,6 +2,7 @@ package com.celeste.databases.cache.model.database.dao;
 
 import com.celeste.databases.core.model.database.dao.Dao;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
+
 import java.util.Map;
 
 public interface CacheDao extends Dao {
@@ -13,6 +14,11 @@ public interface CacheDao extends Dao {
 
   String expire(final String key, final String value, final long seconds)
       throws FailedConnectionException;
+
+  Long expire(final String key, final long seconds)
+      throws FailedConnectionException;
+
+  void increment(final String key, final String value, final double amount) throws FailedConnectionException;
 
   void delete(final String key) throws FailedConnectionException;
 
