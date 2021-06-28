@@ -76,7 +76,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
   @Override
   public void delete(final List<T> entities) throws FailedConnectionException {
-    for (T entity : entities) {
+    for (final T entity : entities) {
       delete(entity);
     }
   }

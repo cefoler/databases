@@ -89,9 +89,9 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   @Override
   public boolean contains(final Object key) throws FailedConnectionException {
     try {
-      final Bson bson = Filters.eq(key);
+      final Bson bson = Filters.eq(serializeObject(key));
 
-      return collection.countDocuments(bson) > 1;
+      return collection.countDocuments(bson) > 0;
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }
@@ -100,7 +100,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   @Override
   public T find(final Object key) throws ValueNotFoundException, FailedConnectionException {
     try {
-      final Bson bson = Filters.eq(key);
+      final Bson bson = Filters.eq(serializeObject(key));
       final Document document = collection.find(bson).first();
 
       if (document == null) {
