@@ -7,8 +7,7 @@ import com.celeste.databases.storage.model.annotation.Name;
 import com.celeste.databases.storage.model.annotation.Storable;
 import com.celeste.databases.storage.model.annotation.Transient;
 import java.lang.reflect.Field;
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,7 +31,8 @@ public final class Entity<T> {
     this.name = storable.value().toLowerCase();
 
     this.values = Arrays.stream(Reflection.getDcFields(clazz))
-        .filter(field -> !Reflection.containsAnnotation(field, Transient.class))
+        .filter(field -> !Reflection.containsAnnotation(field, Transient.class)
+            && !Modifier.isTransient(field.getModifiers()))
         .collect(Collectors.toMap(this::getFieldName, field -> field, (field1, field2) -> field1,
             LinkedHashMap::new));
 
