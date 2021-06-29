@@ -2,7 +2,6 @@ package com.celeste.databases.cache.model.database.dao;
 
 import com.celeste.databases.core.model.database.dao.Dao;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
-
 import java.util.Map;
 
 public interface CacheDao extends Dao {
