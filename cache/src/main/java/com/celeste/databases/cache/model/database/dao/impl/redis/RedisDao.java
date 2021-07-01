@@ -32,10 +32,29 @@ public final class RedisDao extends AbstractCacheDao<Redis> {
   }
 
   @Override
-  public String expire(final String key, final String value, final long seconds)
+  public String setExpire(final String key, final String value, final long seconds)
       throws FailedConnectionException {
     try (final Jedis jedis = getDatabase().getJedis()) {
       return jedis.setex(key, seconds, value);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception);
+    }
+  }
+
+  @Override
+  public Long expire(final String key, final long seconds)
+      throws FailedConnectionException {
+    try (final Jedis jedis = getDatabase().getJedis()) {
+      return jedis.expire(key, seconds);
+    } catch (Exception exception) {
+      throw new FailedConnectionException(exception);
+    }
+  }
+
+  @Override
+  public void increment(final String key, final String value, final double amount) throws FailedConnectionException {
+    try (final Jedis jedis = getDatabase().getJedis()) {
+      jedis.hincrByFloat(key, value, amount);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }
