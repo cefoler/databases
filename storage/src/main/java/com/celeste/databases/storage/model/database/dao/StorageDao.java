@@ -5,6 +5,7 @@ import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundExce
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface StorageDao<T> extends Dao {
 
@@ -23,5 +24,21 @@ public interface StorageDao<T> extends Dao {
   T find(final Object key) throws ValueNotFoundException, FailedConnectionException;
 
   List<T> findAll() throws FailedConnectionException;
+
+  @SuppressWarnings("unchecked")
+  CompletableFuture<Void> saveAsync(final T... entities);
+
+  CompletableFuture<Void> saveAsync(final Collection<T> entities);
+
+  @SuppressWarnings("unchecked")
+  CompletableFuture<Void> deleteAsync(final T... entities);
+
+  CompletableFuture<Void> deleteAsync(final Collection<T> entities);
+
+  CompletableFuture<Boolean> containsAsync(final Object key);
+
+  CompletableFuture<T> findAsync(final Object key);
+
+  CompletableFuture<List<T>> findAllAsync();
 
 }

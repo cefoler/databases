@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
@@ -103,6 +104,90 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @Override
   public List<T> findAll() throws FailedConnectionException {
     return getAll(findAll);
+  }
+
+  @Override
+  @SafeVarargs
+  public final CompletableFuture<Void> saveAsync(final T... entities) {
+    return CompletableFuture.runAsync(() -> {
+      try {
+        save(entities);
+      } catch (FailedConnectionException exception) {
+        exception.printStackTrace();
+      }
+    });
+  }
+
+  @Override
+  public CompletableFuture<Void> saveAsync(final Collection<T> entities) {
+    return CompletableFuture.runAsync(() -> {
+      try {
+        save(entities);
+      } catch (FailedConnectionException exception) {
+        exception.printStackTrace();
+      }
+    });
+  }
+
+  @Override
+  @SafeVarargs
+  public final CompletableFuture<Void> deleteAsync(final T... entities) {
+    return CompletableFuture.runAsync(() -> {
+      try {
+        delete(entities);
+      } catch (FailedConnectionException exception) {
+        exception.printStackTrace();
+      }
+    });
+  }
+
+  @Override
+  public CompletableFuture<Void> deleteAsync(final Collection<T> entities) {
+    return CompletableFuture.runAsync(() -> {
+      try {
+        delete(entities);
+      } catch (FailedConnectionException exception) {
+        exception.printStackTrace();
+      }
+    });
+  }
+  @Override
+  public CompletableFuture<Boolean> containsAsync(final Object key) {
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        return contains(key);
+      } catch (FailedConnectionException exception) {
+        exception.printStackTrace();
+      }
+
+      return false;
+    });
+  }
+
+  @Override
+  public CompletableFuture<T> findAsync(final Object key) {
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        return find(key);
+      } catch (FailedConnectionException | ValueNotFoundException exception) {
+        exception.printStackTrace();
+      }
+
+      return null;
+    });
+  }
+
+  @Override
+  public CompletableFuture<List<T>> findAllAsync() {
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        return findAll();
+      } catch (FailedConnectionException exception) {
+        exception.printStackTrace();
+      }
+
+      return new ArrayList<>();
+    });
   }
 
   private void createTable() throws FailedConnectionException {
