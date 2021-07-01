@@ -18,9 +18,14 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +64,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   }
 
   @Override
-  public void save(final List<T> entities) throws FailedConnectionException {
+  public void save(final Collection<T> entities) throws FailedConnectionException {
     for (final T entity : entities) {
       executeUpdate(save, serialize(entity));
     }
@@ -75,7 +80,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   }
 
   @Override
-  public void delete(final List<T> entities) throws FailedConnectionException {
+  public void delete(final Collection<T> entities) throws FailedConnectionException {
     for (final T entity : entities) {
       delete(entity);
     }
@@ -199,7 +204,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       }
 
       final Object object = result.getObject(name);
-      field.set(entity, deserializeObject(object, field.getType()));
+      field.set(entity, deserializeObject(object, field));
 
       values.remove(name);
     }
@@ -222,13 +227,45 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   }
 
   @Nullable
-  private Object deserializeObject(@Nullable final Object object, final Class<?> clazz) {
+  @SuppressWarnings("unchecked")
+  private Object deserializeObject(@Nullable final Object object, final Field field) {
+    final Class<?> clazz = field.getType();
     final VariableType variable = VariableType.getVariable(object);
 
     if (variable.equals(VariableType.STRING)) {
       try {
+        final Class<?> type = Class.forName(field.getGenericType().getTypeName()
+            .replaceAll(".*<|>.*", "")
+            .replace("[]", ""));
+
+        if (clazz.equals(Set.class)) {
+          return JacksonAdapter.getInstance().deserialize(String.valueOf(object),
+              LinkedHashSet.class).stream()
+              .map(subObject -> {
+                try {
+                  return JacksonAdapter.getInstance().deserialize(String.valueOf(subObject), type);
+                } catch (JsonDeserializeException ignored) {
+                  return subObject;
+                }
+              })
+              .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+
+        if (clazz.equals(List.class)) {
+          return JacksonAdapter.getInstance().deserialize(String.valueOf(object),
+              ArrayList.class).stream()
+              .map(subObject -> {
+                try {
+                  return JacksonAdapter.getInstance().deserialize(String.valueOf(subObject), type);
+                } catch (JsonDeserializeException ignored) {
+                  return subObject;
+                }
+              })
+              .collect(Collectors.toList());
+        }
+
         return JacksonAdapter.getInstance().deserialize(String.valueOf(object), clazz);
-      } catch (JsonDeserializeException exception) {
+      } catch (JsonDeserializeException | ClassNotFoundException exception) {
         return object;
       }
     }
