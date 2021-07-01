@@ -5,7 +5,7 @@ dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.34.0'
     implementation 'com.h2database:h2:1.4.200'
 
-    implementation 'mysql:mysql-connector-java:8.0.23'
+    implementation 'mysql:mysql-connector-java:8.0.25'
     implementation 'org.postgresql:postgresql:42.2.19'
     implementation 'org.mongodb:mongo-java-driver:3.12.8'
 

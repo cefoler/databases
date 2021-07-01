@@ -2,12 +2,16 @@ subprojects {
     apply plugin: 'java'
 
     group 'com.celeste'
-    version '4.1.7-SNAPSHOT'
+    version '4.1.8-SNAPSHOT'
 
     repositories {
         mavenLocal()
         mavenCentral()
     }
+
+    def lombokVersion = "1.18.20"
+    def jetbrainsVersion = "21.0.1"
+    def junitVersion = "5.7.0"
 
     dependencies {
         /**
@@ -18,17 +22,17 @@ subprojects {
         /**
          * ANNOTATION FRAMEWORK
          */
-        compileOnly 'org.projectlombok:lombok:1.18.20'
-        annotationProcessor 'org.projectlombok:lombok:1.18.20'
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-        compileOnly 'org.jetbrains:annotations:21.0.1'
-        annotationProcessor 'org.jetbrains:annotations:21.0.1'
+        compileOnly "org.jetbrains:annotations:${jetbrainsVersion}"
+        annotationProcessor "org.jetbrains:annotations:${jetbrainsVersion}"
 
         /**
          * TEST FRAMEWORK
          */
-        testCompileOnly 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+        testCompileOnly "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     }
 
     jar {
