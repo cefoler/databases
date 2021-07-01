@@ -126,7 +126,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       } catch (FailedConnectionException exception) {
         exception.printStackTrace();
       }
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -138,7 +138,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       } catch (FailedConnectionException exception) {
         exception.printStackTrace();
       }
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -149,8 +149,9 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       } catch (FailedConnectionException exception) {
         exception.printStackTrace();
       }
-    });
+    }, EXECUTOR);
   }
+
   @Override
   public CompletableFuture<Boolean> containsAsync(final Object key) {
     return CompletableFuture.supplyAsync(() -> {
@@ -161,7 +162,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       }
 
       return false;
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -174,7 +175,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       }
 
       return null;
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -187,7 +188,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       }
 
       return new ArrayList<>();
-    });
+    }, EXECUTOR);
   }
 
   private void createTable() throws FailedConnectionException {

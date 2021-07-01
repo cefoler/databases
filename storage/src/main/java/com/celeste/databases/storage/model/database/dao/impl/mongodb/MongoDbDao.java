@@ -154,7 +154,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       } catch (FailedConnectionException exception) {
         exception.printStackTrace();
       }
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -166,7 +166,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       } catch (FailedConnectionException exception) {
         exception.printStackTrace();
       }
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -177,7 +177,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       } catch (FailedConnectionException exception) {
         exception.printStackTrace();
       }
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -190,7 +190,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       }
 
       return false;
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -203,7 +203,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       }
 
       return null;
-    });
+    }, EXECUTOR);
   }
 
   @Override
@@ -216,7 +216,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       }
 
       return new ArrayList<>();
-    });
+    }, EXECUTOR);
   }
 
   private MongoCollection<Document> createCollection() throws FailedConnectionException {
