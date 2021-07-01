@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -71,6 +73,7 @@ public final class MongoDbProvider implements MongoDb {
             .applyToConnectionPoolSettings(connection)
             .applyToSocketSettings(socket)
             .codecRegistry(codec)
+            .uuidRepresentation(UuidRepresentation.STANDARD)
             .readPreference(ReadPreference.primaryPreferred())
             .retryWrites(true)
             .retryWrites(true)
@@ -100,6 +103,7 @@ public final class MongoDbProvider implements MongoDb {
           .applyToSocketSettings(socket)
           .applyToSslSettings(tls)
           .codecRegistry(codec)
+          .uuidRepresentation(UuidRepresentation.STANDARD)
           .credential(credential)
           .readPreference(ReadPreference.primaryPreferred())
           .retryWrites(true)

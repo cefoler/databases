@@ -6,13 +6,18 @@ import java.util.Map;
 
 public interface CacheDao extends Dao {
 
+  String setExpire(final String key, final String value, final long seconds)
+      throws FailedConnectionException;
+
+  Long expire(final String key, final long seconds)
+      throws FailedConnectionException;
+
   String set(final String key, final String value) throws FailedConnectionException;
 
   Long set(final String key, final String field, final String value)
       throws FailedConnectionException;
 
-  String expire(final String key, final String value, final long seconds)
-      throws FailedConnectionException;
+  void increment(final String key, final String value, final double amount) throws FailedConnectionException;
 
   void delete(final String key) throws FailedConnectionException;
 
