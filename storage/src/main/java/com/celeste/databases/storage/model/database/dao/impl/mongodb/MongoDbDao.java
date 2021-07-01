@@ -1,31 +1,29 @@
 package com.celeste.databases.storage.model.database.dao.impl.mongodb;
 
 import com.celeste.databases.core.adapter.exception.JsonDeserializeException;
-import com.celeste.databases.core.adapter.exception.JsonSerializeException;
 import com.celeste.databases.core.adapter.impl.gson.GsonAdapter;
 import com.celeste.databases.core.adapter.impl.jackson.JacksonAdapter;
 import com.celeste.databases.core.model.database.dao.exception.ValueNotFoundException;
 import com.celeste.databases.core.model.database.provider.exception.FailedConnectionException;
 import com.celeste.databases.core.util.Reflection;
-import com.celeste.databases.core.util.Wrapper;
 import com.celeste.databases.storage.model.database.dao.AbstractStorageDao;
-import com.celeste.databases.storage.model.database.dao.impl.sql.type.VariableType;
 import com.celeste.databases.storage.model.database.provider.impl.mongodb.MongoDb;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
-import org.bson.BsonDocumentWriter;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +45,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   }
 
   @Override
-  public void save(final List<T> entities) throws FailedConnectionException {
+  public void save(final Collection<T> entities) throws FailedConnectionException {
     try {
       final ReplaceOptions options = new ReplaceOptions().upsert(true);
 
@@ -80,8 +78,8 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   }
 
   @Override
-  public void delete(final List<T> entities) throws FailedConnectionException {
-    for (T entity : entities) {
+  public void delete(final Collection<T> entities) throws FailedConnectionException {
+    for (final T entity : entities) {
       delete(entity);
     }
   }
@@ -175,7 +173,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       }
 
       final Object object = document.get(name);
-      field.set(entity, deserializeObject(object, field.getType()));
+      field.set(entity, deserializeObject(object, field));
 
       values.remove(name);
     }
@@ -189,23 +187,69 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
   @Nullable
   private Object serializeObject(@Nullable final Object object) {
-    return object instanceof Enum<?>
-        ? String.valueOf(object)
-        : object;
+    if (object instanceof Object[]) {
+      final Object[] objects = (Object[]) object;
+      return Arrays.asList(objects);
+    }
+
+    if (object instanceof Collection<?>) {
+      final Collection<?> collection = (Collection<?>) object;
+      return new ArrayList<>(collection);
+    }
+
+    if (object instanceof Enum<?>) {
+      final Enum<?> enumeration = (Enum<?>) object;
+      return enumeration.name();
+    }
+
+    return object;
   }
 
   @Nullable
   @SneakyThrows
-  private Object deserializeObject(@Nullable final Object object, final Class<?> clazz) {
+  private Object deserializeObject(@Nullable final Object object, final Field field) {
+    final Class<?> clazz = field.getType();
+
     if (object instanceof Document) {
       final Document document = (Document) object;
       return GsonAdapter.getInstance().deserialize(document.toJson(), clazz);
     }
 
+    if (object instanceof List<?>) {
+      final Class<?> type = Class.forName(field.getGenericType().getTypeName()
+          .replaceAll(".*<|>.*", "")
+          .replace("[]", ""));
+
+      final List<?> list = ((List<?>) object).stream()
+          .map(subObject -> {
+            if (subObject instanceof Document) {
+              try {
+                final Document document = (Document) subObject;
+                return JacksonAdapter.getInstance().deserialize(document.toJson(), type);
+              } catch (JsonDeserializeException ignored) {
+              }
+            }
+
+            return subObject;
+          })
+          .collect(Collectors.toList());
+
+      if (clazz.isArray()) {
+        final Object[] array = (Object[]) Array.newInstance(type, list.size());
+        return list.toArray(array);
+      }
+
+      if (clazz.equals(Set.class)) {
+        return new LinkedHashSet<>(list);
+      }
+
+      return list;
+    }
+
     if (clazz.isEnum()) {
-      final String enumerationName = String.valueOf(object);
+      final String name = String.valueOf(object);
       return Arrays.stream(clazz.getEnumConstants())
-          .filter(enumeration -> String.valueOf(enumeration).equals(enumerationName))
+          .filter(enumeration -> String.valueOf(enumeration).equals(name))
           .findFirst()
           .orElseThrow(() -> new JsonDeserializeException("Object isn't an invalid instance"));
     }

@@ -7,6 +7,8 @@ import com.celeste.databases.messenger.model.database.provider.Messenger;
 import com.celeste.databases.messenger.model.entity.Listener;
 import com.google.common.collect.Maps;
 import java.lang.reflect.Constructor;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -26,7 +28,7 @@ public abstract class AbstractMessengerDao<T extends Messenger> implements Messe
   @Override
   public void subscribeAll(final String prefix, final Class<?> clazz, final Object instance)
       throws FailedConnectionException {
-    subscribeAll(prefix, Maps.immutableEntry(clazz, instance));
+    subscribeAll(prefix, new SimpleEntry<>(clazz, instance));
   }
 
   @SafeVarargs
