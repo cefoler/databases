@@ -1,6 +1,6 @@
 package com.celeste.databases.storage.model.database.dao.impl.sql.type;
 
-import com.celeste.databases.storage.model.entity.Entity;
+import com.celeste.databases.storage.model.entity.Data;
 import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
@@ -17,12 +17,12 @@ public enum SqlType {
 
   SAVE("SAVE") {
     @Override
-    public String getSql(final Entity<?> entity) {
-      final Map<String, Field> values = entity.getValues();
+    public String getSql(final Data<?> data) {
+      final Map<String, Field> values = data.getValues();
 
       final StringBuilder builder = new StringBuilder()
           .append("REPLACE INTO ")
-          .append(entity.getName())
+          .append(data.getName())
           .append(" VALUES (");
 
       final int size = values.size();
@@ -38,12 +38,12 @@ public enum SqlType {
   },
   DELETE("DELETE") {
     @Override
-    public String getSql(final Entity<?> entity) {
-      final String key = entity.getKey().getKey();
+    public String getSql(final Data<?> data) {
+      final String key = data.getKey().getKey();
 
       final StringBuilder builder = new StringBuilder()
           .append("DELETE FROM ")
-          .append(entity.getName())
+          .append(data.getName())
           .append(" WHERE ")
           .append(key)
           .append(" = ?;");
@@ -53,12 +53,12 @@ public enum SqlType {
   },
   CONTAINS("CONTAINS") {
     @Override
-    public String getSql(final Entity<?> entity) {
-      final String key = entity.getKey().getKey();
+    public String getSql(final Data<?> data) {
+      final String key = data.getKey().getKey();
 
       final StringBuilder builder = new StringBuilder()
           .append("SELECT 1 FROM ")
-          .append(entity.getName())
+          .append(data.getName())
           .append(" WHERE ")
           .append(key)
           .append(" = ?;");
@@ -68,14 +68,14 @@ public enum SqlType {
   },
   FIND("FIND") {
     @Override
-    public String getSql(final Entity<?> entity) {
-      final String key = entity.getKey().getKey();
-      final Map<String, Field> values = entity.getValues();
+    public String getSql(final Data<?> data) {
+      final String key = data.getKey().getKey();
+      final Map<String, Field> values = data.getValues();
 
       final StringBuilder builder = new StringBuilder()
           .append("SELECT ");
 
-      final Map<String, Field> cache = entity.getValues();
+      final Map<String, Field> cache = data.getValues();
 
       for (final String name : values.keySet()) {
         final int size = cache.size();
@@ -89,7 +89,7 @@ public enum SqlType {
       }
 
       builder.append(" FROM ")
-          .append(entity.getName())
+          .append(data.getName())
           .append(" WHERE ")
           .append(key)
           .append(" = ?;");
@@ -99,13 +99,13 @@ public enum SqlType {
   },
   FIND_ALL("FIND_ALL", "FINDALL") {
     @Override
-    public String getSql(final Entity<?> entity) {
-      final Map<String, Field> values = entity.getValues();
+    public String getSql(final Data<?> data) {
+      final Map<String, Field> values = data.getValues();
 
       final StringBuilder builder = new StringBuilder()
           .append("SELECT ");
 
-      final Map<String, Field> cache = entity.getValues();
+      final Map<String, Field> cache = data.getValues();
 
       for (final String name : values.keySet()) {
         builder.append(name);
@@ -118,7 +118,7 @@ public enum SqlType {
       }
 
       builder.append(" FROM ")
-          .append(entity.getName())
+          .append(data.getName())
           .append(";");
 
       return builder.toString();
@@ -126,15 +126,15 @@ public enum SqlType {
   },
   CREATE_TABLE("CREATE_TABLE", "CREATETABLE") {
     @Override
-    public String getSql(final Entity<?> entity) {
-      final Entry<String, Field> key = entity.getKey();
-      final Map<String, Field> values = entity.getValues();
+    public String getSql(final Data<?> data) {
+      final Entry<String, Field> key = data.getKey();
+      final Map<String, Field> values = data.getValues();
 
       final VariableType variableKey = VariableType.getVariable(key.getValue().getType());
 
       final StringBuilder builder = new StringBuilder()
           .append("CREATE TABLE IF NOT EXISTS ")
-          .append(entity.getName())
+          .append(data.getName())
           .append(" (")
           .append(key.getKey())
           .append(" ")
@@ -185,6 +185,6 @@ public enum SqlType {
         .orElse(orElse);
   }
 
-  public abstract String getSql(final Entity<?> entity);
+  public abstract String getSql(final Data<?> data);
 
 }

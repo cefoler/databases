@@ -33,8 +33,8 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
   private final MongoCollection<Document> collection;
 
-  public MongoDbDao(final MongoDb storage, final Class<T> entity) throws FailedConnectionException {
-    super(storage, entity);
+  public MongoDbDao(final MongoDb storage, final Class<T> clazz) throws FailedConnectionException {
+    super(storage, clazz);
 
     this.collection = createCollection();
   }
@@ -51,7 +51,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       final ReplaceOptions options = new ReplaceOptions().upsert(true);
 
       for (final T entity : entities) {
-        final Object key = getEntity().getKey(entity);
+        final Object key = data.getKey(entity);
 
         final Bson bson = Filters.eq(key);
         final Document document = serialize(entity);
@@ -68,7 +68,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   public final void delete(final T... entities) throws FailedConnectionException {
     try {
       for (final T entity : entities) {
-        final Object key = getEntity().getKey(entity);
+        final Object key = data.getKey(entity);
         final Bson bson = Filters.eq(key);
 
         collection.deleteOne(bson);
@@ -219,8 +219,8 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
   private MongoCollection<Document> createCollection() throws FailedConnectionException {
     try {
-      final MongoDatabase database = getDatabase().getDatabase();
-      final String collection = getEntity().getName();
+      final MongoDatabase database = storage.getDatabase();
+      final String collection = data.getName();
 
       for (final String name : database.listCollectionNames()) {
         if (collection.equalsIgnoreCase(name)) {
@@ -239,7 +239,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
   private Document serialize(final T entity) {
     final Document document = new Document();
 
-    getEntity().getValues(entity).entrySet().stream()
+    data.getValues(entity).entrySet().stream()
         .peek(entry -> entry.setValue(serializeObject(entry.getValue())))
         .forEach(entry -> document.put(entry.getKey(), entry.getValue()));
 
@@ -248,8 +248,8 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
 
   @SneakyThrows
   private T deserialize(final Document document) {
-    final Map<String, Field> values = getEntity().getValues();
-    final T entity = Reflection.getDcConstructor(getClazz()).newInstance();
+    final Map<String, Field> values = data.getValues();
+    final T entity = Reflection.getDcConstructor(clazz).newInstance();
 
     for (final String name : document.keySet()) {
       final Field field = values.get(name);
@@ -337,7 +337,7 @@ public final class MongoDbDao<T> extends AbstractStorageDao<MongoDb, T> {
       return Arrays.stream(clazz.getEnumConstants())
           .filter(enumeration -> String.valueOf(enumeration).equals(name))
           .findFirst()
-          .orElseThrow(() -> new JsonDeserializeException("Object isn't an invalid instance"));
+          .orElseThrow(() -> new JsonDeserializeException("Object isn't an invalid instance."));
     }
 
     return object;

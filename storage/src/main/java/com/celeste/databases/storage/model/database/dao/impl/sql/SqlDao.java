@@ -10,6 +10,7 @@ import com.celeste.databases.storage.model.database.dao.AbstractStorageDao;
 import com.celeste.databases.storage.model.database.dao.impl.sql.type.SqlType;
 import com.celeste.databases.storage.model.database.dao.impl.sql.type.VariableType;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
+import com.celeste.databases.storage.model.database.type.StorageType;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +20,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -42,18 +42,21 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
   private final String createTable;
 
-  public SqlDao(final Sql storage, final Class<T> entity) throws FailedConnectionException {
-    super(storage, entity);
+  public SqlDao(final Sql storage, final Class<T> clazz) throws FailedConnectionException {
+    super(storage, clazz);
 
-    this.save = SqlType.SAVE.getSql(getEntity());
-    this.delete = SqlType.DELETE.getSql(getEntity());
+    this.save = storage.getStorageType().equals(StorageType.H2)
+        ? SqlType.SAVE.getSql(data).replace("REPLACE", "MERGE")
+        : SqlType.SAVE.getSql(data);
 
-    this.contains = SqlType.CONTAINS.getSql(getEntity());
+    this.delete = SqlType.DELETE.getSql(data);
 
-    this.find = SqlType.FIND.getSql(getEntity());
-    this.findAll = SqlType.FIND_ALL.getSql(getEntity());
+    this.contains = SqlType.CONTAINS.getSql(data);
 
-    this.createTable = SqlType.CREATE_TABLE.getSql(getEntity());
+    this.find = SqlType.FIND.getSql(data);
+    this.findAll = SqlType.FIND_ALL.getSql(data);
+
+    this.createTable = SqlType.CREATE_TABLE.getSql(data);
 
     createTable();
   }
@@ -75,7 +78,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @Override
   public final void delete(final T... entities) throws FailedConnectionException {
     for (final T entity : entities) {
-      final Object key = getEntity().getKey(entity);
+      final Object key = data.getKey(entity);
       executeUpdate(delete, serializeObject(key));
     }
   }
@@ -198,7 +201,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   private int executeUpdate(final String sql, final Object... values)
       throws FailedConnectionException {
     try (
-        final Connection connection = getDatabase().getConnection();
+        final Connection connection = storage.getConnection();
         final PreparedStatement statement = connection.prepareStatement(sql)
     ) {
       applyValues(statement, values);
@@ -211,7 +214,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   private ResultSet executeQuery(final String sql, final Object... values)
       throws FailedConnectionException {
     try (
-        final Connection connection = getDatabase().getConnection();
+        final Connection connection = storage.getConnection();
         final PreparedStatement statement = connection.prepareStatement(sql)
     ) {
       applyValues(statement, values);
@@ -237,7 +240,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   private T getFirst(final String sql, final Object... values)
       throws ValueNotFoundException, FailedConnectionException {
     try (final ResultSet result = executeQuery(sql, values)) {
-      Validation.isFalse(result.next(), () -> new ValueNotFoundException("Value not found"));
+      Validation.isFalse(result.next(), () -> new ValueNotFoundException("Value not found."));
       return deserialize(result);
     } catch (SQLException exception) {
       throw new ValueNotFoundException(exception);
@@ -261,7 +264,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
   @SneakyThrows
   private Object[] serialize(final T entity) {
-    final Map<String, Object> values = getEntity().getValues(entity);
+    final Map<String, Object> values = data.getValues(entity);
 
     return values.values().stream()
         .map(this::serializeObject)
@@ -270,8 +273,8 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
   @SneakyThrows(ReflectiveOperationException.class)
   private T deserialize(final ResultSet result) throws SQLException {
-    final Map<String, Field> values = getEntity().getValues();
-    final T entity = Reflection.getDcConstructor(getClazz()).newInstance();
+    final Map<String, Field> values = data.getValues();
+    final T entity = Reflection.getDcConstructor(clazz).newInstance();
 
     final ResultSetMetaData metaData = result.getMetaData();
     final int count = metaData.getColumnCount();
