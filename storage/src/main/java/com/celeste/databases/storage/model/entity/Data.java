@@ -15,18 +15,18 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 
-public final class Entity<T> {
+public final class Data<T> {
 
   private final String name;
 
   private final Entry<String, Field> key;
   private final Map<String, Field> values;
 
-  public Entity(final Class<T> clazz) {
+  public Data(final Class<T> clazz) {
     final Storable storable = Reflection.getAnnotation(clazz, Storable.class);
 
     Validation.notNull(storable, () ->
-        new IllegalArgumentException("Entity doesn't have the @Storable annotation"));
+        new IllegalArgumentException("Data doesn't have the @Storable annotation"));
 
     this.name = storable.value().toLowerCase();
 
@@ -39,7 +39,7 @@ public final class Entity<T> {
     this.key = values.entrySet().stream()
         .filter(entry -> Reflection.containsAnnotation(entry.getValue(), Key.class))
         .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("Entity doesn't have the @Key annotation"));
+        .orElseThrow(() -> new IllegalArgumentException("Data doesn't have the @Key annotation"));
   }
 
   private String getFieldName(final Field field) {
