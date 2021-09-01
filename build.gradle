@@ -1,12 +1,13 @@
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
 
     group 'com.celeste'
-    version '4.1.9-SNAPSHOT'
+    version '4.2.1-SNAPSHOT'
 
     def lombok = "1.18.20"
-    def jetbrains = "21.0.1"
-    def junit = "5.7.0"
+    def jetbrains = "22.0.0"
+    def junit = "5.7.2"
 
     repositories {
         mavenLocal()

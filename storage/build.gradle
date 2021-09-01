@@ -2,17 +2,17 @@ dependencies {
     /**
      * STORAGE DEPENDENCY
      */
-    implementation 'org.xerial:sqlite-jdbc:3.34.0'
+    implementation 'org.xerial:sqlite-jdbc:3.36.0.2'
     implementation 'com.h2database:h2:1.4.200'
 
     implementation 'mysql:mysql-connector-java:8.0.25'
-    implementation 'org.postgresql:postgresql:42.2.19'
+    implementation 'org.postgresql:postgresql:42.2.23'
     implementation 'org.mongodb:mongo-java-driver:3.12.8'
 
     /**
      * CONNECTION POOL DEPENDENCY
      */
-    implementation 'com.zaxxer:HikariCP:4.0.3'
+    implementation 'com.zaxxer:HikariCP:5.0.0'
 
     /**
      * SHARED FRAMEWORK
