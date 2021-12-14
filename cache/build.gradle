@@ -2,7 +2,7 @@ dependencies {
     /**
      * CACHE DEPENDENCY
      */
-    implementation 'redis.clients:jedis:3.6.3'
+    implementation 'redis.clients:jedis:3.7.1'
 
     /**
      * SHARED FRAMEWORK

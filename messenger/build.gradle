@@ -2,14 +2,14 @@ dependencies {
     /**
      * MESSENGER DEPENDENCY
      */
-    implementation 'redis.clients:jedis:3.6.3'
-    implementation 'com.rabbitmq:amqp-client:5.13.1'
+    implementation 'redis.clients:jedis:3.7.1'
+    implementation 'com.rabbitmq:amqp-client:5.14.0'
     implementation 'org.apache.kafka:kafka_2.13:2.8.0'
 
     /**
      * REFLECTION FRAMEWORK
      */
-    implementation 'org.reflections:reflections:0.9.12'
+    implementation 'org.reflections:reflections:0.10.2'
 
     /**
      * SHARED FRAMEWORK

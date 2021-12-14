@@ -3,11 +3,13 @@ dependencies {
      * STORAGE DEPENDENCY
      */
     implementation 'org.xerial:sqlite-jdbc:3.36.0.2'
+    // can't be updated due to changes it makes
     implementation 'com.h2database:h2:1.4.200'
 
     implementation 'mysql:mysql-connector-java:8.0.25'
-    implementation 'org.postgresql:postgresql:42.2.23'
-    implementation 'org.mongodb:mongo-java-driver:3.12.8'
+    implementation 'org.postgresql:postgresql:42.3.1'
+    // can't be updated due to lack of Java 8 support
+    implementation 'org.mongodb:mongo-java-driver:3.12.10'
 
     /**
      * CONNECTION POOL DEPENDENCY
