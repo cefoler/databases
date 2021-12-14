@@ -14,7 +14,7 @@ dependencies {
     /**
      * CONNECTION POOL DEPENDENCY
      */
-    implementation 'com.zaxxer:HikariCP:5.0.0'
+    implementation 'com.zaxxer:HikariCP:4.0.3'
 
     /**
      * SHARED FRAMEWORK
