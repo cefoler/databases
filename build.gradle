@@ -1,6 +1,6 @@
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+    apply plugin: "java"
+    apply plugin: "maven-publish"
 
     group 'com.celeste'
     version '4.2.1-SNAPSHOT'
@@ -46,4 +46,17 @@ subprojects {
     tasks.withType(Jar) {
         destinationDirectory.set(file("$rootDir/target/"))
     }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = groupId
+                artifactId = artifactId
+                version = version
+
+                from components.java
+            }
+        }
+    }
+
 }
