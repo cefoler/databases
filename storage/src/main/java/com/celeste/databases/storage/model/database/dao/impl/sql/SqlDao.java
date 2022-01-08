@@ -11,23 +11,21 @@ import com.celeste.databases.storage.model.database.dao.impl.sql.type.SqlType;
 import com.celeste.databases.storage.model.database.dao.impl.sql.type.VariableType;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
 import com.celeste.databases.storage.model.database.type.StorageType;
+
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
 import lombok.SneakyThrows;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
 public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
@@ -236,15 +234,54 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     final Class<?> clazz = field.getType();
     final VariableType variable = VariableType.getVariable(object);
 
-    if (variable.equals(VariableType.STRING)) {
+    if (variable == VariableType.STRING) {
       try {
-        final Class<?> type = Class.forName(field.getGenericType().getTypeName()
+        final String replaced = field.getGenericType().getTypeName()
             .replaceAll(".*<|>.*", "")
-            .replace("[]", ""));
+            .replace("[]", "");
+
+        if (clazz.equals(Map.class)) {
+          final String converted = String.valueOf(object);
+          final Map<?, ?> deserialized = JacksonAdapter.getInstance().deserialize(converted,
+              LinkedHashMap.class);
+
+          final List<? extends Class<?>> classes = Arrays.stream(replaced.split(", "))
+              .map(path -> {
+                try {
+                  return Class.forName(path);
+                } catch (ClassNotFoundException ignored) {
+                  throw new NullPointerException("Class not found");
+                }
+              })
+              .collect(Collectors.toList());
+
+          final Class<?> keyClazz = classes.get(0);
+          final Class<?> valueClazz = classes.get(1);
+
+          return deserialized.entrySet().stream()
+              .map(entry -> {
+                try {
+                  final Object key = entry.getKey();
+                  final Object value = entry.getValue();
+
+                  final Object keyDeserialized = JacksonAdapter.getInstance()
+                      .deserialize(String.valueOf(key), keyClazz);
+                  final Object valueDeserialized = JacksonAdapter.getInstance()
+                      .deserialize(String.valueOf(value), valueClazz);
+
+                  return new SimpleEntry<>(keyClazz, valueDeserialized);
+                } catch (JsonDeserializeException ignored) {
+                  return entry;
+                }
+              })
+              .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+
+        final Class<?> type = Class.forName(replaced);
 
         if (clazz.equals(Set.class)) {
-          return JacksonAdapter.getInstance().deserialize(String.valueOf(object),
-              LinkedHashSet.class).stream()
+          return JacksonAdapter.getInstance()
+              .deserialize(String.valueOf(object), LinkedHashSet.class).stream()
               .map(subObject -> {
                 try {
                   return JacksonAdapter.getInstance().deserialize(String.valueOf(subObject), type);
@@ -257,7 +294,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
         if (clazz.equals(List.class)) {
           return JacksonAdapter.getInstance().deserialize(String.valueOf(object),
-              ArrayList.class).stream()
+                  ArrayList.class).stream()
               .map(subObject -> {
                 try {
                   return JacksonAdapter.getInstance().deserialize(String.valueOf(subObject), type);
