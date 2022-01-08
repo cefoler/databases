@@ -20,7 +20,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -206,8 +208,9 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       }
 
       final Object object = result.getObject(name);
-      field.set(entity, deserializeObject(object, field));
+      final Object valueDeserialized = deserializeObject(object, field);
 
+      field.set(entity, valueDeserialized);
       values.remove(name);
     }
 
@@ -274,7 +277,8 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
                   return entry;
                 }
               })
-              .collect(Collectors.toCollection(LinkedHashSet::new));
+              .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (value1, value2) -> value1,
+                  LinkedHashMap::new));
         }
 
         final Class<?> type = Class.forName(replaced);
