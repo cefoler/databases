@@ -8,8 +8,10 @@ import com.celeste.databases.storage.model.annotation.Storable;
 import com.celeste.databases.storage.model.annotation.Transient;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -30,13 +32,25 @@ public final class Data<T> {
         new IllegalArgumentException("Data doesn't have the @Storable annotation"));
 
     this.name = storable.value().toLowerCase();
-    final Class<? super T> superClazz = clazz.getSuperclass();
-
     final Field[] fields = Reflection.getDcFields(clazz);
-    final Field[] superFields = Reflection.getDcFields(superClazz);
 
-    this.values = Stream.of(fields, superFields)
-        .flatMap(Stream::of)
+    final List<Field> immutable = Arrays.asList(fields);
+    final List<Field> converted = new ArrayList<>(immutable);
+
+    Class<?> superClazz = clazz.getSuperclass();
+
+    while (superClazz != null) {
+      final Field[] superFields = Reflection.getDcFields(superClazz);
+
+      final List<Field> convertedSuper = Arrays.stream(superFields)
+          .filter(field -> Modifier.isStatic(field.getModifiers()))
+          .collect(Collectors.toList());
+
+      converted.addAll(convertedSuper);
+      superClazz = superClazz.getSuperclass();
+    }
+
+    this.values = converted.stream()
         .filter(field -> !Reflection.containsAnnotation(field, Transient.class)
             && !Modifier.isTransient(field.getModifiers()))
         .collect(Collectors.toMap(this::getFieldName, field -> field, (field1, field2) -> field1,
