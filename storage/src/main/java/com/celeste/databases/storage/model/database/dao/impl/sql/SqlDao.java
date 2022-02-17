@@ -139,6 +139,18 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
     }
   }
 
+  private ResultSet executeQuery2(final String sql, final Object... values)
+      throws FailedConnectionException {
+    try{
+      final Connection connection = storage.getConnection();
+      final PreparedStatement statement = connection.prepareStatement(sql);
+      applyValues(statement, values);
+      return statement.executeQuery();
+    } catch (SQLException exception) {
+      throw new FailedConnectionException(exception);
+    }
+  }
+
   private void applyValues(final PreparedStatement statement, final Object... values)
       throws FailedConnectionException {
     final AtomicInteger index = new AtomicInteger(1);
@@ -166,7 +178,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       throws FailedConnectionException {
     final List<T> entities = new ArrayList<>();
 
-    try (final ResultSet result = executeQuery(sql, values)) {
+    try (final ResultSet result = executeQuery2(sql, values)) {
       while (result.next()) {
         entities.add(deserialize(result));
       }
