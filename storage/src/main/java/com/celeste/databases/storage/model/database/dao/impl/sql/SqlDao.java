@@ -128,6 +128,21 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
 
   private ResultSet executeQuery(final String sql, final Object... values)
       throws FailedConnectionException {
+    final Sql database = getDatabase();
+    final StorageType type = database.getStorageType();
+
+    if (type == StorageType.H2) {
+      try {
+        final Connection connection = storage.getConnection();
+        final PreparedStatement statement = connection.prepareStatement(sql);
+
+        applyValues(statement, values);
+        return statement.executeQuery();
+      } catch (SQLException exception) {
+        throw new FailedConnectionException(exception);
+      }
+    }
+
     try (
         final Connection connection = storage.getConnection();
         final PreparedStatement statement = connection.prepareStatement(sql)
