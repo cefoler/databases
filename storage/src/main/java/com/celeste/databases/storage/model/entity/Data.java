@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.SneakyThrows;
 
 public final class Data<T> {
@@ -29,8 +30,13 @@ public final class Data<T> {
         new IllegalArgumentException("Data doesn't have the @Storable annotation"));
 
     this.name = storable.value().toLowerCase();
+    final Class<? super T> superClazz = clazz.getSuperclass();
 
-    this.values = Arrays.stream(Reflection.getDcFields(clazz))
+    final Field[] fields = Reflection.getDcFields(clazz);
+    final Field[] superFields = Reflection.getDcFields(superClazz);
+
+    this.values = Stream.of(fields, superFields)
+        .flatMap(Stream::of)
         .filter(field -> !Reflection.containsAnnotation(field, Transient.class)
             && !Modifier.isTransient(field.getModifiers()))
         .collect(Collectors.toMap(this::getFieldName, field -> field, (field1, field2) -> field1,
