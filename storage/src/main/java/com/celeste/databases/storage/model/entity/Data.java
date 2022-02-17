@@ -34,8 +34,9 @@ public final class Data<T> {
     this.name = storable.value().toLowerCase();
     final Field[] fields = Reflection.getDcFields(clazz);
 
-    final List<Field> immutable = Arrays.asList(fields);
-    final List<Field> converted = new ArrayList<>(immutable);
+    final List<Field> converted = Arrays.stream(fields)
+        .filter(field -> !Modifier.isStatic(field.getModifiers()))
+        .collect(Collectors.toList());
 
     Class<?> superClazz = clazz.getSuperclass();
 
@@ -43,7 +44,7 @@ public final class Data<T> {
       final Field[] superFields = Reflection.getDcFields(superClazz);
 
       final List<Field> convertedSuper = Arrays.stream(superFields)
-          .filter(field -> Modifier.isStatic(field.getModifiers()))
+          .filter(field -> !Modifier.isStatic(field.getModifiers()))
           .collect(Collectors.toList());
 
       converted.addAll(convertedSuper);
