@@ -16,14 +16,10 @@ public final class SqLiteProvider implements Sql {
 
   private static final String URI;
   private static final String FILE;
-  private static final Pattern PATH;
-  private static final Pattern NAME;
 
   static {
     URI = "jdbc:h2:<path>";
     FILE = "<name>.db";
-    PATH = Pattern.compile("<path>", Pattern.LITERAL);
-    NAME = Pattern.compile("<name>", Pattern.LITERAL);
   }
 
   private final LocalCredentials credentials;
@@ -40,14 +36,11 @@ public final class SqLiteProvider implements Sql {
     try {
       Class.forName("org.sqlite.jdbc4.JDBC4Connection");
 
-      final String newUri = PATH.matcher(URI)
-          .replaceAll(Matcher.quoteReplacement(credentials.getPath().getAbsolutePath()));
+      final String newUri = URI.replace("<path>", credentials.getPath().getAbsolutePath());
+      final String newFile = FILE.replace("<name>", credentials.getName());
 
-      final String newFile = NAME.matcher(FILE)
-          .replaceAll(Matcher.quoteReplacement(credentials.getName()));
-
-      final Connection closableConnection = new JDBC4Connection(newUri, newFile, new Properties());
-      this.connection = new NonClosableConnection(closableConnection);
+      final Connection connection = new JDBC4Connection(newUri, newFile, new Properties());
+      this.connection = new NonClosableConnection(connection);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
     }

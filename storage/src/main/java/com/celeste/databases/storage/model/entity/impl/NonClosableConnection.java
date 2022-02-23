@@ -16,7 +16,8 @@ public final class NonClosableConnection extends ForwardingConnection {
   }
 
   public void shutdown() throws SQLException {
-    getConnection().close();
+    final Connection connection = getConnection();
+    connection.close();
   }
 
 }
