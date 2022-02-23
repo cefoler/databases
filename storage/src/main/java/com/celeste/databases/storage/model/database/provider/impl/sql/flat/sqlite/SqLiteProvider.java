@@ -18,7 +18,7 @@ public final class SqLiteProvider implements Sql {
   private static final String FILE;
 
   static {
-    URI = "jdbc:h2:<path>";
+    URI = "<path>/";
     FILE = "<name>.db";
   }
 
@@ -39,7 +39,7 @@ public final class SqLiteProvider implements Sql {
       final String newUri = URI.replace("<path>", credentials.getPath().getAbsolutePath());
       final String newFile = FILE.replace("<name>", credentials.getName());
 
-      final Connection connection = new JDBC4Connection(newUri, newFile, new Properties());
+      final Connection connection = new JDBC4Connection("", newUri + newFile, new Properties());
       this.connection = new NonClosableConnection(connection);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
