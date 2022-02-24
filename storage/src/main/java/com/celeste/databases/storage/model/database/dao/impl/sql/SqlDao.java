@@ -266,9 +266,11 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @SuppressWarnings("unchecked")
   private Object deserializeObject(@Nullable final Object object, final Field field) {
     final Class<?> clazz = field.getType();
-    final VariableType variable = VariableType.getVariable(clazz);
 
-    if (variable == VariableType.BOOLEAN || variable == VariableType.BOOLEAN_PRIMITIVE) {
+    final VariableType classVariable = VariableType.getVariable(clazz);
+    final VariableType valueVariable = VariableType.getVariable(object);
+
+    if (classVariable == VariableType.BOOLEAN || classVariable == VariableType.BOOLEAN_PRIMITIVE) {
       try {
         return JacksonAdapter.getInstance().deserialize(String.valueOf(object), clazz);
       } catch (JsonDeserializeException exception) {
@@ -276,7 +278,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
       }
     }
 
-    if (variable == VariableType.STRING || variable == VariableType.UUID) {
+    if (valueVariable == VariableType.STRING) {
       try {
         final String replaced = field.getGenericType().getTypeName()
             .replaceAll(".*<|>.*", "")
