@@ -3,6 +3,7 @@ package com.celeste.databases.storage.model.database.dao.impl.sql.type;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public enum VariableType {
   BOOLEAN(Boolean.class, "BOOLEAN"),
   BOOLEAN_PRIMITIVE(boolean.class, "BOOLEAN"),
 
-  DATE(java.util.Date.class, "TIMESTAMP"),
+  DATE(Date.class, "TIMESTAMP"),
   DATESQL(java.sql.Date.class, "DATE"),
   TIME(Time.class, "TIME"),
   TIMESTAMP(Timestamp.class, "TIMESTAMP"),
@@ -47,7 +48,7 @@ public enum VariableType {
 
   public static VariableType getVariable(final Class<?> clazz) {
     return Arrays.stream(values())
-        .filter(type -> type.getClazz().equals(clazz) || type.getClazz().isInstance(clazz))
+        .filter(type -> type.getClazz().equals(clazz) || type.getClazz().isAssignableFrom(clazz))
         .findFirst()
         .orElse(JSON);
   }

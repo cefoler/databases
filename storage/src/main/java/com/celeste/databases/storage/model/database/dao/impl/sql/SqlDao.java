@@ -12,6 +12,7 @@ import com.celeste.databases.storage.model.database.dao.impl.sql.type.VariableTy
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
 import com.celeste.databases.storage.model.database.type.StorageType;
 
+import com.google.errorprone.annotations.Var;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -265,9 +266,17 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
   @SuppressWarnings("unchecked")
   private Object deserializeObject(@Nullable final Object object, final Field field) {
     final Class<?> clazz = field.getType();
-    final VariableType variable = VariableType.getVariable(object);
+    final VariableType variable = VariableType.getVariable(clazz);
 
-    if (variable == VariableType.STRING) {
+    if (variable == VariableType.BOOLEAN || variable == VariableType.BOOLEAN_PRIMITIVE) {
+      try {
+        return JacksonAdapter.getInstance().deserialize(String.valueOf(object), clazz);
+      } catch (JsonDeserializeException exception) {
+        return object;
+      }
+    }
+
+    if (variable == VariableType.STRING || variable == VariableType.UUID) {
       try {
         final String replaced = field.getGenericType().getTypeName()
             .replaceAll(".*<|>.*", "")
