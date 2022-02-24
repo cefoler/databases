@@ -6,6 +6,7 @@ import com.celeste.databases.core.model.entity.impl.LocalCredentials;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
 import com.celeste.databases.storage.model.database.type.StorageType;
 import com.celeste.databases.storage.model.entity.impl.NonClosableConnection;
+import java.io.File;
 import java.sql.Connection;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -39,7 +40,12 @@ public final class SqLiteProvider implements Sql {
       final String newUri = URI.replace("<path>", credentials.getPath().getAbsolutePath());
       final String newFile = FILE.replace("<name>", credentials.getName());
 
-      final Connection connection = new JDBC4Connection("", newUri + newFile, new Properties());
+      final String newPath = newUri + newFile;
+
+      final File file = new File(newUri);
+      file.mkdirs();
+
+      final Connection connection = new JDBC4Connection(newUri, newPath, new Properties());
       this.connection = new NonClosableConnection(connection);
     } catch (Exception exception) {
       throw new FailedConnectionException(exception);
