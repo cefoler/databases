@@ -6,7 +6,6 @@ import com.celeste.databases.messenger.model.database.provider.impl.redis.Redis;
 import com.celeste.databases.messenger.model.database.pubsub.redis.RedisPubSub;
 import com.celeste.databases.messenger.model.entity.Listener;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 
 public final class RedisDao extends AbstractMessengerDao<Redis> {
 

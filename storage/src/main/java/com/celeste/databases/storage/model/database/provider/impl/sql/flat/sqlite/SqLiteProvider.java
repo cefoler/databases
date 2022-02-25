@@ -9,8 +9,6 @@ import com.celeste.databases.storage.model.entity.impl.NonClosableConnection;
 import java.io.File;
 import java.sql.Connection;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.sqlite.jdbc4.JDBC4Connection;
 
 public final class SqLiteProvider implements Sql {

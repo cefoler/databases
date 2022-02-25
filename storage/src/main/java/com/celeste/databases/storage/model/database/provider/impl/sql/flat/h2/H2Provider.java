@@ -8,8 +8,6 @@ import com.celeste.databases.storage.model.database.type.StorageType;
 import com.celeste.databases.storage.model.entity.impl.NonClosableConnection;
 import java.sql.Connection;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.h2.jdbc.JdbcConnection;
 
 public final class H2Provider implements Sql {
