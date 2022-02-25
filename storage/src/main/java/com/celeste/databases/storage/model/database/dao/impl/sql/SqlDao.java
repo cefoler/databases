@@ -11,24 +11,26 @@ import com.celeste.databases.storage.model.database.dao.impl.sql.type.SqlType;
 import com.celeste.databases.storage.model.database.dao.impl.sql.type.VariableType;
 import com.celeste.databases.storage.model.database.provider.impl.sql.Sql;
 import com.celeste.databases.storage.model.database.type.StorageType;
-
-import com.google.errorprone.annotations.Var;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
 import lombok.SneakyThrows;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
 public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
@@ -351,7 +353,7 @@ public final class SqlDao<T> extends AbstractStorageDao<Sql, T> {
         }
 
         return JacksonAdapter.getInstance().deserialize(String.valueOf(object), clazz);
-      } catch (JsonDeserializeException | ClassNotFoundException exception) {
+      } catch (JsonDeserializeException | ClassNotFoundException ignored) {
         return object;
       }
     }

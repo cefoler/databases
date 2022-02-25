@@ -26,6 +26,9 @@ subprojects {
         compileOnly lombok, jetbrains
         annotationProcessor lombok, jetbrains
 
+        testCompileOnly lombok, jetbrains
+        testAnnotationProcessor lombok, jetbrains
+
         /**
          * TEST FRAMEWORK
          */

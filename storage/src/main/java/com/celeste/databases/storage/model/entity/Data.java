@@ -10,10 +10,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
@@ -34,20 +38,25 @@ public final class Data<T> {
     this.name = storable.value().toLowerCase();
     final Field[] fields = Reflection.getDcFields(clazz);
 
-    final List<Field> converted = Arrays.stream(fields)
+    final LinkedList<Field> converted = new LinkedList<>();
+
+    Arrays.stream(fields)
         .filter(field -> !Modifier.isStatic(field.getModifiers()))
-        .collect(Collectors.toList());
+        .collect(Collectors.toCollection(LinkedList::new))
+        .descendingIterator()
+        .forEachRemaining(converted::addFirst);
 
     Class<?> superClazz = clazz.getSuperclass();
 
     while (superClazz != null) {
       final Field[] superFields = Reflection.getDcFields(superClazz);
 
-      final List<Field> convertedSuper = Arrays.stream(superFields)
+      Arrays.stream(superFields)
           .filter(field -> !Modifier.isStatic(field.getModifiers()))
-          .collect(Collectors.toList());
+          .collect(Collectors.toCollection(LinkedList::new))
+          .descendingIterator()
+          .forEachRemaining(converted::addFirst);
 
-      converted.addAll(convertedSuper);
       superClazz = superClazz.getSuperclass();
     }
 

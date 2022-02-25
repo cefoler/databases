@@ -15,6 +15,7 @@ dependencies {
      * CONNECTION POOL DEPENDENCY
      */
     implementation 'com.zaxxer:HikariCP:4.0.3'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
 
     /**
      * SHARED FRAMEWORK
