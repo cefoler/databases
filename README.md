@@ -12,7 +12,7 @@ source code and documentation of this project.
 
 Maven
 
-```
+```java
 <dependency>
     <groupId>com.github.celesteoficial</groupId>
     <artifactId>databases</artifactId>
@@ -22,7 +22,7 @@ Maven
 
 Gradle
 
-```
+```java
 dependencies {
    implementation 'com.github.celesteoficial:databases:VERSION'
 }
